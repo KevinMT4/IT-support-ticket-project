@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ticket_system',
 ]
 
 MIDDLEWARE = [
@@ -121,3 +122,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'ticket_system.Usuario'
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'lista_tickets'
+LOGOUT_REDIRECT_URL = 'login'
