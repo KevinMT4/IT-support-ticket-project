@@ -4,5 +4,5 @@ __pycache__/
 venv
 __pycache__/
 *.log
-db.slqite3
+db.sqlite3
 node_modules/
