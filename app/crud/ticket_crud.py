@@ -1,1 +1,0 @@
-# Operaciones CRUD para tickets
