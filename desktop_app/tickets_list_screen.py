@@ -11,35 +11,38 @@ class TicketsListScreen(ctk.CTkFrame):
         self.on_view_ticket = on_view_ticket
         self.on_logout = on_logout
         self.tickets_data = []
+        self.header_frame = None
 
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-        self.create_header()
         self.create_tickets_list()
 
     def create_header(self):
-        header_frame = ctk.CTkFrame(self, height=80, corner_radius=0)
-        header_frame.grid(row=0, column=0, sticky="ew", padx=0, pady=0)
-        header_frame.grid_columnconfigure(1, weight=1)
+        if self.header_frame:
+            self.header_frame.destroy()
+
+        self.header_frame = ctk.CTkFrame(self, height=80, corner_radius=0)
+        self.header_frame.grid(row=0, column=0, sticky="ew", padx=0, pady=0)
+        self.header_frame.grid_columnconfigure(1, weight=1)
 
         title = ctk.CTkLabel(
-            header_frame,
+            self.header_frame,
             text="Mis Tickets",
             font=ctk.CTkFont(size=24, weight="bold")
         )
         title.grid(row=0, column=0, padx=20, pady=20, sticky="w")
 
-        user_name = self.api_client.user_data.get("username", "Usuario")
+        user_name = self.api_client.user_data.get("username", "Usuario") if self.api_client.user_data else "Usuario"
         user_label = ctk.CTkLabel(
-            header_frame,
+            self.header_frame,
             text=f"Usuario: {user_name}",
             font=ctk.CTkFont(size=12)
         )
         user_label.grid(row=0, column=1, padx=10, pady=20, sticky="e")
 
         refresh_btn = ctk.CTkButton(
-            header_frame,
+            self.header_frame,
             text="↻ Actualizar",
             command=self.load_tickets,
             width=120,
@@ -48,7 +51,7 @@ class TicketsListScreen(ctk.CTkFrame):
         refresh_btn.grid(row=0, column=2, padx=10, pady=20)
 
         create_btn = ctk.CTkButton(
-            header_frame,
+            self.header_frame,
             text="+ Nuevo Ticket",
             command=self.on_create_ticket,
             width=140,
@@ -57,7 +60,7 @@ class TicketsListScreen(ctk.CTkFrame):
         create_btn.grid(row=0, column=3, padx=10, pady=20)
 
         logout_btn = ctk.CTkButton(
-            header_frame,
+            self.header_frame,
             text="Cerrar Sesión",
             command=self.on_logout,
             width=120,
@@ -236,4 +239,5 @@ class TicketsListScreen(ctk.CTkFrame):
             return date_str
 
     def show(self):
+        self.create_header()
         self.load_tickets()

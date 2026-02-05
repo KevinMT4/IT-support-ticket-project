@@ -28,10 +28,20 @@ def login_view(request):
     user = authenticate(username=username, password=password)
 
     if user is not None:
+        if user.is_superuser and user.rol != 'superuser':
+            user.rol = 'superuser'
+            user.save()
+
         token, created = Token.objects.get_or_create(user=user)
+        try:
+            serialized_data = UsuarioSerializer(user).data
+        except Exception as e:
+            return Response({'error': f'Error al procesar datos del usuario: {str(e)}'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
         return Response({
             'token': token.key,
-            'user': UsuarioSerializer(user).data
+            'user': serialized_data
         })
     else:
         return Response({'error': 'Credenciales inválidas'},
