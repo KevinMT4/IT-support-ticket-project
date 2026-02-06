@@ -18,6 +18,35 @@ class UsuarioSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 
+class UsuarioRegistroSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=8)
+    password_confirm = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Usuario
+        fields = ['username', 'email', 'password', 'password_confirm',
+                  'first_name', 'last_name', 'departamento']
+
+    def validate(self, data):
+        if data['password'] != data['password_confirm']:
+            raise serializers.ValidationError({'password_confirm': 'Las contraseñas no coinciden'})
+        return data
+
+    def validate_email(self, value):
+        if Usuario.objects.filter(email=value).exists():
+            raise serializers.ValidationError('Este correo electrónico ya está registrado')
+        return value
+
+    def create(self, validated_data):
+        validated_data.pop('password_confirm')
+        password = validated_data.pop('password')
+        usuario = Usuario(**validated_data)
+        usuario.set_password(password)
+        usuario.rol = 'user'
+        usuario.save()
+        return usuario
+
+
 class MotivoSerializer(serializers.ModelSerializer):
     departamento_nombre = serializers.CharField(source='departamento.nombre', read_only=True)
 

@@ -60,6 +60,16 @@ class ApiClient {
     return data;
   }
 
+  async register(userData) {
+    const data = await this.request('/registro/', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+
+    this.setToken(data.token);
+    return data;
+  }
+
   async logout() {
     try {
       await this.request('/logout/', { method: 'POST' });

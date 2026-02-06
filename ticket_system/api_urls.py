@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .api_views import (
     login_view,
     logout_view,
+    registro_view,
     DepartamentoViewSet,
     MotivoViewSet,
     TicketViewSet
@@ -16,5 +17,6 @@ router.register(r'tickets', TicketViewSet, basename='ticket')
 urlpatterns = [
     path('login/', login_view, name='api_login'),
     path('logout/', logout_view, name='api_logout'),
+    path('registro/', registro_view, name='api_registro'),
     path('', include(router.urls)),
 ]

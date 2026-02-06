@@ -8,6 +8,7 @@ from django.utils import timezone
 from .models import Usuario, Departamento, Motivo, Ticket
 from .serializers import (
     UsuarioSerializer,
+    UsuarioRegistroSerializer,
     DepartamentoSerializer,
     MotivoSerializer,
     TicketSerializer,
@@ -54,6 +55,24 @@ def logout_view(request):
     if hasattr(request.user, 'auth_token'):
         request.user.auth_token.delete()
     return Response({'message': 'Sesión cerrada exitosamente'})
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def registro_view(request):
+    serializer = UsuarioRegistroSerializer(data=request.data)
+
+    if serializer.is_valid():
+        usuario = serializer.save()
+        token, created = Token.objects.get_or_create(user=usuario)
+
+        return Response({
+            'token': token.key,
+            'user': UsuarioSerializer(usuario).data,
+            'message': 'Usuario registrado exitosamente'
+        }, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DepartamentoViewSet(viewsets.ReadOnlyModelViewSet):

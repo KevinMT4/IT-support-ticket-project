@@ -1,46 +1,56 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import Login from './pages/Login';
-import TicketsList from './pages/TicketsList';
-import CreateTicket from './pages/CreateTicket';
-import TicketDetail from './pages/TicketDetail';
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    Navigate,
+} from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import TicketsList from "./pages/TicketsList";
+import CreateTicket from "./pages/CreateTicket";
+import TicketDetail from "./pages/TicketDetail";
 
 function App() {
-  return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/tickets"
-            element={
-              <ProtectedRoute>
-                <TicketsList />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/tickets/new"
-            element={
-              <ProtectedRoute>
-                <CreateTicket />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/tickets/:id"
-            element={
-              <ProtectedRoute>
-                <TicketDetail />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/" element={<Navigate to="/tickets" replace />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
-  );
+    return (
+        <AuthProvider>
+            <Router>
+                <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/registro" element={<Register />} />
+                    <Route
+                        path="/tickets"
+                        element={
+                            <ProtectedRoute>
+                                <TicketsList />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/tickets/new"
+                        element={
+                            <ProtectedRoute>
+                                <CreateTicket />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/tickets/:id"
+                        element={
+                            <ProtectedRoute>
+                                <TicketDetail />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/"
+                        element={<Navigate to="/tickets" replace />}
+                    />
+                </Routes>
+            </Router>
+        </AuthProvider>
+    );
 }
 
 export default App;
