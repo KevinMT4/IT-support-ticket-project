@@ -8,6 +8,13 @@ class Departamento(models.Model):
     email = models.EmailField()
     descripcion = models.TextField(blank=True)
     activo = models.BooleanField(default=True)
+    usuario = models.OneToOneField(
+        'Usuario',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='departamento_asignado'
+    )
 
     class Meta:
         db_table = 'departamento'
