@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Alert from "../components/Alert";
 import "../styles/Login.css";
 
 const Login = () => {
@@ -40,7 +41,7 @@ const Login = () => {
                 <p className="login-subtitle">Inicia sesión para continuar</p>
 
                 <form onSubmit={handleSubmit} className="login-form">
-                    {error && <div className="error-message">{error}</div>}
+                    {error && <Alert type="error" message={error} onClose={() => setError("")} />}
 
                     <div className="form-group">
                         <label htmlFor="email">Email</label>

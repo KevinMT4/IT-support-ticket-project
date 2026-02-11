@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import apiClient from "../api/client";
 import Layout from "../components/Layout";
 import Loading from "../components/Loading";
+import Alert from "../components/Alert";
 import "../styles/CreateTicket.css";
 
 const CreateTicket = () => {
@@ -120,7 +121,7 @@ const CreateTicket = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="ticket-form">
-                    {error && <div className="error-message">{error}</div>}
+                    {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
 
                     <div className="form-group">
                         <label>Departamento</label>

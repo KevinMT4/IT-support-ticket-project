@@ -5,6 +5,7 @@ import apiClient from '../api/client';
 import Layout from '../components/Layout';
 import TicketCard from '../components/TicketCard';
 import Loading from '../components/Loading';
+import Alert from '../components/Alert';
 import '../styles/TicketsList.css';
 
 const TicketsList = () => {
@@ -128,7 +129,7 @@ const TicketsList = () => {
           </button>
         </div>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
 
         {filteredTickets.length === 0 ? (
           <div className="empty-state">

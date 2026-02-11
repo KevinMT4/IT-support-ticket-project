@@ -73,15 +73,6 @@
     gap: var(--spacing-lg);
 }
 
-.error-message {
-    background-color: #fee;
-    color: #c33;
-    padding: var(--spacing-md);
-    border-radius: var(--border-radius);
-    font-size: 0.875rem;
-    border-left: 4px solid #c33;
-}
-
 .btn-register {
     padding: 12px 24px;
     background-color: var(--color-primary);

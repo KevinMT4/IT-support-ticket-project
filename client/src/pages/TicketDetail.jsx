@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import apiClient from '../api/client';
 import Layout from '../components/Layout';
 import Loading from '../components/Loading';
+import Alert from '../components/Alert';
 import '../styles/TicketDetail.css';
 
 const TicketDetail = () => {
@@ -124,8 +125,8 @@ const TicketDetail = () => {
           </div>
         </div>
 
-        {successMessage && <div className="success-message">{successMessage}</div>}
-        {error && <div className="error-message">{error}</div>}
+        {successMessage && <Alert type="success" message={successMessage} onClose={() => setSuccessMessage('')} />}
+        {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
 
         <div className="ticket-detail-content">
           <div className="ticket-main">

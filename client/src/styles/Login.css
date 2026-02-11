@@ -93,15 +93,6 @@
     cursor: not-allowed;
 }
 
-.error-message {
-    background-color: #fee;
-    color: #c33;
-    padding: var(--spacing-md);
-    border-radius: var(--border-radius);
-    font-size: 0.875rem;
-    border-left: 4px solid #c33;
-}
-
 .login-footer {
     text-align: center;
     margin-top: var(--spacing-lg);
