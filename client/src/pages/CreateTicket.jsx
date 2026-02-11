@@ -93,8 +93,8 @@ const CreateTicket = () => {
                 prioridad: formData.prioridad,
             };
 
-            const newTicket = await apiClient.createTicket(ticketData);
-            navigate(`/tickets/${newTicket.id}`);
+            await apiClient.createTicket(ticketData);
+            navigate("/tickets");
         } catch (err) {
             setError(err.message || "Error al crear el ticket");
             setSubmitting(false);
@@ -121,7 +121,13 @@ const CreateTicket = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="ticket-form">
-                    {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
+                    {error && (
+                        <Alert
+                            type="error"
+                            message={error}
+                            onClose={() => setError(null)}
+                        />
+                    )}
 
                     <div className="form-group">
                         <label>Departamento</label>

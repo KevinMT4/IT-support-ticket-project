@@ -1,14 +1,26 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ConfirmModal from './ConfirmModal';
 import '../styles/Layout.css';
 
 const Layout = ({ children }) => {
   const { user, logout, isSuperuser } = useAuth();
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const handleLogout = async () => {
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = async () => {
+    setShowLogoutModal(false);
     await logout();
     navigate('/login');
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
   };
 
   return (
@@ -31,7 +43,7 @@ const Layout = ({ children }) => {
                   {user.first_name || user.username}
                   {isSuperuser() && <span className="badge-superuser">Admin</span>}
                 </span>
-                <button onClick={handleLogout} className="btn-logout">
+                <button onClick={handleLogoutClick} className="btn-logout">
                   Cerrar Sesión
                 </button>
               </div>
@@ -40,6 +52,13 @@ const Layout = ({ children }) => {
         </div>
       </nav>
       <main className="main-content">{children}</main>
+      <ConfirmModal
+        isOpen={showLogoutModal}
+        onClose={handleLogoutCancel}
+        onConfirm={handleLogoutConfirm}
+        title="Cerrar sesión"
+        message="¿Estás seguro que deseas cerrar sesión?"
+      />
     </div>
   );
 };
