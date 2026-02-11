@@ -29,8 +29,8 @@ const CreateTicket = () => {
             const departamentos = await apiClient.getDepartamentos();
             const tiDept = departamentos.find(
                 (d) =>
-                    d.nombre.toLowerCase().includes("tecnolog") ||
-                    d.nombre.toLowerCase().includes("ti"),
+                    d.nombre.toLowerCase().includes("tecnologia") &&
+                    d.nombre.toLowerCase().includes("informacion"),
             );
 
             if (!tiDept) {
