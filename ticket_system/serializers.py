@@ -56,6 +56,7 @@ class MotivoSerializer(serializers.ModelSerializer):
 
 class TicketSerializer(serializers.ModelSerializer):
     usuario_nombre = serializers.SerializerMethodField()
+    usuario_departamento_nombre = serializers.SerializerMethodField()
     departamento_nombre = serializers.CharField(source='departamento.nombre', read_only=True)
     motivo_nombre = serializers.CharField(source='motivo.nombre', read_only=True, allow_null=True)
     estado_display = serializers.CharField(source='get_estado_display', read_only=True)
@@ -63,14 +64,17 @@ class TicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ['id', 'usuario', 'usuario_nombre', 'departamento', 'departamento_nombre',
-                  'motivo', 'motivo_nombre', 'asunto', 'contenido', 'prioridad',
-                  'prioridad_display', 'estado', 'estado_display', 'fecha_creacion',
-                  'fecha_cierre']
+        fields = ['id', 'usuario', 'usuario_nombre', 'usuario_departamento_nombre',
+                  'departamento', 'departamento_nombre', 'motivo', 'motivo_nombre',
+                  'asunto', 'contenido', 'prioridad', 'prioridad_display', 'estado',
+                  'estado_display', 'fecha_creacion', 'fecha_cierre']
         read_only_fields = ['id', 'fecha_creacion', 'usuario']
 
     def get_usuario_nombre(self, obj):
         return f"{obj.usuario.first_name} {obj.usuario.last_name}" if obj.usuario.first_name else obj.usuario.username
+
+    def get_usuario_departamento_nombre(self, obj):
+        return obj.usuario.departamento.nombre if obj.usuario.departamento else 'Sin departamento'
 
 class TicketCreateSerializer(serializers.ModelSerializer):
     class Meta:
