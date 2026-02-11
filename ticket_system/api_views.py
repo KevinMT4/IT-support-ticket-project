@@ -19,14 +19,18 @@ from .serializers import (
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_view(request):
-    username = request.data.get('username')
+    email = request.data.get('email')
     password = request.data.get('password')
 
-    if not username or not password:
-        return Response({'error': 'Por favor proporciona usuario y contraseña'},
+    if not email or not password:
+        return Response({'error': 'Por favor proporciona email y contraseña'},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    user = authenticate(username=username, password=password)
+    try:
+        user_obj = Usuario.objects.get(email=email)
+        user = authenticate(username=user_obj.username, password=password)
+    except Usuario.DoesNotExist:
+        user = None
 
     if user is not None:
         if user.is_superuser and user.rol != 'superuser':

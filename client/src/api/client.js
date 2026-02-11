@@ -50,10 +50,10 @@ class ApiClient {
     }
   }
 
-  async login(username, password) {
+  async login(email, password) {
     const data = await this.request('/login/', {
       method: 'POST',
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email, password }),
     });
 
     this.setToken(data.token);

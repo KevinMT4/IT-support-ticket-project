@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import "../styles/Login.css";
 
 const Login = () => {
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -16,13 +16,13 @@ const Login = () => {
         setError("");
         setLoading(true);
 
-        if (!username || !password) {
+        if (!email || !password) {
             setError("Por favor completa todos los campos");
             setLoading(false);
             return;
         }
 
-        const result = await login(username, password);
+        const result = await login(email, password);
 
         if (result.success) {
             navigate("/tickets");
@@ -43,13 +43,13 @@ const Login = () => {
                     {error && <div className="error-message">{error}</div>}
 
                     <div className="form-group">
-                        <label htmlFor="username">Usuario</label>
+                        <label htmlFor="email">Email</label>
                         <input
-                            type="text"
-                            id="username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Ingresa tu usuario"
+                            type="email"
+                            id="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="correo@ejemplo.com"
                             disabled={loading}
                         />
                     </div>
