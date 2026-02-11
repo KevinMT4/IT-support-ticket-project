@@ -82,7 +82,11 @@ def registro_view(request):
 class DepartamentoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Departamento.objects.filter(activo=True)
     serializer_class = DepartamentoSerializer
-    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action == 'list':
+            return [AllowAny()]
+        return [IsAuthenticated()]
 
 
 class MotivoViewSet(viewsets.ReadOnlyModelViewSet):

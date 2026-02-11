@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import apiClient from "../api/client";
 import Alert from "../components/Alert";
 import "../styles/Register.css";
 
@@ -10,13 +11,32 @@ const Register = () => {
         email: "",
         first_name: "",
         last_name: "",
+        departamento: "",
         password: "",
         password_confirm: "",
     });
+    const [departamentos, setDepartamentos] = useState([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [loadingDepartments, setLoadingDepartments] = useState(true);
     const { register } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        loadDepartamentos();
+    }, []);
+
+    const loadDepartamentos = async () => {
+        try {
+            const data = await apiClient.getDepartamentos();
+            setDepartamentos(data);
+        } catch (err) {
+            setError("Error al cargar los departamentos");
+            console.error(err);
+        } finally {
+            setLoadingDepartments(false);
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -33,6 +53,7 @@ const Register = () => {
         if (
             !formData.username ||
             !formData.email ||
+            !formData.departamento ||
             !formData.password ||
             !formData.password_confirm
         ) {
@@ -52,7 +73,12 @@ const Register = () => {
 
         setLoading(true);
 
-        const result = await register(formData);
+        const dataToSubmit = {
+            ...formData,
+            departamento: parseInt(formData.departamento),
+        };
+
+        const result = await register(dataToSubmit);
 
         if (result.success) {
             navigate("/tickets");
@@ -72,7 +98,13 @@ const Register = () => {
                 </p>
 
                 <form onSubmit={handleSubmit} className="register-form">
-                    {error && <Alert type="error" message={error} onClose={() => setError("")} />}
+                    {error && (
+                        <Alert
+                            type="error"
+                            message={error}
+                            onClose={() => setError("")}
+                        />
+                    )}
 
                     <div className="form-group">
                         <label htmlFor="username">Usuario *</label>
@@ -100,6 +132,25 @@ const Register = () => {
                             disabled={loading}
                             required
                         />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="departamento">Departamento *</label>
+                        <select
+                            id="departamento"
+                            name="departamento"
+                            value={formData.departamento}
+                            onChange={handleChange}
+                            disabled={loading || loadingDepartments}
+                            required
+                        >
+                            <option value="">Selecciona un departamento</option>
+                            {departamentos.map((dept) => (
+                                <option key={dept.id} value={dept.id}>
+                                    {dept.nombre}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="form-row">
