@@ -13,7 +13,6 @@ const CreateTicket = () => {
         motivo: "",
         asunto: "",
         contenido: "",
-        prioridad: "media",
     });
     const [departamentoTI, setDepartamentoTI] = useState(null);
     const [motivos, setMotivos] = useState([]);
@@ -96,7 +95,6 @@ const CreateTicket = () => {
                 motivo: formData.motivo ? parseInt(formData.motivo) : null,
                 asunto: formData.asunto,
                 contenido: formData.contenido,
-                prioridad: formData.prioridad,
             };
 
             await apiClient.createTicket(ticketData);
@@ -142,45 +140,24 @@ const CreateTicket = () => {
                         </div>
                     </div>
 
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="motivo">Motivo</label>
-                            <select
-                                id="motivo"
-                                name="motivo"
-                                value={formData.motivo}
-                                onChange={handleChange}
-                                disabled={submitting}
-                            >
-                                <option value="">
-                                    Selecciona un motivo (opcional)
+                    <div className="form-group">
+                        <label htmlFor="motivo">Motivo</label>
+                        <select
+                            id="motivo"
+                            name="motivo"
+                            value={formData.motivo}
+                            onChange={handleChange}
+                            disabled={submitting}
+                        >
+                            <option value="">
+                                Selecciona un motivo (opcional)
+                            </option>
+                            {motivos.map((motivo) => (
+                                <option key={motivo.id} value={motivo.id}>
+                                    {motivo.nombre}
                                 </option>
-                                {motivos.map((motivo) => (
-                                    <option key={motivo.id} value={motivo.id}>
-                                        {motivo.nombre}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="prioridad">
-                                Prioridad <span className="required">*</span>
-                            </label>
-                            <select
-                                id="prioridad"
-                                name="prioridad"
-                                value={formData.prioridad}
-                                onChange={handleChange}
-                                required
-                                disabled={submitting}
-                            >
-                                <option value="baja">Baja</option>
-                                <option value="media">Media</option>
-                                <option value="alta">Alta</option>
-                                <option value="urgente">Urgente</option>
-                            </select>
-                        </div>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="form-group">

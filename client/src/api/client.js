@@ -100,6 +100,13 @@ class ApiClient {
     });
   }
 
+  async updateTicketPriority(id, prioridad) {
+    return this.request(`/tickets/${id}/update_prioridad/`, {
+      method: 'POST',
+      body: JSON.stringify({ prioridad }),
+    });
+  }
+
   async getDepartamentos() {
     return this.request('/departamentos/');
   }
