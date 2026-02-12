@@ -104,7 +104,9 @@ const TicketsList = () => {
                         </p>
                     </div>
                     <div className="header-actions">
-                        <button className="btn-pdf">PDF Semanal</button>
+                        {isSuperuser() && (
+                            <button className="btn-pdf">PDF Semanal</button>
+                        )}
                         {!isSuperuser() && (
                             <Link to="/tickets/new" className="btn-create">
                                 + Nuevo Ticket
