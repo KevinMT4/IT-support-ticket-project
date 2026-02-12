@@ -146,3 +146,25 @@ class TicketViewSet(viewsets.ModelViewSet):
         ticket.save()
 
         return Response(TicketSerializer(ticket).data)
+
+    @action(detail=True, methods=['post'])
+    def update_prioridad(self, request, pk=None):
+        ticket = self.get_object()
+
+        if request.user.rol != 'superuser':
+            return Response({'error': 'No tienes permisos para actualizar la prioridad'},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        nueva_prioridad = request.data.get('prioridad')
+        if not nueva_prioridad:
+            return Response({'error': 'La prioridad es requerida'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if nueva_prioridad not in dict(Ticket.PRIORIDAD_CHOICES):
+            return Response({'error': 'Prioridad inválida'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        ticket.prioridad = nueva_prioridad
+        ticket.save()
+
+        return Response(TicketSerializer(ticket).data)

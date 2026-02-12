@@ -79,4 +79,4 @@ class TicketSerializer(serializers.ModelSerializer):
 class TicketCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
-        fields = ['departamento', 'motivo', 'asunto', 'contenido', 'prioridad']
+        fields = ['departamento', 'motivo', 'asunto', 'contenido']

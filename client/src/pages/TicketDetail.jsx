@@ -53,6 +53,24 @@ const TicketDetail = () => {
         }
     };
 
+    const handlePriorityChange = async (newPriority) => {
+        try {
+            setUpdating(true);
+            const updatedTicket = await apiClient.updateTicketPriority(
+                id,
+                newPriority,
+            );
+            setTicket(updatedTicket);
+            setSuccessMessage("Prioridad actualizada correctamente");
+            setTimeout(() => setSuccessMessage(""), 3000);
+        } catch (err) {
+            setError("Error al actualizar la prioridad");
+            console.error(err);
+        } finally {
+            setUpdating(false);
+        }
+    };
+
     const formatDate = (dateString) => {
         if (!dateString) return "N/A";
         const date = new Date(dateString);
@@ -169,59 +187,115 @@ const TicketDetail = () => {
                         </div>
 
                         {isSuperuser() && (
-                            <div className="ticket-section">
-                                <h3>Actualizar Estado</h3>
-                                <div className="status-buttons">
-                                    <button
-                                        className={`status-btn ${ticket.estado === "abierto" ? "active" : ""}`}
-                                        onClick={() =>
-                                            handleStatusChange("abierto")
-                                        }
-                                        disabled={
-                                            updating ||
-                                            ticket.estado === "abierto"
-                                        }
-                                    >
-                                        Abierto
-                                    </button>
-                                    <button
-                                        className={`status-btn ${ticket.estado === "en_proceso" ? "active" : ""}`}
-                                        onClick={() =>
-                                            handleStatusChange("en_proceso")
-                                        }
-                                        disabled={
-                                            updating ||
-                                            ticket.estado === "en_proceso"
-                                        }
-                                    >
-                                        En Proceso
-                                    </button>
-                                    <button
-                                        className={`status-btn ${ticket.estado === "resuelto" ? "active" : ""}`}
-                                        onClick={() =>
-                                            handleStatusChange("resuelto")
-                                        }
-                                        disabled={
-                                            updating ||
-                                            ticket.estado === "resuelto"
-                                        }
-                                    >
-                                        Resuelto
-                                    </button>
-                                    <button
-                                        className={`status-btn ${ticket.estado === "cerrado" ? "active" : ""}`}
-                                        onClick={() =>
-                                            handleStatusChange("cerrado")
-                                        }
-                                        disabled={
-                                            updating ||
-                                            ticket.estado === "cerrado"
-                                        }
-                                    >
-                                        Cerrado
-                                    </button>
+                            <>
+                                <div className="ticket-section">
+                                    <h3>Actualizar Prioridad</h3>
+                                    <div className="status-buttons">
+                                        <button
+                                            className={`status-btn priority-btn ${ticket.prioridad === "baja" ? "active priority-low" : ""}`}
+                                            onClick={() =>
+                                                handlePriorityChange("baja")
+                                            }
+                                            disabled={
+                                                updating ||
+                                                ticket.prioridad === "baja"
+                                            }
+                                        >
+                                            Baja
+                                        </button>
+                                        <button
+                                            className={`status-btn priority-btn ${ticket.prioridad === "media" ? "active priority-medium" : ""}`}
+                                            onClick={() =>
+                                                handlePriorityChange("media")
+                                            }
+                                            disabled={
+                                                updating ||
+                                                ticket.prioridad === "media"
+                                            }
+                                        >
+                                            Media
+                                        </button>
+                                        <button
+                                            className={`status-btn priority-btn ${ticket.prioridad === "alta" ? "active priority-high" : ""}`}
+                                            onClick={() =>
+                                                handlePriorityChange("alta")
+                                            }
+                                            disabled={
+                                                updating ||
+                                                ticket.prioridad === "alta"
+                                            }
+                                        >
+                                            Alta
+                                        </button>
+                                        <button
+                                            className={`status-btn priority-btn ${ticket.prioridad === "urgente" ? "active priority-urgent" : ""}`}
+                                            onClick={() =>
+                                                handlePriorityChange("urgente")
+                                            }
+                                            disabled={
+                                                updating ||
+                                                ticket.prioridad === "urgente"
+                                            }
+                                        >
+                                            Urgente
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+
+                                <div className="ticket-section">
+                                    <h3>Actualizar Estado</h3>
+                                    <div className="status-buttons">
+                                        <button
+                                            className={`status-btn ${ticket.estado === "abierto" ? "active" : ""}`}
+                                            onClick={() =>
+                                                handleStatusChange("abierto")
+                                            }
+                                            disabled={
+                                                updating ||
+                                                ticket.estado === "abierto"
+                                            }
+                                        >
+                                            Abierto
+                                        </button>
+                                        <button
+                                            className={`status-btn ${ticket.estado === "en_proceso" ? "active" : ""}`}
+                                            onClick={() =>
+                                                handleStatusChange("en_proceso")
+                                            }
+                                            disabled={
+                                                updating ||
+                                                ticket.estado === "en_proceso"
+                                            }
+                                        >
+                                            En Proceso
+                                        </button>
+                                        <button
+                                            className={`status-btn ${ticket.estado === "resuelto" ? "active" : ""}`}
+                                            onClick={() =>
+                                                handleStatusChange("resuelto")
+                                            }
+                                            disabled={
+                                                updating ||
+                                                ticket.estado === "resuelto"
+                                            }
+                                        >
+                                            Resuelto
+                                        </button>
+                                        <button
+                                            className={`status-btn ${ticket.estado === "cerrado" ? "active" : ""}`}
+                                            onClick={() =>
+                                                handleStatusChange("cerrado")
+                                            }
+                                            disabled={
+                                                updating ||
+                                                ticket.estado === "cerrado"
+                                            }
+                                        >
+                                            Cerrado
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
                         )}
                     </div>
 
