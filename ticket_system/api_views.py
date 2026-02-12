@@ -327,7 +327,7 @@ def generar_pdf_estadisticas(request):
     elements.append(dept_table)
     elements.append(Spacer(1, 0.3 * inch))
 
-    elements.append(Paragraph("Top 10 Usuarios con Más Tickets", heading_style))
+    elements.append(Paragraph("Usuarios con Más Tickets", heading_style))
     user_stats = todos_tickets.values('usuario__username', 'usuario__first_name', 'usuario__last_name').annotate(
         total=Count('id')
     ).order_by('-total')[:10]
