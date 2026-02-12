@@ -1,46 +1,19 @@
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-
-export const playNotificationSound = () => {
+const playAudio = (fileName) => {
   try {
-    const audioContext = new AudioContext();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-    oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
-
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.3);
+    const audio = new Audio(`/sounds/${fileName}`);
+    audio.volume = 10;
+    audio.play().catch(error => {
+      console.warn(`No se pudo reproducir ${fileName}:`, error);
+    });
   } catch (error) {
-    console.warn('No se pudo reproducir el sonido de notificación:', error);
+    console.warn(`Error al cargar audio ${fileName}:`, error);
   }
 };
 
+export const playNotificationSound = () => {
+  playAudio('notification.mp3');
+};
+
 export const playSuccessSound = () => {
-  try {
-    const audioContext = new AudioContext();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
-    oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.05);
-    oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
-
-    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.2);
-  } catch (error) {
-    console.warn('No se pudo reproducir el sonido de éxito:', error);
-  }
+  playAudio('success.mp3');
 };
