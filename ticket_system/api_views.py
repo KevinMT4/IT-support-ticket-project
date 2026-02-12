@@ -242,19 +242,19 @@ def generar_pdf_estadisticas(request):
     title_style = ParagraphStyle(
         'CustomTitle',
         parent=styles['Heading1'],
-        fontSize=18,
+        fontSize=24,
         textColor=colors.HexColor('#2563eb'),
-        spaceAfter=12,
+        spaceAfter=30,
         alignment=TA_CENTER
     )
 
     heading_style = ParagraphStyle(
         'CustomHeading',
         parent=styles['Heading2'],
-        fontSize=13,
+        fontSize=16,
         textColor=colors.HexColor('#1e40af'),
-        spaceAfter=6,
-        spaceBefore=12
+        spaceAfter=12,
+        spaceBefore=20
     )
 
     fecha_inicio = timezone.now() - timedelta(days=7)
@@ -264,7 +264,7 @@ def generar_pdf_estadisticas(request):
     logo_path = os.path.join(settings.BASE_DIR, 'ticket_system', 'static', 'ticket_system', 'images', 'logo.png')
     logo_header = LogoHeader(6.5 * inch, 80, logo_path)
     elements.append(logo_header)
-    elements.append(Spacer(1, 0.15 * inch))
+    elements.append(Spacer(1, 0.3 * inch))
 
     title = Paragraph("Reporte Semanal de Tickets", title_style)
     elements.append(title)
@@ -274,16 +274,16 @@ def generar_pdf_estadisticas(request):
         styles['Normal']
     )
     elements.append(subtitle)
-    elements.append(Spacer(1, 0.15 * inch))
+    elements.append(Spacer(1, 0.3 * inch))
 
     elements.append(Paragraph("Resumen General por Estado", heading_style))
 
-    drawing = Drawing(480, 180)
+    drawing = Drawing(400, 200)
     bc = VerticalBarChart()
     bc.x = 50
-    bc.y = 15
-    bc.height = 130
-    bc.width = 380
+    bc.y = 20
+    bc.height = 150
+    bc.width = 300
 
     estados_labels = ['Abiertos', 'En Proceso', 'Resueltos', 'Cerrados']
     semana_data = [
@@ -317,11 +317,11 @@ def generar_pdf_estadisticas(request):
 
     legend = Legend()
     legend.x = 50
-    legend.y = 155
+    legend.y = 180
     legend.dx = 8
     legend.dy = 8
     legend.fontName = 'Helvetica'
-    legend.fontSize = 8
+    legend.fontSize = 9
     legend.alignment = 'right'
     legend.columnMaximum = 2
     legend.colorNamePairs = [
@@ -332,53 +332,53 @@ def generar_pdf_estadisticas(request):
     drawing.add(bc)
     drawing.add(legend)
     elements.append(drawing)
-    elements.append(Spacer(1, 0.25 * inch))
+    elements.append(Spacer(1, 0.5 * inch))
 
     elements.append(Paragraph("Tickets por Departamento", heading_style))
     dept_stats = todos_tickets.values('usuario__departamento__nombre').annotate(
         total=Count('id')
-    ).order_by('-total')[:6]
+    ).order_by('-total')[:8]
 
     if dept_stats:
-        drawing = Drawing(480, 160)
+        drawing = Drawing(450, 200)
         bc = HorizontalBarChart()
-        bc.x = 130
-        bc.y = 15
-        bc.height = 130
-        bc.width = 300
+        bc.x = 150
+        bc.y = 20
+        bc.height = 150
+        bc.width = 250
 
         dept_names = [stat['usuario__departamento__nombre'] or 'Sin dept.' for stat in dept_stats]
         dept_values = [[stat['total'] for stat in dept_stats]]
 
         bc.data = dept_values
         bc.categoryAxis.categoryNames = dept_names
-        bc.categoryAxis.labels.fontSize = 7
+        bc.categoryAxis.labels.fontSize = 8
         bc.valueAxis.valueMin = 0
         bc.valueAxis.valueMax = max(dept_values[0]) * 1.2
-        bc.valueAxis.labels.fontSize = 7
+        bc.valueAxis.labels.fontSize = 8
 
         bc.bars[0].fillColor = colors.HexColor('#3b82f6')
-        bc.barWidth = 15
+        bc.barWidth = 12
 
         drawing.add(bc)
         elements.append(drawing)
     else:
         elements.append(Paragraph("No hay datos de departamentos", styles['Normal']))
 
-    elements.append(Spacer(1, 0.25 * inch))
+    elements.append(Spacer(1, 0.5 * inch))
 
     elements.append(Paragraph("Usuarios con Más Tickets", heading_style))
     user_stats = todos_tickets.values('usuario__username', 'usuario__first_name', 'usuario__last_name').annotate(
         total=Count('id')
-    ).order_by('-total')[:6]
+    ).order_by('-total')[:10]
 
     if user_stats:
-        drawing = Drawing(480, 160)
+        drawing = Drawing(450, 250)
         bc = HorizontalBarChart()
-        bc.x = 110
-        bc.y = 15
-        bc.height = 130
-        bc.width = 320
+        bc.x = 120
+        bc.y = 20
+        bc.height = 200
+        bc.width = 280
 
         user_names = []
         for stat in user_stats:
@@ -396,44 +396,30 @@ def generar_pdf_estadisticas(request):
         bc.categoryAxis.labels.fontSize = 7
         bc.valueAxis.valueMin = 0
         bc.valueAxis.valueMax = max(user_values[0]) * 1.2
-        bc.valueAxis.labels.fontSize = 7
+        bc.valueAxis.labels.fontSize = 8
 
         bc.bars[0].fillColor = colors.HexColor('#10b981')
-        bc.barWidth = 15
+        bc.barWidth = 14
 
         drawing.add(bc)
         elements.append(drawing)
     else:
         elements.append(Paragraph("No hay datos de usuarios", styles['Normal']))
 
-    elements.append(Spacer(1, 0.3 * inch))
+    elements.append(Spacer(1, 0.5 * inch))
 
-    heading_motivo = Paragraph("Tickets por Motivo", heading_style)
-    heading_prioridad = Paragraph("Tickets por Prioridad", heading_style)
-
+    elements.append(Paragraph("Tickets por Motivo", heading_style))
     motivo_stats = todos_tickets.filter(motivo__isnull=False).values('motivo__nombre').annotate(
         total=Count('id')
     ).order_by('-total')
 
-    prioridad_stats = todos_tickets.values('prioridad').annotate(total=Count('id')).order_by('-total')
-
-    prioridad_nombres = {
-        'baja': 'Baja',
-        'media': 'Media',
-        'alta': 'Alta',
-        'urgente': 'Urgente'
-    }
-
-    drawing_motivo = None
-    drawing_prioridad = None
-
     if motivo_stats.count() > 0:
-        drawing_motivo = Drawing(240, 180)
+        drawing = Drawing(400, 200)
         pie = Pie()
-        pie.x = 40
-        pie.y = 15
-        pie.width = 140
-        pie.height = 140
+        pie.x = 100
+        pie.y = 20
+        pie.width = 150
+        pie.height = 150
 
         motivo_labels = [stat['motivo__nombre'] for stat in motivo_stats]
         motivo_values = [stat['total'] for stat in motivo_stats]
@@ -441,7 +427,7 @@ def generar_pdf_estadisticas(request):
         pie.data = motivo_values
         pie.labels = [f"{label}\n({value})" for label, value in zip(motivo_labels, motivo_values)]
         pie.slices.strokeWidth = 0.5
-        pie.slices.fontsize = 7
+        pie.slices.fontSize = 8
 
         colores = [
             colors.HexColor('#3b82f6'),
@@ -454,15 +440,30 @@ def generar_pdf_estadisticas(request):
         for i in range(len(motivo_values)):
             pie.slices[i].fillColor = colores[i % len(colores)]
 
-        drawing_motivo.add(pie)
+        drawing.add(pie)
+        elements.append(drawing)
+    else:
+        elements.append(Paragraph("No hay tickets con motivos especificados", styles['Normal']))
+
+    elements.append(Spacer(1, 0.5 * inch))
+
+    elements.append(Paragraph("Tickets por Prioridad", heading_style))
+    prioridad_stats = todos_tickets.values('prioridad').annotate(total=Count('id')).order_by('-total')
+
+    prioridad_nombres = {
+        'baja': 'Baja',
+        'media': 'Media',
+        'alta': 'Alta',
+        'urgente': 'Urgente'
+    }
 
     if prioridad_stats.count() > 0:
-        drawing_prioridad = Drawing(240, 180)
+        drawing = Drawing(400, 200)
         pie = Pie()
-        pie.x = 40
-        pie.y = 15
-        pie.width = 140
-        pie.height = 140
+        pie.x = 100
+        pie.y = 20
+        pie.width = 150
+        pie.height = 150
 
         prioridad_labels = [prioridad_nombres.get(stat['prioridad'], stat['prioridad']) for stat in prioridad_stats]
         prioridad_values = [stat['total'] for stat in prioridad_stats]
@@ -470,7 +471,7 @@ def generar_pdf_estadisticas(request):
         pie.data = prioridad_values
         pie.labels = [f"{label}\n({value})" for label, value in zip(prioridad_labels, prioridad_values)]
         pie.slices.strokeWidth = 0.5
-        pie.slices.fontsize = 7
+        pie.slices.fontSize = 9
 
         prioridad_colores = {
             'Baja': colors.HexColor('#3b82f6'),
@@ -481,27 +482,10 @@ def generar_pdf_estadisticas(request):
         for i, label in enumerate(prioridad_labels):
             pie.slices[i].fillColor = prioridad_colores.get(label, colors.gray)
 
-        drawing_prioridad.add(pie)
-
-    if drawing_motivo and drawing_prioridad:
-        data = [
-            [heading_motivo, heading_prioridad],
-            [drawing_motivo, drawing_prioridad]
-        ]
-        table = Table(data, colWidths=[240, 240])
-        table.setStyle(TableStyle([
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ]))
-        elements.append(table)
-    elif drawing_motivo:
-        elements.append(heading_motivo)
-        elements.append(drawing_motivo)
-    elif drawing_prioridad:
-        elements.append(heading_prioridad)
-        elements.append(drawing_prioridad)
+        drawing.add(pie)
+        elements.append(drawing)
     else:
-        elements.append(Paragraph("No hay datos de motivos ni prioridades", styles['Normal']))
+        elements.append(Paragraph("No hay datos de prioridades", styles['Normal']))
 
     doc.build(elements)
     return response
