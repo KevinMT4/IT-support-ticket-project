@@ -28,7 +28,11 @@ const Layout = ({ children }) => {
             <nav className="navbar">
                 <div className="navbar-container">
                     <Link to="/tickets" className="navbar-brand">
-                        Sistema de Tickets
+                        <img
+                            src="/src/assets/image.png"
+                            alt="COFATECH"
+                            className="navbar-logo"
+                        />
                     </Link>
                     <div className="navbar-menu">
                         <Link to="/tickets" className="navbar-link">

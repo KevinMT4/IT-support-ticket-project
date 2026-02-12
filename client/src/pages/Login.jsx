@@ -37,11 +37,23 @@ const Login = () => {
     return (
         <div className="login-container">
             <div className="login-box">
-                <h1 className="login-title">Sistema de Tickets</h1>
+                <div className="login-logo-container">
+                    <img
+                        src="/src/assets/image.png"
+                        alt="COFATECH"
+                        className="login-logo"
+                    />
+                </div>
                 <p className="login-subtitle">Inicia sesión para continuar</p>
 
                 <form onSubmit={handleSubmit} className="login-form">
-                    {error && <Alert type="error" message={error} onClose={() => setError("")} />}
+                    {error && (
+                        <Alert
+                            type="error"
+                            message={error}
+                            onClose={() => setError("")}
+                        />
+                    )}
 
                     <div className="form-group">
                         <label htmlFor="email">Email</label>

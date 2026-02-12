@@ -92,7 +92,13 @@ const Register = () => {
     return (
         <div className="register-container">
             <div className="register-box">
-                <h1 className="register-title">Crear Cuenta</h1>
+                <div className="register-logo-container">
+                    <img
+                        src="/src/assets/image.png"
+                        alt="COFATECH"
+                        className="register-logo"
+                    />
+                </div>
                 <p className="register-subtitle">
                     Regístrate para acceder al sistema
                 </p>
