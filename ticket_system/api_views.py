@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.http import HttpResponse
 from django.db.models import Count, Q
 from datetime import timedelta
+import os
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -15,6 +16,7 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.platypus.flowables import Flowable
+from django.conf import settings
 from .models import Usuario, Departamento, Motivo, Ticket
 from .serializers import (
     UsuarioSerializer,
@@ -27,26 +29,41 @@ from .serializers import (
 
 
 class LogoHeader(Flowable):
-    def __init__(self, width, height):
+    def __init__(self, width, height, logo_path=None):
         Flowable.__init__(self)
         self.width = width
         self.height = height
+        self.logo_path = logo_path
 
     def draw(self):
         canvas = self.canv
 
-        gradient_rect_height = 60
-        canvas.setFillColor(colors.HexColor('#667eea'))
-        canvas.rect(0, self.height - gradient_rect_height, self.width, gradient_rect_height, fill=1, stroke=0)
+        if self.logo_path and os.path.exists(self.logo_path):
+            logo_width = 2.5 * inch
+            logo_height = 0.7 * inch
+            x_position = 0.5 * inch
+            y_position = self.height - logo_height - 0.2 * inch
 
-        canvas.setFillColor(colors.white)
-        canvas.setFont('Helvetica-Bold', 32)
-        text_x = self.width / 2
-        text_y = self.height - 42
-        canvas.drawCentredString(text_x, text_y, 'COFATECH')
+            canvas.drawImage(
+                self.logo_path,
+                x_position,
+                y_position,
+                width=logo_width,
+                height=logo_height,
+                preserveAspectRatio=True,
+                mask='auto'
+            )
 
-        canvas.setFont('Helvetica', 10)
-        canvas.drawCentredString(text_x, text_y - 20, 'Sistema de Gestión de Tickets')
+            canvas.setFillColor(colors.HexColor('#6b7280'))
+            canvas.setFont('Helvetica', 9)
+            canvas.drawString(x_position, y_position - 0.25 * inch, 'Sistema de Gestión de Tickets')
+        else:
+            canvas.setFillColor(colors.HexColor('#2563eb'))
+            canvas.setFont('Helvetica-Bold', 24)
+            canvas.drawString(0.5 * inch, self.height - 0.5 * inch, 'COFATECH')
+            canvas.setFont('Helvetica', 9)
+            canvas.setFillColor(colors.HexColor('#6b7280'))
+            canvas.drawString(0.5 * inch, self.height - 0.7 * inch, 'Sistema de Gestión de Tickets')
 
 
 @api_view(['POST'])
@@ -240,7 +257,8 @@ def generar_pdf_estadisticas(request):
     tickets_semana = Ticket.objects.filter(fecha_creacion__gte=fecha_inicio)
     todos_tickets = Ticket.objects.all()
 
-    logo_header = LogoHeader(6.5 * inch, 80)
+    logo_path = os.path.join(settings.BASE_DIR, 'ticket_system', 'static', 'ticket_system', 'images', 'logo.png')
+    logo_header = LogoHeader(6.5 * inch, 80, logo_path)
     elements.append(logo_header)
     elements.append(Spacer(1, 0.3 * inch))
 
