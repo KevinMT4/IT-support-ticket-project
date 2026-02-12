@@ -1,135 +1,136 @@
 .ticket-card {
-  display: block;
-  background: white;
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-lg);
-  transition: all 0.2s;
-  box-shadow: var(--shadow-sm);
+    display: block;
+    background: white;
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
 }
 
 .ticket-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-  border-color: var(--color-primary-light);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: var(--color-primary-light);
 }
 
 .ticket-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-md);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
 }
 
-.ticket-id {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--color-gray-500);
+.ticket-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
 }
 
 .ticket-badges {
-  display: flex;
-  gap: var(--spacing-sm);
+    display: flex;
+    gap: var(--spacing-sm);
 }
 
 .badge {
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .priority-badge.priority-low {
-  background-color: #dbeafe;
-  color: #1e40af;
+    background-color: #dbeafe;
+    color: #1e40af;
 }
 
 .priority-badge.priority-medium {
-  background-color: #fef3c7;
-  color: #92400e;
+    background-color: #fef3c7;
+    color: #92400e;
 }
 
 .priority-badge.priority-high {
-  background-color: #fed7aa;
-  color: #9a3412;
+    background-color: #fed7aa;
+    color: #9a3412;
 }
 
 .priority-badge.priority-urgent {
-  background-color: #fee2e2;
-  color: #991b1b;
+    background-color: #fee2e2;
+    color: #991b1b;
 }
 
 .status-badge.status-open {
-  background-color: #dbeafe;
-  color: #1e3a8a;
+    background-color: #dbeafe;
+    color: #1e3a8a;
 }
 
 .status-badge.status-in-progress {
-  background-color: #fef3c7;
-  color: #78350f;
+    background-color: #fef3c7;
+    color: #78350f;
 }
 
 .status-badge.status-resolved {
-  background-color: #d1fae5;
-  color: #065f46;
+    background-color: #d1fae5;
+    color: #065f46;
 }
 
 .status-badge.status-closed {
-  background-color: #e5e7eb;
-  color: #374151;
+    background-color: #e5e7eb;
+    color: #374151;
 }
 
 .ticket-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--color-gray-900);
-  margin-bottom: var(--spacing-sm);
-  line-height: 1.4;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-gray-900);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.4;
 }
 
 .ticket-content {
-  color: var(--color-gray-600);
-  font-size: 0.875rem;
-  line-height: 1.6;
-  margin-bottom: var(--spacing-md);
+    color: var(--color-gray-600);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin-bottom: var(--spacing-md);
 }
 
 .ticket-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--color-gray-100);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-gray-100);
 }
 
 .ticket-info {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  color: var(--color-gray-500);
-  font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: var(--color-gray-500);
+    font-size: 0.875rem;
 }
 
 .ticket-department {
-  font-weight: 600;
-  color: var(--color-primary);
+    font-weight: 600;
+    color: var(--color-primary);
 }
 
 .ticket-reason {
-  color: var(--color-gray-500);
+    color: var(--color-gray-500);
 }
 
 .ticket-date {
-  color: var(--color-gray-500);
-  font-size: 0.75rem;
+    color: var(--color-gray-500);
+    font-size: 0.75rem;
 }
 
 @media (max-width: 768px) {
-  .ticket-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-sm);
-  }
+    .ticket-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
 }

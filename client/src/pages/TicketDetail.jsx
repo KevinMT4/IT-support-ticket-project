@@ -136,7 +136,7 @@ const TicketDetail = () => {
                     </Link>
                     <div className="header-content">
                         <div className="header-left">
-                            <h1>Ticket #{ticket.id}</h1>
+                            <h1>Detalles del Ticket</h1>
                             <div className="ticket-badges-detail">
                                 <span
                                     className={`badge priority-badge ${getPriorityClass(ticket.prioridad)}`}

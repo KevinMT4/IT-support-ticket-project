@@ -38,7 +38,6 @@ const TicketCard = ({ ticket }) => {
         <Link to={`/tickets/${ticket.id}`} className="ticket-link">
             <div className="ticket-card">
                 <div className="ticket-header">
-                    <span className="ticket-id">#{ticket.id}</span>
                     <div className="ticket-badges">
                         <span
                             className={`badge priority-badge ${getPriorityClass(ticket.prioridad)}`}
