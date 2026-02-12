@@ -14,6 +14,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.platypus.flowables import Flowable
 from .models import Usuario, Departamento, Motivo, Ticket
 from .serializers import (
     UsuarioSerializer,
@@ -23,6 +24,29 @@ from .serializers import (
     TicketSerializer,
     TicketCreateSerializer
 )
+
+
+class LogoHeader(Flowable):
+    def __init__(self, width, height):
+        Flowable.__init__(self)
+        self.width = width
+        self.height = height
+
+    def draw(self):
+        canvas = self.canv
+
+        gradient_rect_height = 60
+        canvas.setFillColor(colors.HexColor('#667eea'))
+        canvas.rect(0, self.height - gradient_rect_height, self.width, gradient_rect_height, fill=1, stroke=0)
+
+        canvas.setFillColor(colors.white)
+        canvas.setFont('Helvetica-Bold', 32)
+        text_x = self.width / 2
+        text_y = self.height - 42
+        canvas.drawCentredString(text_x, text_y, 'COFATECH')
+
+        canvas.setFont('Helvetica', 10)
+        canvas.drawCentredString(text_x, text_y - 20, 'Sistema de Gestión de Tickets')
 
 
 @api_view(['POST'])
@@ -215,6 +239,10 @@ def generar_pdf_estadisticas(request):
     fecha_inicio = timezone.now() - timedelta(days=7)
     tickets_semana = Ticket.objects.filter(fecha_creacion__gte=fecha_inicio)
     todos_tickets = Ticket.objects.all()
+
+    logo_header = LogoHeader(6.5 * inch, 80)
+    elements.append(logo_header)
+    elements.append(Spacer(1, 0.3 * inch))
 
     title = Paragraph("Reporte Semanal de Tickets", title_style)
     elements.append(title)
