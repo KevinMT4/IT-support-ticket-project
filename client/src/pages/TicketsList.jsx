@@ -17,11 +17,36 @@ const TicketsList = () => {
 
     useEffect(() => {
         loadTickets();
+
+        const interval = setInterval(() => {
+            loadTickets();
+        }, 2000);
+
+        const handleVisibilityChange = () => {
+            if (!document.hidden) {
+                loadTickets();
+            }
+        };
+
+        const handleFocus = () => {
+            loadTickets();
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+        window.addEventListener("focus", handleFocus);
+
+        return () => {
+            clearInterval(interval);
+            document.removeEventListener(
+                "visibilitychange",
+                handleVisibilityChange,
+            );
+            window.removeEventListener("focus", handleFocus);
+        };
     }, []);
 
     const loadTickets = async () => {
         try {
-            setLoading(true);
             const data = await apiClient.getTickets();
             setTickets(data);
             setError(null);
@@ -29,7 +54,7 @@ const TicketsList = () => {
             setError("Error al cargar los tickets");
             console.error(err);
         } finally {
-            setLoading(false);
+            if (loading) setLoading(false);
         }
     };
 
