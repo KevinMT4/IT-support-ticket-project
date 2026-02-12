@@ -103,59 +103,41 @@ const TicketsList = () => {
                 </div>
 
                 <div className="stats-grid">
-                    <div className="stat-card">
+                    <div
+                        className={`stat-card stat-clickable ${filter === "all" ? "active" : ""}`}
+                        onClick={() => setFilter("all")}
+                    >
                         <div className="stat-value">{stats.total}</div>
                         <div className="stat-label">Total</div>
                     </div>
-                    <div className="stat-card stat-open">
+                    <div
+                        className={`stat-card stat-open stat-clickable ${filter === "abierto" ? "active" : ""}`}
+                        onClick={() => setFilter("abierto")}
+                    >
                         <div className="stat-value">{stats.abierto}</div>
                         <div className="stat-label">Abiertos</div>
                     </div>
-                    <div className="stat-card stat-progress">
+                    <div
+                        className={`stat-card stat-progress stat-clickable ${filter === "en_proceso" ? "active" : ""}`}
+                        onClick={() => setFilter("en_proceso")}
+                    >
                         <div className="stat-value">{stats.en_proceso}</div>
                         <div className="stat-label">En Proceso</div>
                     </div>
-                    <div className="stat-card stat-resolved">
+                    <div
+                        className={`stat-card stat-resolved stat-clickable ${filter === "resuelto" ? "active" : ""}`}
+                        onClick={() => setFilter("resuelto")}
+                    >
                         <div className="stat-value">{stats.resuelto}</div>
                         <div className="stat-label">Resueltos</div>
                     </div>
-                    <div className="stat-card stat-closed">
+                    <div
+                        className={`stat-card stat-closed stat-clickable ${filter === "cerrado" ? "active" : ""}`}
+                        onClick={() => setFilter("cerrado")}
+                    >
                         <div className="stat-value">{stats.cerrado}</div>
                         <div className="stat-label">Cerrados</div>
                     </div>
-                </div>
-
-                <div className="filters">
-                    <button
-                        className={`filter-btn ${filter === "all" ? "active" : ""}`}
-                        onClick={() => setFilter("all")}
-                    >
-                        Todos
-                    </button>
-                    <button
-                        className={`filter-btn ${filter === "abierto" ? "active" : ""}`}
-                        onClick={() => setFilter("abierto")}
-                    >
-                        Abiertos
-                    </button>
-                    <button
-                        className={`filter-btn ${filter === "en_proceso" ? "active" : ""}`}
-                        onClick={() => setFilter("en_proceso")}
-                    >
-                        En Proceso
-                    </button>
-                    <button
-                        className={`filter-btn ${filter === "resuelto" ? "active" : ""}`}
-                        onClick={() => setFilter("resuelto")}
-                    >
-                        Resueltos
-                    </button>
-                    <button
-                        className={`filter-btn ${filter === "cerrado" ? "active" : ""}`}
-                        onClick={() => setFilter("cerrado")}
-                    >
-                        Cerrados
-                    </button>
                 </div>
 
                 {error && (
