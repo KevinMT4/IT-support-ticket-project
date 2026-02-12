@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/client";
 import Layout from "../components/Layout";
 import Loading from "../components/Loading";
@@ -7,6 +8,7 @@ import Alert from "../components/Alert";
 import "../styles/CreateTicket.css";
 
 const CreateTicket = () => {
+    const { isSuperuser } = useAuth();
     const [formData, setFormData] = useState({
         motivo: "",
         asunto: "",
@@ -21,8 +23,12 @@ const CreateTicket = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (isSuperuser()) {
+            navigate("/tickets");
+            return;
+        }
         loadDepartamentoTI();
-    }, []);
+    }, [isSuperuser, navigate]);
 
     const loadDepartamentoTI = async () => {
         try {

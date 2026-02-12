@@ -118,6 +118,9 @@ class TicketViewSet(viewsets.ModelViewSet):
         return TicketSerializer
 
     def perform_create(self, serializer):
+        if self.request.user.rol == 'superuser':
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Los administradores no pueden crear tickets')
         serializer.save(usuario=self.request.user)
 
     @action(detail=True, methods=['post'])
