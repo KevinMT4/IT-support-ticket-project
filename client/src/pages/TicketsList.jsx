@@ -16,7 +16,8 @@ const TicketsList = () => {
     const [error, setError] = useState(null);
     const [filter, setFilter] = useState("all");
     const { isSuperuser } = useAuth();
-    const { notifications, removeNotification } = useTicketNotifications(tickets);
+    const { notifications, removeNotification } =
+        useTicketNotifications(tickets);
 
     useEffect(() => {
         loadTickets();
@@ -102,11 +103,14 @@ const TicketsList = () => {
                                 : "Tickets que has creado"}
                         </p>
                     </div>
-                    {!isSuperuser() && (
-                        <Link to="/tickets/new" className="btn-create">
-                            + Nuevo Ticket
-                        </Link>
-                    )}
+                    <div className="header-actions">
+                        <button className="btn-pdf">PDF Semanal</button>
+                        {!isSuperuser() && (
+                            <Link to="/tickets/new" className="btn-create">
+                                + Nuevo Ticket
+                            </Link>
+                        )}
+                    </div>
                 </div>
 
                 <div className="stats-grid">
