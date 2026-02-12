@@ -6,6 +6,8 @@ import Layout from "../components/Layout";
 import TicketCard from "../components/TicketCard";
 import Loading from "../components/Loading";
 import Alert from "../components/Alert";
+import ToastContainer from "../components/ToastContainer";
+import { useTicketNotifications } from "../hooks/useTicketNotifications";
 import "../styles/TicketsList.css";
 
 const TicketsList = () => {
@@ -14,6 +16,7 @@ const TicketsList = () => {
     const [error, setError] = useState(null);
     const [filter, setFilter] = useState("all");
     const { isSuperuser } = useAuth();
+    const { notifications, removeNotification } = useTicketNotifications(tickets);
 
     useEffect(() => {
         loadTickets();
@@ -85,6 +88,10 @@ const TicketsList = () => {
 
     return (
         <Layout>
+            <ToastContainer
+                notifications={notifications}
+                onRemove={removeNotification}
+            />
             <div className="tickets-container">
                 <div className="tickets-header">
                     <div>

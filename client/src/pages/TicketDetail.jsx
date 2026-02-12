@@ -5,6 +5,7 @@ import apiClient from "../api/client";
 import Layout from "../components/Layout";
 import Loading from "../components/Loading";
 import Alert from "../components/Alert";
+import { playSuccessSound } from "../utils/sounds";
 import "../styles/TicketDetail.css";
 
 const TicketDetail = () => {
@@ -43,6 +44,7 @@ const TicketDetail = () => {
                 newStatus,
             );
             setTicket(updatedTicket);
+            playSuccessSound();
             setSuccessMessage("Estado actualizado correctamente");
             setTimeout(() => setSuccessMessage(""), 3000);
         } catch (err) {
@@ -61,6 +63,7 @@ const TicketDetail = () => {
                 newPriority,
             );
             setTicket(updatedTicket);
+            playSuccessSound();
             setSuccessMessage("Prioridad actualizada correctamente");
             setTimeout(() => setSuccessMessage(""), 3000);
         } catch (err) {
