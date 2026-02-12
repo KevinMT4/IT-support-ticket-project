@@ -79,6 +79,40 @@ const TicketsList = () => {
 
     const stats = getTicketStats();
 
+    const handleDownloadPDF = async () => {
+        try {
+            const token = localStorage.getItem("authToken");
+            const API_BASE_URL = import.meta.env.VITE_API_PROXY_PATH || "/api";
+
+            const response = await fetch(
+                `${API_BASE_URL}/reportes/pdf-estadisticas/`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Token ${token}`,
+                    },
+                },
+            );
+
+            if (!response.ok) {
+                throw new Error("Error al generar el PDF");
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `reporte_tickets_${new Date().toISOString().split("T")[0]}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (err) {
+            setError("Error al descargar el reporte PDF");
+            console.error(err);
+        }
+    };
+
     if (loading) {
         return (
             <Layout>
@@ -105,7 +139,12 @@ const TicketsList = () => {
                     </div>
                     <div className="header-actions">
                         {isSuperuser() && (
-                            <button className="btn-pdf">PDF Semanal</button>
+                            <button
+                                className="btn-pdf"
+                                onClick={handleDownloadPDF}
+                            >
+                                PDF Semanal
+                            </button>
                         )}
                         {!isSuperuser() && (
                             <Link to="/tickets/new" className="btn-create">

@@ -10,6 +10,7 @@ idna==3.11
 packaging==24.0
 python-dotenv==1.2.1
 pytz==2025.2
+reportlab==4.0.7
 requests==2.31.0
 sqlparse==0.5.5
 urllib3==2.6.3
