@@ -16,6 +16,10 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.platypus.flowables import Flowable
+from reportlab.graphics.shapes import Drawing
+from reportlab.graphics.charts.barcharts import VerticalBarChart, HorizontalBarChart
+from reportlab.graphics.charts.piecharts import Pie
+from reportlab.graphics.charts.legends import Legend
 from django.conf import settings
 from .models import Usuario, Departamento, Motivo, Ticket
 from .serializers import (
@@ -272,121 +276,176 @@ def generar_pdf_estadisticas(request):
     elements.append(subtitle)
     elements.append(Spacer(1, 0.3 * inch))
 
-    elements.append(Paragraph("Resumen General", heading_style))
-    resumen_data = [
-        ['Métrica', 'Esta Semana', 'Total'],
-        ['Total de Tickets', str(tickets_semana.count()), str(todos_tickets.count())],
-        ['Abiertos', str(tickets_semana.filter(estado='abierto').count()), str(todos_tickets.filter(estado='abierto').count())],
-        ['En Proceso', str(tickets_semana.filter(estado='en_proceso').count()), str(todos_tickets.filter(estado='en_proceso').count())],
-        ['Resueltos', str(tickets_semana.filter(estado='resuelto').count()), str(todos_tickets.filter(estado='resuelto').count())],
-        ['Cerrados', str(tickets_semana.filter(estado='cerrado').count()), str(todos_tickets.filter(estado='cerrado').count())],
+    elements.append(Paragraph("Resumen General por Estado", heading_style))
+
+    drawing = Drawing(400, 200)
+    bc = VerticalBarChart()
+    bc.x = 50
+    bc.y = 20
+    bc.height = 150
+    bc.width = 300
+
+    estados_labels = ['Abiertos', 'En Proceso', 'Resueltos', 'Cerrados']
+    semana_data = [
+        tickets_semana.filter(estado='abierto').count(),
+        tickets_semana.filter(estado='en_proceso').count(),
+        tickets_semana.filter(estado='resuelto').count(),
+        tickets_semana.filter(estado='cerrado').count()
+    ]
+    total_data = [
+        todos_tickets.filter(estado='abierto').count(),
+        todos_tickets.filter(estado='en_proceso').count(),
+        todos_tickets.filter(estado='resuelto').count(),
+        todos_tickets.filter(estado='cerrado').count()
     ]
 
-    resumen_table = Table(resumen_data, colWidths=[2.5 * inch, 1.5 * inch, 1.5 * inch])
-    resumen_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2563eb')),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 12),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 1), (-1, -1), 10),
-        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
-    ]))
-    elements.append(resumen_table)
-    elements.append(Spacer(1, 0.3 * inch))
+    bc.data = [semana_data, total_data]
+    bc.categoryAxis.categoryNames = estados_labels
+    bc.categoryAxis.labels.boxAnchor = 'ne'
+    bc.categoryAxis.labels.dx = -2
+    bc.categoryAxis.labels.dy = -2
+    bc.categoryAxis.labels.angle = 30
+    bc.categoryAxis.labels.fontSize = 8
+    bc.valueAxis.valueMin = 0
+    bc.valueAxis.valueMax = max(max(total_data), 1) * 1.2
+    bc.valueAxis.labels.fontSize = 8
+
+    bc.bars[0].fillColor = colors.HexColor('#3b82f6')
+    bc.bars[1].fillColor = colors.HexColor('#10b981')
+    bc.barWidth = 8
+    bc.groupSpacing = 15
+
+    legend = Legend()
+    legend.x = 50
+    legend.y = 180
+    legend.dx = 8
+    legend.dy = 8
+    legend.fontName = 'Helvetica'
+    legend.fontSize = 9
+    legend.alignment = 'right'
+    legend.columnMaximum = 2
+    legend.colorNamePairs = [
+        (colors.HexColor('#3b82f6'), 'Esta Semana'),
+        (colors.HexColor('#10b981'), 'Total')
+    ]
+
+    drawing.add(bc)
+    drawing.add(legend)
+    elements.append(drawing)
+    elements.append(Spacer(1, 0.5 * inch))
 
     elements.append(Paragraph("Tickets por Departamento", heading_style))
     dept_stats = todos_tickets.values('usuario__departamento__nombre').annotate(
         total=Count('id')
-    ).order_by('-total')
+    ).order_by('-total')[:8]
 
-    dept_data = [['Departamento', 'Total de Tickets']]
-    for stat in dept_stats:
-        dept_name = stat['usuario__departamento__nombre'] or 'Sin departamento'
-        dept_data.append([dept_name, str(stat['total'])])
+    if dept_stats:
+        drawing = Drawing(450, 200)
+        bc = HorizontalBarChart()
+        bc.x = 150
+        bc.y = 20
+        bc.height = 150
+        bc.width = 250
 
-    dept_table = Table(dept_data, colWidths=[4 * inch, 2 * inch])
-    dept_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2563eb')),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 12),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 1), (-1, -1), 10),
-        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
-    ]))
-    elements.append(dept_table)
-    elements.append(Spacer(1, 0.3 * inch))
+        dept_names = [stat['usuario__departamento__nombre'] or 'Sin dept.' for stat in dept_stats]
+        dept_values = [[stat['total'] for stat in dept_stats]]
+
+        bc.data = dept_values
+        bc.categoryAxis.categoryNames = dept_names
+        bc.categoryAxis.labels.fontSize = 8
+        bc.valueAxis.valueMin = 0
+        bc.valueAxis.valueMax = max(dept_values[0]) * 1.2
+        bc.valueAxis.labels.fontSize = 8
+
+        bc.bars[0].fillColor = colors.HexColor('#3b82f6')
+        bc.barWidth = 12
+
+        drawing.add(bc)
+        elements.append(drawing)
+    else:
+        elements.append(Paragraph("No hay datos de departamentos", styles['Normal']))
+
+    elements.append(Spacer(1, 0.5 * inch))
 
     elements.append(Paragraph("Usuarios con Más Tickets", heading_style))
     user_stats = todos_tickets.values('usuario__username', 'usuario__first_name', 'usuario__last_name').annotate(
         total=Count('id')
     ).order_by('-total')[:10]
 
-    user_data = [['Usuario', 'Total de Tickets']]
-    for stat in user_stats:
-        nombre_completo = f"{stat['usuario__first_name']} {stat['usuario__last_name']}".strip()
-        if not nombre_completo:
-            nombre_completo = stat['usuario__username']
-        user_data.append([nombre_completo, str(stat['total'])])
+    if user_stats:
+        drawing = Drawing(450, 250)
+        bc = HorizontalBarChart()
+        bc.x = 120
+        bc.y = 20
+        bc.height = 200
+        bc.width = 280
 
-    user_table = Table(user_data, colWidths=[4 * inch, 2 * inch])
-    user_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2563eb')),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 12),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 1), (-1, -1), 10),
-        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
-    ]))
-    elements.append(user_table)
-    elements.append(Spacer(1, 0.3 * inch))
+        user_names = []
+        for stat in user_stats:
+            nombre = f"{stat['usuario__first_name']} {stat['usuario__last_name']}".strip()
+            if not nombre:
+                nombre = stat['usuario__username']
+            if len(nombre) > 20:
+                nombre = nombre[:17] + '...'
+            user_names.append(nombre)
+
+        user_values = [[stat['total'] for stat in user_stats]]
+
+        bc.data = user_values
+        bc.categoryAxis.categoryNames = user_names
+        bc.categoryAxis.labels.fontSize = 7
+        bc.valueAxis.valueMin = 0
+        bc.valueAxis.valueMax = max(user_values[0]) * 1.2
+        bc.valueAxis.labels.fontSize = 8
+
+        bc.bars[0].fillColor = colors.HexColor('#10b981')
+        bc.barWidth = 14
+
+        drawing.add(bc)
+        elements.append(drawing)
+    else:
+        elements.append(Paragraph("No hay datos de usuarios", styles['Normal']))
+
+    elements.append(Spacer(1, 0.5 * inch))
 
     elements.append(Paragraph("Tickets por Motivo", heading_style))
     motivo_stats = todos_tickets.filter(motivo__isnull=False).values('motivo__nombre').annotate(
         total=Count('id')
     ).order_by('-total')
 
-    motivo_data = [['Motivo', 'Total de Tickets']]
-    for stat in motivo_stats:
-        motivo_data.append([stat['motivo__nombre'], str(stat['total'])])
+    if motivo_stats.count() > 0:
+        drawing = Drawing(400, 200)
+        pie = Pie()
+        pie.x = 100
+        pie.y = 20
+        pie.width = 150
+        pie.height = 150
 
-    if len(motivo_data) > 1:
-        motivo_table = Table(motivo_data, colWidths=[4 * inch, 2 * inch])
-        motivo_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2563eb')),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 12),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -1), 10),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
-        ]))
-        elements.append(motivo_table)
+        motivo_labels = [stat['motivo__nombre'] for stat in motivo_stats]
+        motivo_values = [stat['total'] for stat in motivo_stats]
+
+        pie.data = motivo_values
+        pie.labels = [f"{label}\n({value})" for label, value in zip(motivo_labels, motivo_values)]
+        pie.slices.strokeWidth = 0.5
+        pie.slices.fontsize = 8
+
+        colores = [
+            colors.HexColor('#3b82f6'),
+            colors.HexColor('#10b981'),
+            colors.HexColor('#f59e0b'),
+            colors.HexColor('#ef4444'),
+            colors.HexColor('#8b5cf6'),
+            colors.HexColor('#ec4899'),
+        ]
+        for i in range(len(motivo_values)):
+            pie.slices[i].fillColor = colores[i % len(colores)]
+
+        drawing.add(pie)
+        elements.append(drawing)
     else:
         elements.append(Paragraph("No hay tickets con motivos especificados", styles['Normal']))
 
-    elements.append(Spacer(1, 0.3 * inch))
+    elements.append(Spacer(1, 0.5 * inch))
 
     elements.append(Paragraph("Tickets por Prioridad", heading_style))
     prioridad_stats = todos_tickets.values('prioridad').annotate(total=Count('id')).order_by('-total')
@@ -398,26 +457,35 @@ def generar_pdf_estadisticas(request):
         'urgente': 'Urgente'
     }
 
-    prioridad_data = [['Prioridad', 'Total de Tickets']]
-    for stat in prioridad_stats:
-        prioridad_data.append([prioridad_nombres.get(stat['prioridad'], stat['prioridad']), str(stat['total'])])
+    if prioridad_stats.count() > 0:
+        drawing = Drawing(400, 200)
+        pie = Pie()
+        pie.x = 100
+        pie.y = 20
+        pie.width = 150
+        pie.height = 150
 
-    prioridad_table = Table(prioridad_data, colWidths=[4 * inch, 2 * inch])
-    prioridad_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2563eb')),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 12),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 1), (-1, -1), 10),
-        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
-    ]))
-    elements.append(prioridad_table)
+        prioridad_labels = [prioridad_nombres.get(stat['prioridad'], stat['prioridad']) for stat in prioridad_stats]
+        prioridad_values = [stat['total'] for stat in prioridad_stats]
+
+        pie.data = prioridad_values
+        pie.labels = [f"{label}\n({value})" for label, value in zip(prioridad_labels, prioridad_values)]
+        pie.slices.strokeWidth = 0.5
+        pie.slices.fontsize = 9
+
+        prioridad_colores = {
+            'Baja': colors.HexColor('#3b82f6'),
+            'Media': colors.HexColor('#f59e0b'),
+            'Alta': colors.HexColor('#fb923c'),
+            'Urgente': colors.HexColor('#ef4444')
+        }
+        for i, label in enumerate(prioridad_labels):
+            pie.slices[i].fillColor = prioridad_colores.get(label, colors.gray)
+
+        drawing.add(pie)
+        elements.append(drawing)
+    else:
+        elements.append(Paragraph("No hay datos de prioridades", styles['Normal']))
 
     doc.build(elements)
     return response
