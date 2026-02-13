@@ -7,7 +7,6 @@ import {
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
 import TicketsList from "./pages/TicketsList";
 import CreateTicket from "./pages/CreateTicket";
 import TicketDetail from "./pages/TicketDetail";
@@ -18,7 +17,7 @@ function App() {
             <Router>
                 <Routes>
                     <Route path="/login" element={<Login />} />
-                    <Route path="/registro" element={<Register />} />
+                    <Route path="/registro" element={<Login />} />
                     <Route
                         path="/tickets"
                         element={
