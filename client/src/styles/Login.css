@@ -79,6 +79,40 @@
     cursor: not-allowed;
 }
 
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-wrapper input {
+    width: 100%;
+    padding-right: 40px;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-gray-600);
+    padding: 4px;
+    transition: color 0.2s;
+}
+
+.password-toggle-btn:hover:not(:disabled) {
+    color: var(--color-primary);
+}
+
+.password-toggle-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 .btn-login {
     padding: 12px 24px;
     background-color: var(--color-primary);

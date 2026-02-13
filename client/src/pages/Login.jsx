@@ -22,6 +22,9 @@ const Login = () => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [loadingDepartments, setLoadingDepartments] = useState(false);
+    const [showLoginPassword, setShowLoginPassword] = useState(false);
+    const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+    const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
     const { login, register } = useAuth();
     const navigate = useNavigate();
 
@@ -133,9 +136,6 @@ const Login = () => {
                                 />
                             </div>
                             <h2 className="auth-title">Iniciar Sesión</h2>
-                            <p className="auth-subtitle">
-                                Inicia sesión para continuar
-                            </p>
 
                             <form
                                 onSubmit={handleLoginSubmit}
@@ -168,19 +168,75 @@ const Login = () => {
 
                                 <div className="form-group">
                                     <label htmlFor="password">Contraseña</label>
-                                    <input
-                                        type="password"
-                                        id="password"
-                                        value={loginData.password}
-                                        onChange={(e) =>
-                                            setLoginData({
-                                                ...loginData,
-                                                password: e.target.value,
-                                            })
-                                        }
-                                        placeholder="Ingresa tu contraseña"
-                                        disabled={loading}
-                                    />
+                                    <div className="password-input-wrapper">
+                                        <input
+                                            type={
+                                                showLoginPassword
+                                                    ? "text"
+                                                    : "password"
+                                            }
+                                            id="password"
+                                            value={loginData.password}
+                                            onChange={(e) =>
+                                                setLoginData({
+                                                    ...loginData,
+                                                    password: e.target.value,
+                                                })
+                                            }
+                                            placeholder="Ingresa tu contraseña"
+                                            disabled={loading}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="password-toggle-btn"
+                                            onClick={() =>
+                                                setShowLoginPassword(
+                                                    !showLoginPassword,
+                                                )
+                                            }
+                                            disabled={loading}
+                                            title={
+                                                showLoginPassword
+                                                    ? "Ocultar contraseña"
+                                                    : "Mostrar contraseña"
+                                            }
+                                        >
+                                            {showLoginPassword ? (
+                                                <svg
+                                                    width="18"
+                                                    height="18"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2"
+                                                >
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle
+                                                        cx="12"
+                                                        cy="12"
+                                                        r="3"
+                                                    ></circle>
+                                                </svg>
+                                            ) : (
+                                                <svg
+                                                    width="18"
+                                                    height="18"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2"
+                                                >
+                                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                                    <line
+                                                        x1="1"
+                                                        y1="1"
+                                                        x2="23"
+                                                        y2="23"
+                                                    ></line>
+                                                </svg>
+                                            )}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <button
@@ -204,9 +260,6 @@ const Login = () => {
                                 />
                             </div>
                             <h2 className="auth-title">Crear Cuenta</h2>
-                            <p className="auth-subtitle">
-                                Regístrate para acceder al sistema
-                            </p>
 
                             <form
                                 onSubmit={handleRegisterSubmit}
@@ -337,43 +390,156 @@ const Login = () => {
                                         <label htmlFor="register-password">
                                             Contraseña *
                                         </label>
-                                        <input
-                                            type="password"
-                                            id="register-password"
-                                            value={registerData.password}
-                                            onChange={(e) =>
-                                                setRegisterData({
-                                                    ...registerData,
-                                                    password: e.target.value,
-                                                })
-                                            }
-                                            placeholder="Mínimo 8 caracteres"
-                                            disabled={loading}
-                                            required
-                                        />
+                                        <div className="password-input-wrapper">
+                                            <input
+                                                type={
+                                                    showRegisterPassword
+                                                        ? "text"
+                                                        : "password"
+                                                }
+                                                id="register-password"
+                                                value={registerData.password}
+                                                onChange={(e) =>
+                                                    setRegisterData({
+                                                        ...registerData,
+                                                        password:
+                                                            e.target.value,
+                                                    })
+                                                }
+                                                placeholder="Mínimo 8 caracteres"
+                                                disabled={loading}
+                                                required
+                                            />
+                                            <button
+                                                type="button"
+                                                className="password-toggle-btn"
+                                                onClick={() =>
+                                                    setShowRegisterPassword(
+                                                        !showRegisterPassword,
+                                                    )
+                                                }
+                                                disabled={loading}
+                                                title={
+                                                    showRegisterPassword
+                                                        ? "Ocultar contraseña"
+                                                        : "Mostrar contraseña"
+                                                }
+                                            >
+                                                {showRegisterPassword ? (
+                                                    <svg
+                                                        width="18"
+                                                        height="18"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                    >
+                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                        <circle
+                                                            cx="12"
+                                                            cy="12"
+                                                            r="3"
+                                                        ></circle>
+                                                    </svg>
+                                                ) : (
+                                                    <svg
+                                                        width="18"
+                                                        height="18"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                    >
+                                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                                        <line
+                                                            x1="1"
+                                                            y1="1"
+                                                            x2="23"
+                                                            y2="23"
+                                                        ></line>
+                                                    </svg>
+                                                )}
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <div className="form-group">
                                         <label htmlFor="password_confirm">
                                             Confirmar Contraseña *
                                         </label>
-                                        <input
-                                            type="password"
-                                            id="password_confirm"
-                                            value={
-                                                registerData.password_confirm
-                                            }
-                                            onChange={(e) =>
-                                                setRegisterData({
-                                                    ...registerData,
-                                                    password_confirm:
-                                                        e.target.value,
-                                                })
-                                            }
-                                            placeholder="Repite tu contraseña"
-                                            disabled={loading}
-                                            required
-                                        />
+                                        <div className="password-input-wrapper">
+                                            <input
+                                                type={
+                                                    showPasswordConfirm
+                                                        ? "text"
+                                                        : "password"
+                                                }
+                                                id="password_confirm"
+                                                value={
+                                                    registerData.password_confirm
+                                                }
+                                                onChange={(e) =>
+                                                    setRegisterData({
+                                                        ...registerData,
+                                                        password_confirm:
+                                                            e.target.value,
+                                                    })
+                                                }
+                                                placeholder="Repite tu contraseña"
+                                                disabled={loading}
+                                                required
+                                            />
+                                            <button
+                                                type="button"
+                                                className="password-toggle-btn"
+                                                onClick={() =>
+                                                    setShowPasswordConfirm(
+                                                        !showPasswordConfirm,
+                                                    )
+                                                }
+                                                disabled={loading}
+                                                title={
+                                                    showPasswordConfirm
+                                                        ? "Ocultar contraseña"
+                                                        : "Mostrar contraseña"
+                                                }
+                                            >
+                                                {showPasswordConfirm ? (
+                                                    <svg
+                                                        width="18"
+                                                        height="18"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                    >
+                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                        <circle
+                                                            cx="12"
+                                                            cy="12"
+                                                            r="3"
+                                                        ></circle>
+                                                    </svg>
+                                                ) : (
+                                                    <svg
+                                                        width="18"
+                                                        height="18"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                    >
+                                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                                        <line
+                                                            x1="1"
+                                                            y1="1"
+                                                            x2="23"
+                                                            y2="23"
+                                                        ></line>
+                                                    </svg>
+                                                )}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
