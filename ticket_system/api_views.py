@@ -351,16 +351,16 @@ def generar_pdf_estadisticas(request):
     drawing_motivos = Drawing(310, 210)
     if motivo_stats.count() > 0:
         pie_motivo = Pie()
-        pie_motivo.x = 40
-        pie_motivo.y = 30
-        pie_motivo.width = 90
-        pie_motivo.height = 90
+        pie_motivo.x = 90
+        pie_motivo.y = 45
+        pie_motivo.width = 130
+        pie_motivo.height = 130
         motivo_labels = [stat['motivo__nombre'] for stat in motivo_stats]
         motivo_values = [stat['total'] for stat in motivo_stats]
         pie_motivo.data = motivo_values
-        pie_motivo.labels = [f"{label[:10]}..." if len(label) > 10 else label for label in motivo_labels]
+        pie_motivo.labels = motivo_labels
         pie_motivo.slices.strokeWidth = 0.5
-        pie_motivo.slices.fontSize = 7
+        pie_motivo.slices.fontSize = 9
         colores = [
             colors.HexColor('#3b82f6'),
             colors.HexColor('#10b981'),
