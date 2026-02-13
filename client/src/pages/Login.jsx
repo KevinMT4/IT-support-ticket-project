@@ -43,9 +43,8 @@ const Login = () => {
     };
 
     const handleToggle = () => {
-        const newMode = !isLogin;
         setError("");
-        if (newMode) {
+        if (isLogin) {
             navigate("/registro");
             loadDepartamentos();
         } else {
@@ -120,7 +119,9 @@ const Login = () => {
 
     return (
         <div className="auth-container">
-            <div className={`auth-wrapper ${isLogin ? "login-mode" : "register-mode"}`}>
+            <div
+                className={`auth-wrapper ${isLogin ? "login-mode" : "register-mode"}`}
+            >
                 <div className="auth-form-section">
                     {isLogin ? (
                         <div className="form-content">
@@ -132,9 +133,14 @@ const Login = () => {
                                 />
                             </div>
                             <h2 className="auth-title">Iniciar Sesión</h2>
-                            <p className="auth-subtitle">Inicia sesión para continuar</p>
+                            <p className="auth-subtitle">
+                                Inicia sesión para continuar
+                            </p>
 
-                            <form onSubmit={handleLoginSubmit} className="auth-form">
+                            <form
+                                onSubmit={handleLoginSubmit}
+                                className="auth-form"
+                            >
                                 {error && (
                                     <Alert
                                         type="error"
@@ -150,7 +156,10 @@ const Login = () => {
                                         id="email"
                                         value={loginData.email}
                                         onChange={(e) =>
-                                            setLoginData({ ...loginData, email: e.target.value })
+                                            setLoginData({
+                                                ...loginData,
+                                                email: e.target.value,
+                                            })
                                         }
                                         placeholder="correo@ejemplo.com"
                                         disabled={loading}
@@ -164,7 +173,10 @@ const Login = () => {
                                         id="password"
                                         value={loginData.password}
                                         onChange={(e) =>
-                                            setLoginData({ ...loginData, password: e.target.value })
+                                            setLoginData({
+                                                ...loginData,
+                                                password: e.target.value,
+                                            })
                                         }
                                         placeholder="Ingresa tu contraseña"
                                         disabled={loading}
@@ -176,7 +188,9 @@ const Login = () => {
                                     className="btn-auth-submit"
                                     disabled={loading}
                                 >
-                                    {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
+                                    {loading
+                                        ? "Iniciando sesión..."
+                                        : "Iniciar Sesión"}
                                 </button>
                             </form>
                         </div>
@@ -190,9 +204,14 @@ const Login = () => {
                                 />
                             </div>
                             <h2 className="auth-title">Crear Cuenta</h2>
-                            <p className="auth-subtitle">Regístrate para acceder al sistema</p>
+                            <p className="auth-subtitle">
+                                Regístrate para acceder al sistema
+                            </p>
 
-                            <form onSubmit={handleRegisterSubmit} className="auth-form">
+                            <form
+                                onSubmit={handleRegisterSubmit}
+                                className="auth-form"
+                            >
                                 {error && (
                                     <Alert
                                         type="error"
@@ -201,41 +220,52 @@ const Login = () => {
                                     />
                                 )}
 
-                                <div className="form-group">
-                                    <label htmlFor="username">Usuario *</label>
-                                    <input
-                                        type="text"
-                                        id="username"
-                                        value={registerData.username}
-                                        onChange={(e) =>
-                                            setRegisterData({
-                                                ...registerData,
-                                                username: e.target.value,
-                                            })
-                                        }
-                                        placeholder="Nombre de usuario"
-                                        disabled={loading}
-                                        required
-                                    />
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label htmlFor="username">
+                                            Usuario *
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="username"
+                                            value={registerData.username}
+                                            onChange={(e) =>
+                                                setRegisterData({
+                                                    ...registerData,
+                                                    username: e.target.value,
+                                                })
+                                            }
+                                            placeholder="Nombre de usuario"
+                                            disabled={loading}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label htmlFor="register-email">
+                                            Correo Electrónico *
+                                        </label>
+                                        <input
+                                            type="email"
+                                            id="register-email"
+                                            value={registerData.email}
+                                            onChange={(e) =>
+                                                setRegisterData({
+                                                    ...registerData,
+                                                    email: e.target.value,
+                                                })
+                                            }
+                                            placeholder="correo@ejemplo.com"
+                                            disabled={loading}
+                                            required
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="form-group">
-                                    <label htmlFor="register-email">Correo Electrónico *</label>
-                                    <input
-                                        type="email"
-                                        id="register-email"
-                                        value={registerData.email}
-                                        onChange={(e) =>
-                                            setRegisterData({ ...registerData, email: e.target.value })
-                                        }
-                                        placeholder="correo@ejemplo.com"
-                                        disabled={loading}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="departamento">Departamento *</label>
+                                    <label htmlFor="departamento">
+                                        Departamento *
+                                    </label>
                                     <select
                                         id="departamento"
                                         value={registerData.departamento}
@@ -248,9 +278,14 @@ const Login = () => {
                                         disabled={loading || loadingDepartments}
                                         required
                                     >
-                                        <option value="">Selecciona un departamento</option>
+                                        <option value="">
+                                            Selecciona un departamento
+                                        </option>
                                         {departamentos.map((dept) => (
-                                            <option key={dept.id} value={dept.id}>
+                                            <option
+                                                key={dept.id}
+                                                value={dept.id}
+                                            >
                                                 {dept.nombre}
                                             </option>
                                         ))}
@@ -259,7 +294,9 @@ const Login = () => {
 
                                 <div className="form-row">
                                     <div className="form-group">
-                                        <label htmlFor="first_name">Nombre</label>
+                                        <label htmlFor="first_name">
+                                            Nombre
+                                        </label>
                                         <input
                                             type="text"
                                             id="first_name"
@@ -276,7 +313,9 @@ const Login = () => {
                                     </div>
 
                                     <div className="form-group">
-                                        <label htmlFor="last_name">Apellido</label>
+                                        <label htmlFor="last_name">
+                                            Apellido
+                                        </label>
                                         <input
                                             type="text"
                                             id="last_name"
@@ -293,40 +332,49 @@ const Login = () => {
                                     </div>
                                 </div>
 
-                                <div className="form-group">
-                                    <label htmlFor="register-password">Contraseña *</label>
-                                    <input
-                                        type="password"
-                                        id="register-password"
-                                        value={registerData.password}
-                                        onChange={(e) =>
-                                            setRegisterData({
-                                                ...registerData,
-                                                password: e.target.value,
-                                            })
-                                        }
-                                        placeholder="Mínimo 8 caracteres"
-                                        disabled={loading}
-                                        required
-                                    />
-                                </div>
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label htmlFor="register-password">
+                                            Contraseña *
+                                        </label>
+                                        <input
+                                            type="password"
+                                            id="register-password"
+                                            value={registerData.password}
+                                            onChange={(e) =>
+                                                setRegisterData({
+                                                    ...registerData,
+                                                    password: e.target.value,
+                                                })
+                                            }
+                                            placeholder="Mínimo 8 caracteres"
+                                            disabled={loading}
+                                            required
+                                        />
+                                    </div>
 
-                                <div className="form-group">
-                                    <label htmlFor="password_confirm">Confirmar Contraseña *</label>
-                                    <input
-                                        type="password"
-                                        id="password_confirm"
-                                        value={registerData.password_confirm}
-                                        onChange={(e) =>
-                                            setRegisterData({
-                                                ...registerData,
-                                                password_confirm: e.target.value,
-                                            })
-                                        }
-                                        placeholder="Repite tu contraseña"
-                                        disabled={loading}
-                                        required
-                                    />
+                                    <div className="form-group">
+                                        <label htmlFor="password_confirm">
+                                            Confirmar Contraseña *
+                                        </label>
+                                        <input
+                                            type="password"
+                                            id="password_confirm"
+                                            value={
+                                                registerData.password_confirm
+                                            }
+                                            onChange={(e) =>
+                                                setRegisterData({
+                                                    ...registerData,
+                                                    password_confirm:
+                                                        e.target.value,
+                                                })
+                                            }
+                                            placeholder="Repite tu contraseña"
+                                            disabled={loading}
+                                            required
+                                        />
+                                    </div>
                                 </div>
 
                                 <button
@@ -334,7 +382,9 @@ const Login = () => {
                                     className="btn-auth-submit"
                                     disabled={loading}
                                 >
-                                    {loading ? "Creando cuenta..." : "Crear Cuenta"}
+                                    {loading
+                                        ? "Creando cuenta..."
+                                        : "Crear Cuenta"}
                                 </button>
                             </form>
                         </div>
@@ -344,12 +394,19 @@ const Login = () => {
                 <div className="auth-panel-section">
                     <div className="panel-content">
                         <h2 className="panel-title">
-                            {isLogin ? "¡Hola, Bienvenido!" : "¡Bienvenido de vuelta!"}
+                            {isLogin
+                                ? "¡Hola, Bienvenido!"
+                                : "¡Bienvenido de vuelta!"}
                         </h2>
                         <p className="panel-subtitle">
-                            {isLogin ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"}
+                            {isLogin
+                                ? "¿No tienes cuenta?"
+                                : "¿Ya tienes cuenta?"}
                         </p>
-                        <button onClick={handleToggle} className="btn-panel-toggle">
+                        <button
+                            onClick={handleToggle}
+                            className="btn-panel-toggle"
+                        >
                             {isLogin ? "Registrarse" : "Iniciar Sesión"}
                         </button>
                     </div>
