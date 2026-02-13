@@ -283,20 +283,6 @@ def generar_pdf_estadisticas(request):
     elements.append(subtitle)
     elements.append(Spacer(1, 0.2 * inch))
 
-    estados_labels = ['Abiertos', 'En Proceso', 'Resueltos', 'Cerrados']
-    semana_data = [
-        tickets_semana.filter(estado='abierto').count(),
-        tickets_semana.filter(estado='en_proceso').count(),
-        tickets_semana.filter(estado='resuelto').count(),
-        tickets_semana.filter(estado='cerrado').count()
-    ]
-    total_data = [
-        todos_tickets.filter(estado='abierto').count(),
-        todos_tickets.filter(estado='en_proceso').count(),
-        todos_tickets.filter(estado='resuelto').count(),
-        todos_tickets.filter(estado='cerrado').count()
-    ]
-
     dept_stats = todos_tickets.values('usuario__departamento__nombre').annotate(
         total=Count('id')
     ).order_by('-total')[:5]
@@ -316,43 +302,6 @@ def generar_pdf_estadisticas(request):
         'alta': 'Alta',
         'urgente': 'Urgente'
     }
-
-    drawing_estados = Drawing(310, 210)
-    bc_estados = VerticalBarChart()
-    bc_estados.x = 30
-    bc_estados.y = 30
-    bc_estados.height = 135
-    bc_estados.width = 250
-    bc_estados.data = [semana_data, total_data]
-    bc_estados.categoryAxis.categoryNames = estados_labels
-    bc_estados.categoryAxis.labels.boxAnchor = 'ne'
-    bc_estados.categoryAxis.labels.dx = -2
-    bc_estados.categoryAxis.labels.dy = -2
-    bc_estados.categoryAxis.labels.angle = 30
-    bc_estados.categoryAxis.labels.fontSize = 9
-    bc_estados.valueAxis.valueMin = 0
-    bc_estados.valueAxis.valueMax = max(max(total_data), 1) * 1.2
-    bc_estados.valueAxis.labels.fontSize = 9
-    bc_estados.bars[0].fillColor = colors.HexColor('#3b82f6')
-    bc_estados.bars[1].fillColor = colors.HexColor('#10b981')
-    bc_estados.barWidth = 10
-    bc_estados.groupSpacing = 15
-
-    legend_estados = Legend()
-    legend_estados.x = 40
-    legend_estados.y = 175
-    legend_estados.dx = 8
-    legend_estados.dy = 8
-    legend_estados.fontName = 'Helvetica'
-    legend_estados.fontSize = 9
-    legend_estados.alignment = 'right'
-    legend_estados.columnMaximum = 2
-    legend_estados.colorNamePairs = [
-        (colors.HexColor('#3b82f6'), 'Semana'),
-        (colors.HexColor('#10b981'), 'Total')
-    ]
-    drawing_estados.add(bc_estados)
-    drawing_estados.add(legend_estados)
 
     drawing_dept = Drawing(310, 210)
     if dept_stats:
@@ -402,16 +351,16 @@ def generar_pdf_estadisticas(request):
     drawing_motivos = Drawing(310, 210)
     if motivo_stats.count() > 0:
         pie_motivo = Pie()
-        pie_motivo.x = 90
-        pie_motivo.y = 45
-        pie_motivo.width = 130
-        pie_motivo.height = 130
+        pie_motivo.x = 40
+        pie_motivo.y = 30
+        pie_motivo.width = 90
+        pie_motivo.height = 90
         motivo_labels = [stat['motivo__nombre'] for stat in motivo_stats]
         motivo_values = [stat['total'] for stat in motivo_stats]
         pie_motivo.data = motivo_values
-        pie_motivo.labels = [f"{label[:12]}..." if len(label) > 12 else label for label in motivo_labels]
+        pie_motivo.labels = [f"{label[:10]}..." if len(label) > 10 else label for label in motivo_labels]
         pie_motivo.slices.strokeWidth = 0.5
-        pie_motivo.slices.fontSize = 8
+        pie_motivo.slices.fontSize = 7
         colores = [
             colors.HexColor('#3b82f6'),
             colors.HexColor('#10b981'),
@@ -448,12 +397,10 @@ def generar_pdf_estadisticas(request):
         drawing_prioridad.add(pie_prioridad)
 
     tabla_graficas = Table([
-        [Paragraph("Resumen por Estado", heading_style), Paragraph("Tickets por Departamento", heading_style)],
-        [drawing_estados, drawing_dept],
+        [Paragraph("Tickets por Motivo", heading_style), Paragraph("Tickets por Departamento", heading_style)],
+        [drawing_motivos, drawing_dept],
         [Paragraph("Usuarios con Más Tickets", heading_style), Paragraph("Tickets por Prioridad", heading_style)],
         [drawing_users, drawing_prioridad],
-        [Paragraph("Tickets por Motivo", heading_style), ''],
-        [drawing_motivos, ''],
     ], colWidths=[310, 310])
 
     tabla_graficas.setStyle(TableStyle([
@@ -467,8 +414,6 @@ def generar_pdf_estadisticas(request):
         ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
         ('TOPPADDING', (0, 2), (-1, 2), 12),
         ('BOTTOMPADDING', (0, 2), (-1, 2), 8),
-        ('TOPPADDING', (0, 4), (-1, 4), 12),
-        ('BOTTOMPADDING', (0, 4), (-1, 4), 8),
     ]))
 
     elements.append(tabla_graficas)
