@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { playNotificationSound } from '../utils/sounds';
 
-const STORAGE_KEY = 'ticket_notifications_state';
+const STORAGE_KEY = 'ticket_last_known_state';
 
 const getStoredState = () => {
   try {
@@ -12,7 +12,7 @@ const getStoredState = () => {
   } catch (e) {
     console.error('Error loading notification state:', e);
   }
-  return { notifiedTickets: {}, lastUpdate: Date.now() };
+  return { ticketStates: {}, lastUpdate: Date.now() };
 };
 
 const saveStoredState = (state) => {
@@ -27,16 +27,16 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
   const [notifications, setNotifications] = useState([]);
   const previousTicketsRef = useRef(null);
   const isFirstLoadRef = useRef(true);
-  const notifiedStateRef = useRef(getStoredState());
+  const knownStateRef = useRef(getStoredState());
 
   useEffect(() => {
-    const state = notifiedStateRef.current;
+    const state = knownStateRef.current;
     const now = Date.now();
     const oneHour = 60 * 60 * 1000;
 
     if (now - state.lastUpdate > oneHour) {
-      notifiedStateRef.current = { notifiedTickets: {}, lastUpdate: now };
-      saveStoredState(notifiedStateRef.current);
+      knownStateRef.current = { ticketStates: {}, lastUpdate: now };
+      saveStoredState(knownStateRef.current);
     }
   }, []);
 
@@ -44,6 +44,18 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
     if (isFirstLoadRef.current) {
       previousTicketsRef.current = tickets;
       isFirstLoadRef.current = false;
+
+      tickets.forEach(ticket => {
+        const ticketKey = `ticket-${ticket.id}`;
+        if (!knownStateRef.current.ticketStates[ticketKey]) {
+          knownStateRef.current.ticketStates[ticketKey] = {
+            estado: ticket.estado,
+            prioridad: ticket.prioridad,
+            created: true,
+          };
+        }
+      });
+      saveStoredState(knownStateRef.current);
       return;
     }
 
@@ -53,14 +65,14 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
     }
 
     const changes = [];
-    const notifiedState = notifiedStateRef.current.notifiedTickets;
+    const ticketStates = knownStateRef.current.ticketStates;
 
     tickets.forEach(ticket => {
       const previousTicket = previousTicketsRef.current.find(t => t.id === ticket.id);
       const ticketKey = `ticket-${ticket.id}`;
 
       if (!previousTicket) {
-        if (isSuperuser && !notifiedState[ticketKey]) {
+        if (isSuperuser && !ticketStates[ticketKey]) {
           changes.push({
             id: `${ticket.id}-nuevo-${Date.now()}`,
             ticketId: ticket.id,
@@ -68,59 +80,51 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
             message: `Nuevo ticket. ${ticket.usuario_nombre}: "${ticket.asunto}"`,
             newValue: ticket.asunto,
           });
-          notifiedState[ticketKey] = {
-            created: true,
+          ticketStates[ticketKey] = {
             estado: ticket.estado,
             prioridad: ticket.prioridad,
+            created: true,
           };
         }
       } else {
-        const ticketState = notifiedState[ticketKey] || {
-          estado: previousTicket.estado,
-          prioridad: previousTicket.prioridad,
-        };
+        if (!ticketStates[ticketKey]) {
+          ticketStates[ticketKey] = {
+            estado: previousTicket.estado,
+            prioridad: previousTicket.prioridad,
+          };
+        }
 
         if (previousTicket.estado !== ticket.estado) {
-          const stateChangeKey = `${ticketKey}-estado-${ticket.estado}`;
-          if (!notifiedState[stateChangeKey]) {
-            changes.push({
-              id: `${ticket.id}-estado-${Date.now()}`,
-              ticketId: ticket.id,
-              type: 'estado',
-              message: `Ticket "${ticket.asunto}" Estado cambiado a "${ticket.estado_display}"`,
-              previousValue: previousTicket.estado_display,
-              newValue: ticket.estado_display,
-            });
-            notifiedState[stateChangeKey] = true;
-            ticketState.estado = ticket.estado;
-          }
+          changes.push({
+            id: `${ticket.id}-estado-${Date.now()}-${Math.random()}`,
+            ticketId: ticket.id,
+            type: 'estado',
+            message: `Ticket "${ticket.asunto}": Estado cambiado a "${ticket.estado_display}"`,
+            previousValue: previousTicket.estado_display,
+            newValue: ticket.estado_display,
+          });
+          ticketStates[ticketKey].estado = ticket.estado;
         }
 
         if (previousTicket.prioridad !== ticket.prioridad) {
-          const priorityChangeKey = `${ticketKey}-prioridad-${ticket.prioridad}`;
-          if (!notifiedState[priorityChangeKey]) {
-            changes.push({
-              id: `${ticket.id}-prioridad-${Date.now()}`,
-              ticketId: ticket.id,
-              type: 'prioridad',
-              message: `Ticket "${ticket.asunto}": Prioridad cambiada a "${ticket.prioridad_display}"`,
-              previousValue: previousTicket.prioridad_display,
-              newValue: ticket.prioridad_display,
-            });
-            notifiedState[priorityChangeKey] = true;
-            ticketState.prioridad = ticket.prioridad;
-          }
+          changes.push({
+            id: `${ticket.id}-prioridad-${Date.now()}-${Math.random()}`,
+            ticketId: ticket.id,
+            type: 'prioridad',
+            message: `Ticket "${ticket.asunto}": Prioridad cambiada a "${ticket.prioridad_display}"`,
+            previousValue: previousTicket.prioridad_display,
+            newValue: ticket.prioridad_display,
+          });
+          ticketStates[ticketKey].prioridad = ticket.prioridad;
         }
-
-        notifiedState[ticketKey] = ticketState;
       }
     });
 
     if (changes.length > 0) {
       playNotificationSound();
       setNotifications(prev => [...prev, ...changes]);
-      notifiedStateRef.current.lastUpdate = Date.now();
-      saveStoredState(notifiedStateRef.current);
+      knownStateRef.current.lastUpdate = Date.now();
+      saveStoredState(knownStateRef.current);
     }
 
     previousTicketsRef.current = tickets;
