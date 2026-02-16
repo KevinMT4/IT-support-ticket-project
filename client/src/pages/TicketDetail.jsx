@@ -101,7 +101,6 @@ const TicketDetail = () => {
             abierto: "status-open",
             en_proceso: "status-in-progress",
             resuelto: "status-resolved",
-            cerrado: "status-closed",
         };
         return classes[estado] || "status-open";
     };
@@ -283,18 +282,6 @@ const TicketDetail = () => {
                                             }
                                         >
                                             Resuelto
-                                        </button>
-                                        <button
-                                            className={`status-btn ${ticket.estado === "cerrado" ? "active" : ""}`}
-                                            onClick={() =>
-                                                handleStatusChange("cerrado")
-                                            }
-                                            disabled={
-                                                updating ||
-                                                ticket.estado === "cerrado"
-                                            }
-                                        >
-                                            Cerrado
                                         </button>
                                     </div>
                                 </div>

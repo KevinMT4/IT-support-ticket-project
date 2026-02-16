@@ -87,7 +87,7 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
               id: `${ticket.id}-estado-${Date.now()}`,
               ticketId: ticket.id,
               type: 'estado',
-              message: `Ticket #${ticket.id}: Estado cambiado a "${ticket.estado_display}"`,
+              message: `Ticket "${ticket.asunto}" Estado cambiado a "${ticket.estado_display}"`,
               previousValue: previousTicket.estado_display,
               newValue: ticket.estado_display,
             });
@@ -103,7 +103,7 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
               id: `${ticket.id}-prioridad-${Date.now()}`,
               ticketId: ticket.id,
               type: 'prioridad',
-              message: `Ticket #${ticket.id}: Prioridad cambiada a "${ticket.prioridad_display}"`,
+              message: `Ticket "${ticket.asunto}": Prioridad cambiada a "${ticket.prioridad_display}"`,
               previousValue: previousTicket.prioridad_display,
               newValue: ticket.prioridad_display,
             });

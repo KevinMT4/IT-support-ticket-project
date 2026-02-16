@@ -73,7 +73,6 @@ class Ticket(models.Model):
         ('abierto', 'Abierto'),
         ('en_proceso', 'En Proceso'),
         ('resuelto', 'Resuelto'),
-        ('cerrado', 'Cerrado'),
     ]
 
     PRIORIDAD_CHOICES = [
