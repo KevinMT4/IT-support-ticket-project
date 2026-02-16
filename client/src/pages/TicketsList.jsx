@@ -75,7 +75,6 @@ const TicketsList = () => {
             abierto: tickets.filter((t) => t.estado === "abierto").length,
             en_proceso: tickets.filter((t) => t.estado === "en_proceso").length,
             resuelto: tickets.filter((t) => t.estado === "resuelto").length,
-            cerrado: tickets.filter((t) => t.estado === "cerrado").length,
         };
     };
 
@@ -184,13 +183,6 @@ const TicketsList = () => {
                     >
                         <div className="stat-value">{stats.resuelto}</div>
                         <div className="stat-label">Resueltos</div>
-                    </div>
-                    <div
-                        className={`stat-card stat-closed stat-clickable ${filter === "cerrado" ? "active" : ""}`}
-                        onClick={() => setFilter("cerrado")}
-                    >
-                        <div className="stat-value">{stats.cerrado}</div>
-                        <div className="stat-label">Cerrados</div>
                     </div>
                 </div>
 

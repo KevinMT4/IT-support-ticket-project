@@ -324,14 +324,6 @@ const TicketDetail = () => {
                                     {formatDate(ticket.fecha_creacion)}
                                 </span>
                             </div>
-                            {ticket.fecha_cierre && (
-                                <div className="info-item">
-                                    <span className="info-label">Cerrado</span>
-                                    <span className="info-value">
-                                        {formatDate(ticket.fecha_cierre)}
-                                    </span>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>

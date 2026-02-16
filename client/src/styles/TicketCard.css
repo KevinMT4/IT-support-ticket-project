@@ -77,11 +77,6 @@
     color: #065f46;
 }
 
-.status-badge.status-closed {
-    background-color: #e5e7eb;
-    color: #374151;
-}
-
 .ticket-title {
     font-size: 1.125rem;
     font-weight: 600;

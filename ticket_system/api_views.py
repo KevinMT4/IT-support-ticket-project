@@ -195,8 +195,6 @@ class TicketViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
         ticket.estado = nuevo_estado
-        if nuevo_estado == 'cerrado':
-            ticket.fecha_cierre = timezone.now()
         ticket.save()
 
         return Response(TicketSerializer(ticket).data)

@@ -63,8 +63,6 @@ def detalle_ticket(request, ticket_id):
         estado = request.POST.get('estado')
         if estado:
             ticket.estado = estado
-            if estado == 'cerrado':
-                ticket.fecha_cierre = timezone.now()
             ticket.save()
             messages.success(request, 'Estado del ticket actualizado.')
             return redirect('detalle_ticket', ticket_id=ticket.id)

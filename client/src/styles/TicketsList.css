@@ -133,14 +133,6 @@
     color: #065f46;
 }
 
-.stat-card.stat-closed {
-    border-color: var(--color-gray-400);
-}
-
-.stat-card.stat-closed .stat-value {
-    color: var(--color-gray-600);
-}
-
 .filters {
     display: none;
 }

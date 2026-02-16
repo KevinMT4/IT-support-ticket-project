@@ -29,7 +29,6 @@ const TicketCard = ({ ticket }) => {
             abierto: "status-open",
             en_proceso: "status-in-progress",
             resuelto: "status-resolved",
-            cerrado: "status-closed",
         };
         return classes[estado] || "status-open";
     };
