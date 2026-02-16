@@ -25,7 +25,7 @@ Este sistema permite a los usuarios crear y gestionar tickets de soporte dirigid
 - Django 4.2.11
 - Django REST Framework 3.14.0
 - ReportLab 4.0.7 (generación de PDFs)
-- SQLite (base de datos)
+- MySQL (base de datos)
 
 ### Frontend
 - React 19.2.0
