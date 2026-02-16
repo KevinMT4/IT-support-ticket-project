@@ -23,14 +23,41 @@
 
 .ticket-header {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: var(--spacing-md);
+    gap: var(--spacing-md);
 }
 
 .ticket-badges {
     display: flex;
     gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.ticket-download-btn {
+    background-color: transparent;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-gray-600);
+    transition: all 0.2s;
+    flex-shrink: 0;
+    z-index: 10;
+}
+
+.ticket-download-btn:hover {
+    background-color: var(--color-primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+.ticket-download-btn:active {
+    transform: scale(0.95);
 }
 
 .badge {

@@ -418,3 +418,145 @@ def generar_pdf_estadisticas(request):
 
     doc.build(elements)
     return response
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def generar_pdf_ticket(request, ticket_id):
+    if request.user.rol != 'superuser':
+        return Response({'error': 'No tienes permisos para generar reportes'},
+                        status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        ticket = Ticket.objects.get(id=ticket_id)
+    except Ticket.DoesNotExist:
+        return Response({'error': 'Ticket no encontrado'},
+                        status=status.HTTP_404_NOT_FOUND)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="ticket_{ticket.id}_{timezone.now().strftime("%Y%m%d_%H%M%S")}.pdf"'
+
+    doc = SimpleDocTemplate(response, pagesize=letter, rightMargin=40, leftMargin=40, topMargin=40, bottomMargin=40)
+
+    elements = []
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=20,
+        textColor=colors.HexColor('#2563eb'),
+        spaceAfter=12,
+        alignment=TA_CENTER
+    )
+
+    heading_style = ParagraphStyle(
+        'CustomHeading',
+        parent=styles['Heading2'],
+        fontSize=14,
+        textColor=colors.HexColor('#1e40af'),
+        spaceAfter=8,
+        spaceBefore=12,
+        alignment=TA_LEFT
+    )
+
+    body_style = ParagraphStyle(
+        'BodyText',
+        parent=styles['Normal'],
+        fontSize=11,
+        alignment=TA_LEFT,
+        spaceAfter=6
+    )
+
+    logo_path = os.path.join(settings.BASE_DIR, 'ticket_system', 'static', 'ticket_system', 'images', 'logo.png')
+    logo_header = LogoHeader(7.5 * inch, 60, logo_path)
+    elements.append(logo_header)
+    elements.append(Spacer(1, 0.15 * inch))
+
+    title = Paragraph(f"{ticket.asunto}", title_style)
+    elements.append(title)
+
+    subtitle_style = ParagraphStyle(
+        'Subtitle',
+        parent=styles['Normal'],
+        fontSize=10,
+        alignment=TA_CENTER,
+        textColor=colors.HexColor('#6b7280')
+    )
+    subtitle = Paragraph(
+        f"Generado el {timezone.now().strftime('%d/%m/%Y a las %H:%M')}",
+        subtitle_style
+    )
+    elements.append(subtitle)
+    elements.append(Spacer(1, 0.3 * inch))
+
+    info_data = [
+        ['Campo', 'Información'],
+        ['Asunto', ticket.asunto],
+        ['Estado', ticket.get_estado_display()],
+        ['Prioridad', ticket.get_prioridad_display()],
+        ['Creado por', f"{ticket.usuario.first_name} {ticket.usuario.last_name}" if ticket.usuario.first_name else ticket.usuario.username],
+        ['Departamento', ticket.usuario.departamento.nombre if ticket.usuario.departamento else 'N/A'],
+        ['Motivo', ticket.motivo.nombre if ticket.motivo else 'N/A'],
+        ['Fecha de creación', ticket.fecha_creacion.strftime('%d/%m/%Y %H:%M')],
+    ]
+
+    if ticket.fecha_cierre:
+        info_data.append(['Fecha de cierre', ticket.fecha_cierre.strftime('%d/%m/%Y %H:%M')])
+
+    info_table = Table(info_data, colWidths=[2 * inch, 5 * inch])
+    info_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2563eb')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('TOPPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (0, -1), colors.HexColor('#f3f4f6')),
+        ('FONTNAME', (0, 1), (0, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 1), (-1, -1), 10),
+        ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#d1d5db')),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 10),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 10),
+        ('TOPPADDING', (0, 1), (-1, -1), 8),
+        ('BOTTOMPADDING', (0, 1), (-1, -1), 8),
+    ]))
+
+    elements.append(info_table)
+    elements.append(Spacer(1, 0.3 * inch))
+
+    elements.append(Paragraph("Descripción del Ticket", heading_style))
+    elements.append(Spacer(1, 0.1 * inch))
+
+    content_style = ParagraphStyle(
+        'ContentText',
+        parent=styles['Normal'],
+        fontSize=10,
+        alignment=TA_LEFT,
+        leftIndent=10,
+        rightIndent=10,
+        spaceAfter=6,
+        leading=14
+    )
+
+    content_text = ticket.contenido.replace('\n', '<br/>')
+    content_paragraph = Paragraph(content_text, content_style)
+
+    content_frame_data = [[content_paragraph]]
+    content_table = Table(content_frame_data, colWidths=[7 * inch])
+    content_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#f9fafb')),
+        ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#d1d5db')),
+        ('LEFTPADDING', (0, 0), (-1, -1), 15),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 15),
+        ('TOPPADDING', (0, 0), (-1, -1), 15),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 15),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+    ]))
+
+    elements.append(content_table)
+
+    doc.build(elements)
+    return response

@@ -5,6 +5,7 @@ from .api_views import (
     logout_view,
     registro_view,
     generar_pdf_estadisticas,
+    generar_pdf_ticket,
     DepartamentoViewSet,
     MotivoViewSet,
     TicketViewSet
@@ -20,5 +21,6 @@ urlpatterns = [
     path('logout/', logout_view, name='api_logout'),
     path('registro/', registro_view, name='api_registro'),
     path('reportes/pdf-estadisticas/', generar_pdf_estadisticas, name='pdf_estadisticas'),
+    path('reportes/pdf-ticket/<int:ticket_id>/', generar_pdf_ticket, name='pdf_ticket'),
     path('', include(router.urls)),
 ]
