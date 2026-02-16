@@ -16,8 +16,10 @@ const TicketsList = () => {
     const [error, setError] = useState(null);
     const [filter, setFilter] = useState("all");
     const { isSuperuser } = useAuth();
-    const { notifications, removeNotification } =
-        useTicketNotifications(tickets);
+    const { notifications, removeNotification } = useTicketNotifications(
+        tickets,
+        isSuperuser(),
+    );
 
     useEffect(() => {
         loadTickets();

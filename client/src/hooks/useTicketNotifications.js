@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { playNotificationSound } from '../utils/sounds';
 
-export const useTicketNotifications = (tickets) => {
+export const useTicketNotifications = (tickets, isSuperuser = false) => {
   const [notifications, setNotifications] = useState([]);
   const previousTicketsRef = useRef(null);
   const isFirstLoadRef = useRef(true);
@@ -23,7 +23,17 @@ export const useTicketNotifications = (tickets) => {
     tickets.forEach(ticket => {
       const previousTicket = previousTicketsRef.current.find(t => t.id === ticket.id);
 
-      if (previousTicket) {
+      if (!previousTicket) {
+        if (isSuperuser) {
+          changes.push({
+            id: `${ticket.id}-nuevo-${Date.now()}`,
+            ticketId: ticket.id,
+            type: 'nuevo',
+            message: `Nuevo ticket. ${ticket.usuario_nombre}: "${ticket.asunto}"`,
+            newValue: ticket.asunto,
+          });
+        }
+      } else {
         if (previousTicket.estado !== ticket.estado) {
           changes.push({
             id: `${ticket.id}-estado-${Date.now()}`,
@@ -54,7 +64,7 @@ export const useTicketNotifications = (tickets) => {
     }
 
     previousTicketsRef.current = tickets;
-  }, [tickets]);
+  }, [tickets, isSuperuser]);
 
   const removeNotification = (notificationId) => {
     setNotifications(prev => prev.filter(n => n.id !== notificationId));
