@@ -89,10 +89,19 @@
         "close": "Cerrar",
         "confirmDeleteTicket": "¿Estás seguro de que deseas eliminar este ticket?",
         "deleteConfirmed": "Ticket eliminado",
-        "deleteError": "Error al eliminar el ticket"
+        "deleteError": "Error al eliminar el ticket",
+        "downloadPdf": "Descargar PDF",
+        "downloadTicketPdf": "Descargar PDF del ticket",
+        "errorDownloadingPdf": "Error al descargar el PDF"
     },
     "ticketDetail": {
         "errorLoadingTicket": "Error al cargar el ticket",
-        "noAvailableActions": "No hay acciones disponibles"
+        "noAvailableActions": "No hay acciones disponibles",
+        "createdBy": "Creado por",
+        "description": "Descripción",
+        "updatePriority": "Actualizar Prioridad",
+        "updateStatus": "Actualizar Estado",
+        "information": "Información",
+        "created": "Creado"
     }
 }

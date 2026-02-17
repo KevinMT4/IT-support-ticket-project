@@ -1,14 +1,17 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../hooks/useLanguage";
 import "../styles/TicketCard.css";
 
 const TicketCard = ({ ticket }) => {
     const { isSuperuser } = useAuth();
+    const { t, currentLanguage } = useLanguage();
 
     const formatDate = (dateString) => {
         if (!dateString) return "N/A";
         const date = new Date(dateString);
-        return date.toLocaleDateString("es-ES", {
+        const locale = currentLanguage === "es" ? "es-ES" : "en-US";
+        return date.toLocaleDateString(locale, {
             year: "numeric",
             month: "short",
             day: "numeric",
@@ -36,6 +39,25 @@ const TicketCard = ({ ticket }) => {
         return classes[estado] || "status-open";
     };
 
+    const translatePriority = (prioridad) => {
+        const translations = {
+            baja: t("priority.low"),
+            media: t("priority.medium"),
+            alta: t("priority.high"),
+            urgente: t("priority.urgent"),
+        };
+        return translations[prioridad] || prioridad;
+    };
+
+    const translateStatus = (estado) => {
+        const translations = {
+            abierto: t("status.open"),
+            en_proceso: t("status.inProgress"),
+            resuelto: t("status.resolved"),
+        };
+        return translations[estado] || estado;
+    };
+
     const handleDownloadPDF = async (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -55,7 +77,7 @@ const TicketCard = ({ ticket }) => {
             );
 
             if (!response.ok) {
-                throw new Error("Error al generar el PDF");
+                throw new Error(t("messages.pdfGeneratingError"));
             }
 
             const blob = await response.blob();
@@ -68,7 +90,7 @@ const TicketCard = ({ ticket }) => {
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
         } catch (err) {
-            console.error("Error al descargar el PDF:", err);
+            console.error(t("messages.errorDownloadingPdf"), err);
         }
     };
 
@@ -80,20 +102,20 @@ const TicketCard = ({ ticket }) => {
                         <span
                             className={`badge priority-badge ${getPriorityClass(ticket.prioridad)}`}
                         >
-                            {ticket.prioridad_display}
+                            {translatePriority(ticket.prioridad)}
                         </span>
                         <span
                             className={`badge status-badge ${getStatusClass(ticket.estado)}`}
                         >
-                            {ticket.estado_display}
+                            {translateStatus(ticket.estado)}
                         </span>
                     </div>
                     {isSuperuser() && (
                         <button
                             className="ticket-download-btn"
                             onClick={handleDownloadPDF}
-                            title="Descargar PDF"
-                            aria-label="Descargar PDF del ticket"
+                            title={t("messages.downloadPdf")}
+                            aria-label={t("messages.downloadTicketPdf")}
                         >
                             <svg
                                 width="20"

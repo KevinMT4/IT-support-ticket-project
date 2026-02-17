@@ -108,6 +108,25 @@ const TicketDetail = () => {
         return classes[estado] || "status-open";
     };
 
+    const translatePriority = (prioridad) => {
+        const translations = {
+            baja: t("priority.low"),
+            media: t("priority.medium"),
+            alta: t("priority.high"),
+            urgente: t("priority.urgent"),
+        };
+        return translations[prioridad] || prioridad;
+    };
+
+    const translateStatus = (estado) => {
+        const translations = {
+            abierto: t("status.open"),
+            en_proceso: t("status.inProgress"),
+            resuelto: t("status.resolved"),
+        };
+        return translations[estado] || estado;
+    };
+
     if (loading) {
         return (
             <Layout>
@@ -146,12 +165,12 @@ const TicketDetail = () => {
                                 <span
                                     className={`badge priority-badge ${getPriorityClass(ticket.prioridad)}`}
                                 >
-                                    {ticket.prioridad_display}
+                                    {translatePriority(ticket.prioridad)}
                                 </span>
                                 <span
                                     className={`badge status-badge ${getStatusClass(ticket.estado)}`}
                                 >
-                                    {ticket.estado_display}
+                                    {translateStatus(ticket.estado)}
                                 </span>
                             </div>
                         </div>
@@ -178,14 +197,17 @@ const TicketDetail = () => {
                         <div className="ticket-section">
                             <h2 className="ticket-subject">{ticket.asunto}</h2>
                             <div className="ticket-meta">
-                                <span>Creado por: {ticket.usuario_nombre}</span>
+                                <span>
+                                    {t("ticketDetail.createdBy")}:{" "}
+                                    {ticket.usuario_nombre}
+                                </span>
                                 <span>•</span>
                                 <span>{formatDate(ticket.fecha_creacion)}</span>
                             </div>
                         </div>
 
                         <div className="ticket-section">
-                            <h3>Descripción</h3>
+                            <h3>{t("ticketDetail.description")}</h3>
                             <div className="ticket-description">
                                 {ticket.contenido}
                             </div>
@@ -194,7 +216,7 @@ const TicketDetail = () => {
                         {isSuperuser() && (
                             <>
                                 <div className="ticket-section">
-                                    <h3>Actualizar Prioridad</h3>
+                                    <h3>{t("ticketDetail.updatePriority")}</h3>
                                     <div className="status-buttons">
                                         <button
                                             className={`status-btn priority-btn ${ticket.prioridad === "baja" ? "active priority-low" : ""}`}
@@ -206,7 +228,7 @@ const TicketDetail = () => {
                                                 ticket.prioridad === "baja"
                                             }
                                         >
-                                            Baja
+                                            {t("priority.low")}
                                         </button>
                                         <button
                                             className={`status-btn priority-btn ${ticket.prioridad === "media" ? "active priority-medium" : ""}`}
@@ -218,7 +240,7 @@ const TicketDetail = () => {
                                                 ticket.prioridad === "media"
                                             }
                                         >
-                                            Media
+                                            {t("priority.medium")}
                                         </button>
                                         <button
                                             className={`status-btn priority-btn ${ticket.prioridad === "alta" ? "active priority-high" : ""}`}
@@ -230,7 +252,7 @@ const TicketDetail = () => {
                                                 ticket.prioridad === "alta"
                                             }
                                         >
-                                            Alta
+                                            {t("priority.high")}
                                         </button>
                                         <button
                                             className={`status-btn priority-btn ${ticket.prioridad === "urgente" ? "active priority-urgent" : ""}`}
@@ -242,13 +264,13 @@ const TicketDetail = () => {
                                                 ticket.prioridad === "urgente"
                                             }
                                         >
-                                            Urgente
+                                            {t("priority.urgent")}
                                         </button>
                                     </div>
                                 </div>
 
                                 <div className="ticket-section">
-                                    <h3>Actualizar Estado</h3>
+                                    <h3>{t("ticketDetail.updateStatus")}</h3>
                                     <div className="status-buttons">
                                         <button
                                             className={`status-btn ${ticket.estado === "abierto" ? "active" : ""}`}
@@ -260,7 +282,7 @@ const TicketDetail = () => {
                                                 ticket.estado === "abierto"
                                             }
                                         >
-                                            Abierto
+                                            {t("status.open")}
                                         </button>
                                         <button
                                             className={`status-btn ${ticket.estado === "en_proceso" ? "active" : ""}`}
@@ -272,7 +294,7 @@ const TicketDetail = () => {
                                                 ticket.estado === "en_proceso"
                                             }
                                         >
-                                            En Proceso
+                                            {t("status.inProgress")}
                                         </button>
                                         <button
                                             className={`status-btn ${ticket.estado === "resuelto" ? "active" : ""}`}
@@ -284,7 +306,7 @@ const TicketDetail = () => {
                                                 ticket.estado === "resuelto"
                                             }
                                         >
-                                            Resuelto
+                                            {t("status.resolved")}
                                         </button>
                                     </div>
                                 </div>
@@ -294,35 +316,45 @@ const TicketDetail = () => {
 
                     <div className="ticket-sidebar">
                         <div className="info-card">
-                            <h3>Información</h3>
+                            <h3>{t("ticketDetail.information")}</h3>
                             <div className="info-item">
-                                <span className="info-label">Departamento</span>
+                                <span className="info-label">
+                                    {t("ticket.department")}
+                                </span>
                                 <span className="info-value">
                                     {ticket.usuario_departamento_nombre}
                                 </span>
                             </div>
                             {ticket.motivo_nombre && (
                                 <div className="info-item">
-                                    <span className="info-label">Motivo</span>
+                                    <span className="info-label">
+                                        {t("ticket.reason")}
+                                    </span>
                                     <span className="info-value">
                                         {ticket.motivo_nombre}
                                     </span>
                                 </div>
                             )}
                             <div className="info-item">
-                                <span className="info-label">Prioridad</span>
+                                <span className="info-label">
+                                    {t("ticket.priority")}
+                                </span>
                                 <span className="info-value">
-                                    {ticket.prioridad_display}
+                                    {translatePriority(ticket.prioridad)}
                                 </span>
                             </div>
                             <div className="info-item">
-                                <span className="info-label">Estado</span>
+                                <span className="info-label">
+                                    {t("ticket.status")}
+                                </span>
                                 <span className="info-value">
-                                    {ticket.estado_display}
+                                    {translateStatus(ticket.estado)}
                                 </span>
                             </div>
                             <div className="info-item">
-                                <span className="info-label">Creado</span>
+                                <span className="info-label">
+                                    {t("ticketDetail.created")}
+                                </span>
                                 <span className="info-value">
                                     {formatDate(ticket.fecha_creacion)}
                                 </span>

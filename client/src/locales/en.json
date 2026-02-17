@@ -89,10 +89,19 @@
         "close": "Close",
         "confirmDeleteTicket": "Are you sure you want to delete this ticket?",
         "deleteConfirmed": "Ticket deleted",
-        "deleteError": "Error deleting ticket"
+        "deleteError": "Error deleting ticket",
+        "downloadPdf": "Download PDF",
+        "downloadTicketPdf": "Download ticket PDF",
+        "errorDownloadingPdf": "Error downloading PDF"
     },
     "ticketDetail": {
         "errorLoadingTicket": "Error loading ticket",
-        "noAvailableActions": "No available actions"
+        "noAvailableActions": "No available actions",
+        "createdBy": "Created by",
+        "description": "Description",
+        "updatePriority": "Update Priority",
+        "updateStatus": "Update Status",
+        "information": "Information",
+        "created": "Created"
     }
 }
