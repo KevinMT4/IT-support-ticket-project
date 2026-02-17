@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/client";
 import Alert from "../components/Alert";
@@ -7,6 +8,7 @@ import "../styles/Auth.css";
 
 const Login = () => {
     const location = useLocation();
+    const { t } = useTranslation();
     const [isLogin, setIsLogin] = useState(location.pathname === "/login");
     const [loginData, setLoginData] = useState({ email: "", password: "" });
     const [registerData, setRegisterData] = useState({
@@ -39,7 +41,7 @@ const Login = () => {
             const data = await apiClient.getDepartamentos();
             setDepartamentos(data);
         } catch (err) {
-            setError("Error al cargar los departamentos");
+            setError(t("auth.loginError"));
         } finally {
             setLoadingDepartments(false);
         }
@@ -61,7 +63,7 @@ const Login = () => {
         setLoading(true);
 
         if (!loginData.email || !loginData.password) {
-            setError("Por favor completa todos los campos");
+            setError(t("form.required"));
             setLoading(false);
             return;
         }
@@ -71,7 +73,7 @@ const Login = () => {
         if (result.success) {
             navigate("/tickets");
         } else {
-            setError(result.error || "Error al iniciar sesión");
+            setError(result.error || t("auth.loginError"));
         }
 
         setLoading(false);
@@ -88,17 +90,17 @@ const Login = () => {
             !registerData.password ||
             !registerData.password_confirm
         ) {
-            setError("Por favor completa los campos requeridos");
+            setError(t("form.required"));
             return;
         }
 
         if (registerData.password !== registerData.password_confirm) {
-            setError("Las contraseñas no coinciden");
+            setError(t("auth.registerError"));
             return;
         }
 
         if (registerData.password.length < 8) {
-            setError("La contraseña debe tener al menos 8 caracteres");
+            setError(t("form.required"));
             return;
         }
 
@@ -114,7 +116,7 @@ const Login = () => {
         if (result.success) {
             navigate("/tickets");
         } else {
-            setError(result.error || "Error al registrar usuario");
+            setError(result.error || t("auth.registerError"));
         }
 
         setLoading(false);
@@ -135,7 +137,7 @@ const Login = () => {
                                     className="auth-logo"
                                 />
                             </div>
-                            <h2 className="auth-title">Iniciar Sesión</h2>
+                            <h2 className="auth-title">{t("auth.login")}</h2>
 
                             <form
                                 onSubmit={handleLoginSubmit}
@@ -150,7 +152,9 @@ const Login = () => {
                                 )}
 
                                 <div className="form-group">
-                                    <label htmlFor="email">Email</label>
+                                    <label htmlFor="email">
+                                        {t("auth.email")}
+                                    </label>
                                     <input
                                         type="email"
                                         id="email"
@@ -167,7 +171,9 @@ const Login = () => {
                                 </div>
 
                                 <div className="form-group">
-                                    <label htmlFor="password">Contraseña</label>
+                                    <label htmlFor="password">
+                                        {t("auth.password")}
+                                    </label>
                                     <div className="password-input-wrapper">
                                         <input
                                             type={
@@ -245,8 +251,8 @@ const Login = () => {
                                     disabled={loading}
                                 >
                                     {loading
-                                        ? "Iniciando sesión..."
-                                        : "Iniciar Sesión"}
+                                        ? t("common.loading")
+                                        : t("auth.login")}
                                 </button>
                             </form>
                         </div>
@@ -259,7 +265,7 @@ const Login = () => {
                                     className="auth-logo"
                                 />
                             </div>
-                            <h2 className="auth-title">Crear Cuenta</h2>
+                            <h2 className="auth-title">{t("auth.register")}</h2>
 
                             <form
                                 onSubmit={handleRegisterSubmit}
@@ -276,7 +282,7 @@ const Login = () => {
                                 <div className="form-row">
                                     <div className="form-group">
                                         <label htmlFor="username">
-                                            Usuario *
+                                            {t("auth.username")} *
                                         </label>
                                         <input
                                             type="text"
@@ -296,7 +302,7 @@ const Login = () => {
 
                                     <div className="form-group">
                                         <label htmlFor="register-email">
-                                            Correo Electrónico *
+                                            {t("auth.email")} *
                                         </label>
                                         <input
                                             type="email"
@@ -317,7 +323,7 @@ const Login = () => {
 
                                 <div className="form-group">
                                     <label htmlFor="departamento">
-                                        Departamento *
+                                        {t("auth.department")} *
                                     </label>
                                     <select
                                         id="departamento"
@@ -332,7 +338,7 @@ const Login = () => {
                                         required
                                     >
                                         <option value="">
-                                            Selecciona un departamento
+                                            {t("form.selectDepartment")}
                                         </option>
                                         {departamentos.map((dept) => (
                                             <option
@@ -549,8 +555,8 @@ const Login = () => {
                                     disabled={loading}
                                 >
                                     {loading
-                                        ? "Creando cuenta..."
-                                        : "Crear Cuenta"}
+                                        ? t("common.loading")
+                                        : t("auth.register")}
                                 </button>
                             </form>
                         </div>
@@ -566,14 +572,14 @@ const Login = () => {
                         </h2>
                         <p className="panel-subtitle">
                             {isLogin
-                                ? "¿No tienes cuenta?"
-                                : "¿Ya tienes cuenta?"}
+                                ? t("auth.dontHaveAccount")
+                                : t("auth.haveAccount")}
                         </p>
                         <button
                             onClick={handleToggle}
                             className="btn-panel-toggle"
                         >
-                            {isLogin ? "Registrarse" : "Iniciar Sesión"}
+                            {isLogin ? t("auth.register") : t("auth.login")}
                         </button>
                     </div>
                 </div>

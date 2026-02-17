@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiDownload } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/client";
 import Layout from "../components/Layout";
@@ -17,6 +18,7 @@ const TicketsList = () => {
     const [error, setError] = useState(null);
     const [filter, setFilter] = useState("all");
     const { isSuperuser } = useAuth();
+    const { t } = useTranslation();
     const { notifications, removeNotification } = useTicketNotifications(
         tickets,
         isSuperuser(),
@@ -58,7 +60,7 @@ const TicketsList = () => {
             setTickets(data);
             setError(null);
         } catch (err) {
-            setError("Error al cargar los tickets");
+            setError(t("common.errorLoadingTickets"));
             console.error(err);
         } finally {
             if (loading) setLoading(false);
@@ -110,7 +112,7 @@ const TicketsList = () => {
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
         } catch (err) {
-            setError("Error al descargar el reporte PDF");
+            setError(t("messages.pdfDownloadError"));
             console.error(err);
         }
     };
@@ -132,11 +134,11 @@ const TicketsList = () => {
             <div className="tickets-container">
                 <div className="tickets-header">
                     <div>
-                        <h1>Mis Tickets</h1>
+                        <h1>{t("common.myTickets")}</h1>
                         <p className="subtitle">
                             {isSuperuser()
-                                ? "Todos los tickets del sistema"
-                                : "Tickets que has creado"}
+                                ? t("common.allTicketsInSystem")
+                                : t("common.ticketsYouCreated")}
                         </p>
                     </div>
                     <div className="header-actions">
@@ -145,12 +147,12 @@ const TicketsList = () => {
                                 className="btn-pdf"
                                 onClick={handleDownloadPDF}
                             >
-                                <FiDownload /> PDF Semanal
+                                <FiDownload /> {t("common.pdfWeekly")}
                             </button>
                         )}
                         {!isSuperuser() && (
                             <Link to="/tickets/new" className="btn-create">
-                                + Nuevo Ticket
+                                {t("common.createNewTicket")}
                             </Link>
                         )}
                     </div>
@@ -162,28 +164,30 @@ const TicketsList = () => {
                         onClick={() => setFilter("all")}
                     >
                         <div className="stat-value">{stats.total}</div>
-                        <div className="stat-label">Total</div>
+                        <div className="stat-label">{t("stats.total")}</div>
                     </div>
                     <div
                         className={`stat-card stat-open stat-clickable ${filter === "abierto" ? "active" : ""}`}
                         onClick={() => setFilter("abierto")}
                     >
                         <div className="stat-value">{stats.abierto}</div>
-                        <div className="stat-label">Abiertos</div>
+                        <div className="stat-label">{t("stats.open")}</div>
                     </div>
                     <div
                         className={`stat-card stat-progress stat-clickable ${filter === "en_proceso" ? "active" : ""}`}
                         onClick={() => setFilter("en_proceso")}
                     >
                         <div className="stat-value">{stats.en_proceso}</div>
-                        <div className="stat-label">En Proceso</div>
+                        <div className="stat-label">
+                            {t("stats.inProgress")}
+                        </div>
                     </div>
                     <div
                         className={`stat-card stat-resolved stat-clickable ${filter === "resuelto" ? "active" : ""}`}
                         onClick={() => setFilter("resuelto")}
                     >
                         <div className="stat-value">{stats.resuelto}</div>
-                        <div className="stat-label">Resueltos</div>
+                        <div className="stat-label">{t("stats.resolved")}</div>
                     </div>
                 </div>
 
@@ -197,13 +201,13 @@ const TicketsList = () => {
 
                 {filteredTickets.length === 0 ? (
                     <div className="empty-state">
-                        <p>No hay tickets para mostrar</p>
+                        <p>{t("common.noTicketsToShow")}</p>
                         {!isSuperuser() && (
                             <Link
                                 to="/tickets/new"
                                 className="btn-create-empty"
                             >
-                                Crear primer ticket
+                                {t("common.createOne")}
                             </Link>
                         )}
                     </div>

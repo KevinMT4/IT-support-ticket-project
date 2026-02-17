@@ -1,0 +1,85 @@
+{
+    "common": {
+        "myTickets": "Mis Tickets",
+        "allTicketsInSystem": "Todos los tickets del sistema",
+        "ticketsYouCreated": "Tickets que has creado",
+        "createNewTicket": "+ Nuevo Ticket",
+        "pdfWeekly": "PDF Semanal",
+        "logout": "Cerrar Sesión",
+        "closeSession": "Cerrar sesión",
+        "areYouSure": "¿Estás seguro que deseas cerrar sesión?",
+        "admin": "Admin",
+        "loading": "Cargando...",
+        "errorLoadingTickets": "Error al cargar los tickets",
+        "noTicketsToShow": "No hay tickets para mostrar",
+        "createOne": "Crea uno"
+    },
+    "stats": {
+        "total": "Total",
+        "open": "Abiertos",
+        "inProgress": "En Proceso",
+        "resolved": "Resueltos"
+    },
+    "ticket": {
+        "subject": "Asunto",
+        "description": "Descripción",
+        "department": "Departamento",
+        "reason": "Motivo",
+        "priority": "Prioridad",
+        "status": "Estado",
+        "createdDate": "Fecha de Creación",
+        "createdBy": "Creado por",
+        "lastUpdate": "Última Actualización",
+        "actions": "Acciones",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "details": "Detalles del Ticket"
+    },
+    "auth": {
+        "login": "Iniciar Sesión",
+        "register": "Registrarse",
+        "email": "Correo",
+        "username": "Usuario",
+        "password": "Contraseña",
+        "confirmPassword": "Confirmar Contraseña",
+        "firstName": "Nombre",
+        "lastName": "Apellido",
+        "department": "Departamento",
+        "loginError": "Error al iniciar sesión",
+        "registerError": "Error al registrarse",
+        "invalidCredentials": "Credenciales inválidas",
+        "dontHaveAccount": "¿No tienes cuenta?",
+        "haveAccount": "¿Ya tienes cuenta?"
+    },
+    "form": {
+        "submit": "Enviar",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "delete": "Eliminar",
+        "confirm": "Confirmar",
+        "selectDepartment": "Selecciona un departamento",
+        "selectReason": "Selecciona un motivo",
+        "selectPriority": "Selecciona una prioridad",
+        "selectStatus": "Selecciona un estado",
+        "required": "Este campo es requerido",
+        "invalidEmail": "Correo inválido"
+    },
+    "priority": {
+        "low": "Baja",
+        "medium": "Media",
+        "high": "Alta",
+        "urgent": "Urgente"
+    },
+    "status": {
+        "open": "Abierto",
+        "inProgress": "En Proceso",
+        "resolved": "Resuelto"
+    },
+    "messages": {
+        "ticketCreatedSuccessfully": "Ticket creado exitosamente",
+        "ticketUpdatedSuccessfully": "Ticket actualizado exitosamente",
+        "ticketDeletedSuccessfully": "Ticket eliminado exitosamente",
+        "pdfDownloadError": "Error al descargar el reporte PDF",
+        "pdfGeneratingError": "Error al generar el PDF"
+    }
+}

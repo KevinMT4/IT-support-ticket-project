@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 import ConfirmModal from "./ConfirmModal";
 import "../styles/Layout.css";
 
 const Layout = ({ children }) => {
     const { user, logout, isSuperuser } = useAuth();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [showLogoutModal, setShowLogoutModal] = useState(false);
 
@@ -36,11 +39,11 @@ const Layout = ({ children }) => {
                     </Link>
                     <div className="navbar-menu">
                         <Link to="/tickets" className="navbar-link">
-                            Mis Tickets
+                            {t("common.myTickets")}
                         </Link>
                         {!isSuperuser() && (
                             <Link to="/tickets/new" className="navbar-link">
-                                Crear Ticket
+                                {t("common.createNewTicket")}
                             </Link>
                         )}
                         {user && (
@@ -49,15 +52,16 @@ const Layout = ({ children }) => {
                                     {user.first_name || user.username}
                                     {isSuperuser() && (
                                         <span className="badge-superuser">
-                                            Admin
+                                            {t("common.admin")}
                                         </span>
                                     )}
                                 </span>
+                                <LanguageSwitcher />
                                 <button
                                     onClick={handleLogoutClick}
                                     className="btn-logout"
                                 >
-                                    Cerrar Sesión
+                                    {t("common.logout")}
                                 </button>
                             </div>
                         )}
@@ -69,8 +73,8 @@ const Layout = ({ children }) => {
                 isOpen={showLogoutModal}
                 onClose={handleLogoutCancel}
                 onConfirm={handleLogoutConfirm}
-                title="Cerrar sesión"
-                message="¿Estás seguro que deseas cerrar sesión?"
+                title={t("common.closeSession")}
+                message={t("common.areYouSure")}
             />
         </div>
     );

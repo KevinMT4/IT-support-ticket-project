@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/client";
 import Layout from "../components/Layout";
@@ -9,6 +10,7 @@ import "../styles/CreateTicket.css";
 
 const CreateTicket = () => {
     const { isSuperuser } = useAuth();
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({
         motivo: "",
         asunto: "",
@@ -39,9 +41,7 @@ const CreateTicket = () => {
             );
 
             if (!tiDept) {
-                setError(
-                    "No se encontró el departamento de TI. Por favor contacta al administrador.",
-                );
+                setError(t("messages.ticketCreatedSuccessfully"));
                 setLoading(false);
                 return;
             }
@@ -50,7 +50,7 @@ const CreateTicket = () => {
             await loadMotivos(tiDept.id);
             setLoading(false);
         } catch (err) {
-            setError("Error al cargar departamento de TI");
+            setError(t("common.errorLoadingTickets"));
             setLoading(false);
         }
     };
@@ -78,12 +78,12 @@ const CreateTicket = () => {
         setError(null);
 
         if (!formData.asunto || !formData.contenido) {
-            setError("Por favor completa todos los campos requeridos");
+            setError(t("form.required"));
             return;
         }
 
         if (!departamentoTI) {
-            setError("No se pudo cargar el departamento de TI");
+            setError(t("common.errorLoadingTickets"));
             return;
         }
 
@@ -100,7 +100,7 @@ const CreateTicket = () => {
             await apiClient.createTicket(ticketData);
             navigate("/tickets");
         } catch (err) {
-            setError(err.message || "Error al crear el ticket");
+            setError(err.message || t("messages.pdfGeneratingError"));
             setSubmitting(false);
         }
     };
@@ -117,7 +117,7 @@ const CreateTicket = () => {
         <Layout>
             <div className="create-ticket-container">
                 <div className="create-ticket-header">
-                    <h1>Crear Nuevo Ticket</h1>
+                    <h1>{t("common.createNewTicket").replace("+ ", "")}</h1>
                     <p className="subtitle">
                         Completa el formulario para crear un nuevo ticket de
                         soporte
@@ -134,14 +134,14 @@ const CreateTicket = () => {
                     )}
 
                     <div className="form-group">
-                        <label>Departamento</label>
+                        <label>{t("ticket.department")}</label>
                         <div className="department-display">
-                            {departamentoTI?.nombre || "Cargando..."}
+                            {departamentoTI?.nombre || t("common.loading")}
                         </div>
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="motivo">Motivo</label>
+                        <label htmlFor="motivo">{t("ticket.reason")}</label>
                         <select
                             id="motivo"
                             name="motivo"
@@ -149,9 +149,7 @@ const CreateTicket = () => {
                             onChange={handleChange}
                             disabled={submitting}
                         >
-                            <option value="">
-                                Selecciona un motivo (opcional)
-                            </option>
+                            <option value="">{t("form.selectReason")}</option>
                             {motivos.map((motivo) => (
                                 <option key={motivo.id} value={motivo.id}>
                                     {motivo.nombre}
@@ -162,7 +160,8 @@ const CreateTicket = () => {
 
                     <div className="form-group">
                         <label htmlFor="asunto">
-                            Asunto <span className="required">*</span>
+                            {t("ticket.subject")}{" "}
+                            <span className="required">*</span>
                         </label>
                         <input
                             type="text"
@@ -178,7 +177,8 @@ const CreateTicket = () => {
 
                     <div className="form-group">
                         <label htmlFor="contenido">
-                            Descripción <span className="required">*</span>
+                            {t("ticket.description")}{" "}
+                            <span className="required">*</span>
                         </label>
                         <textarea
                             id="contenido"
@@ -199,14 +199,14 @@ const CreateTicket = () => {
                             onClick={() => navigate("/tickets")}
                             disabled={submitting}
                         >
-                            Cancelar
+                            {t("form.cancel")}
                         </button>
                         <button
                             type="submit"
                             className="btn-submit"
                             disabled={submitting}
                         >
-                            {submitting ? "Creando..." : "Crear Ticket"}
+                            {submitting ? t("common.loading") : "Crear Ticket"}
                         </button>
                     </div>
                 </form>

@@ -1,0 +1,85 @@
+{
+    "common": {
+        "myTickets": "My Tickets",
+        "allTicketsInSystem": "All tickets in the system",
+        "ticketsYouCreated": "Tickets you created",
+        "createNewTicket": "+ New Ticket",
+        "pdfWeekly": "Weekly PDF",
+        "logout": "Logout",
+        "closeSession": "Logout",
+        "areYouSure": "Are you sure you want to logout?",
+        "admin": "Admin",
+        "loading": "Loading...",
+        "errorLoadingTickets": "Error loading tickets",
+        "noTicketsToShow": "No tickets to show",
+        "createOne": "Create one"
+    },
+    "stats": {
+        "total": "Total",
+        "open": "Open",
+        "inProgress": "In Progress",
+        "resolved": "Resolved"
+    },
+    "ticket": {
+        "subject": "Subject",
+        "description": "Description",
+        "department": "Department",
+        "reason": "Reason",
+        "priority": "Priority",
+        "status": "Status",
+        "createdDate": "Created Date",
+        "createdBy": "Created By",
+        "lastUpdate": "Last Update",
+        "actions": "Actions",
+        "edit": "Edit",
+        "delete": "Delete",
+        "details": "Ticket Details"
+    },
+    "auth": {
+        "login": "Login",
+        "register": "Register",
+        "email": "Email",
+        "username": "Username",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "department": "Department",
+        "loginError": "Login error",
+        "registerError": "Registration error",
+        "invalidCredentials": "Invalid credentials",
+        "dontHaveAccount": "Don't have an account?",
+        "haveAccount": "Already have an account?"
+    },
+    "form": {
+        "submit": "Submit",
+        "cancel": "Cancel",
+        "save": "Save",
+        "delete": "Delete",
+        "confirm": "Confirm",
+        "selectDepartment": "Select a department",
+        "selectReason": "Select a reason",
+        "selectPriority": "Select a priority",
+        "selectStatus": "Select a status",
+        "required": "This field is required",
+        "invalidEmail": "Invalid email"
+    },
+    "priority": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "urgent": "Urgent"
+    },
+    "status": {
+        "open": "Open",
+        "inProgress": "In Progress",
+        "resolved": "Resolved"
+    },
+    "messages": {
+        "ticketCreatedSuccessfully": "Ticket created successfully",
+        "ticketUpdatedSuccessfully": "Ticket updated successfully",
+        "ticketDeletedSuccessfully": "Ticket deleted successfully",
+        "pdfDownloadError": "Error downloading PDF report",
+        "pdfGeneratingError": "Error generating PDF"
+    }
+}
