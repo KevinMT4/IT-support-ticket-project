@@ -7,12 +7,4 @@ db.sqlite3
 node_modules/
 .vscode/
 
-*.xlsx
-*.xls
-*.xlsm
-*.xlsb
-*.xltx
-*.xltm
-*.xlt
-*.xml
-*.lamw
+reportes_pdf/

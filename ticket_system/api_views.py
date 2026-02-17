@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.db.models import Count, Q
 from datetime import timedelta
 import os
+from io import BytesIO
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -229,10 +230,14 @@ def generar_pdf_estadisticas(request):
         return Response({'error': 'No tienes permisos para generar reportes'},
                         status=status.HTTP_403_FORBIDDEN)
 
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="reporte_tickets_{timezone.now().strftime("%Y%m%d_%H%M%S")}.pdf"'
+    pdf_dir = os.path.join(settings.BASE_DIR, 'reportes_pdf', 'semanales')
+    os.makedirs(pdf_dir, exist_ok=True)
 
-    doc = SimpleDocTemplate(response, pagesize=letter, rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=30)
+    filename = f"reporte_tickets_{timezone.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+    pdf_path = os.path.join(pdf_dir, filename)
+
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=30)
 
     elements = []
     styles = getSampleStyleSheet()
@@ -417,6 +422,15 @@ def generar_pdf_estadisticas(request):
     elements.append(tabla_graficas)
 
     doc.build(elements)
+
+    pdf_content = buffer.getvalue()
+    buffer.close()
+
+    with open(pdf_path, 'wb') as f:
+        f.write(pdf_content)
+
+    response = HttpResponse(pdf_content, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
 
 
@@ -433,10 +447,14 @@ def generar_pdf_ticket(request, ticket_id):
         return Response({'error': 'Ticket no encontrado'},
                         status=status.HTTP_404_NOT_FOUND)
 
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="ticket_{ticket.id}_{timezone.now().strftime("%Y%m%d_%H%M%S")}.pdf"'
+    pdf_dir = os.path.join(settings.BASE_DIR, 'reportes_pdf', 'tickets')
+    os.makedirs(pdf_dir, exist_ok=True)
 
-    doc = SimpleDocTemplate(response, pagesize=letter, rightMargin=40, leftMargin=40, topMargin=40, bottomMargin=40)
+    filename = f"ticket_{ticket.id}_{timezone.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+    pdf_path = os.path.join(pdf_dir, filename)
+
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=40, leftMargin=40, topMargin=40, bottomMargin=40)
 
     elements = []
     styles = getSampleStyleSheet()
@@ -559,4 +577,13 @@ def generar_pdf_ticket(request, ticket_id):
     elements.append(content_table)
 
     doc.build(elements)
+
+    pdf_content = buffer.getvalue()
+    buffer.close()
+
+    with open(pdf_path, 'wb') as f:
+        f.write(pdf_content)
+
+    response = HttpResponse(pdf_content, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
