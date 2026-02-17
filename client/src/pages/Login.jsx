@@ -95,12 +95,12 @@ const Login = () => {
         }
 
         if (registerData.password !== registerData.password_confirm) {
-            setError(t("auth.registerError"));
+            setError(t("auth.passwordsNotMatch"));
             return;
         }
 
         if (registerData.password.length < 8) {
-            setError(t("form.required"));
+            setError(t("auth.passwordMinLength"));
             return;
         }
 
@@ -165,7 +165,9 @@ const Login = () => {
                                                 email: e.target.value,
                                             })
                                         }
-                                        placeholder="correo@ejemplo.com"
+                                        placeholder={t(
+                                            "form.placeholders.email",
+                                        )}
                                         disabled={loading}
                                     />
                                 </div>
@@ -189,7 +191,9 @@ const Login = () => {
                                                     password: e.target.value,
                                                 })
                                             }
-                                            placeholder="Ingresa tu contraseña"
+                                            placeholder={t(
+                                                "form.placeholders.password",
+                                            )}
                                             disabled={loading}
                                         />
                                         <button
@@ -203,8 +207,8 @@ const Login = () => {
                                             disabled={loading}
                                             title={
                                                 showLoginPassword
-                                                    ? "Ocultar contraseña"
-                                                    : "Mostrar contraseña"
+                                                    ? t("auth.hidePassword")
+                                                    : t("auth.showPassword")
                                             }
                                         >
                                             {showLoginPassword ? (
@@ -294,7 +298,9 @@ const Login = () => {
                                                     username: e.target.value,
                                                 })
                                             }
-                                            placeholder="Nombre de usuario"
+                                            placeholder={t(
+                                                "form.placeholders.username",
+                                            )}
                                             disabled={loading}
                                             required
                                         />
@@ -314,7 +320,9 @@ const Login = () => {
                                                     email: e.target.value,
                                                 })
                                             }
-                                            placeholder="correo@ejemplo.com"
+                                            placeholder={t(
+                                                "form.placeholders.email",
+                                            )}
                                             disabled={loading}
                                             required
                                         />
@@ -354,7 +362,7 @@ const Login = () => {
                                 <div className="form-row">
                                     <div className="form-group">
                                         <label htmlFor="first_name">
-                                            Nombre
+                                            {t("auth.firstName")}
                                         </label>
                                         <input
                                             type="text"
@@ -366,14 +374,16 @@ const Login = () => {
                                                     first_name: e.target.value,
                                                 })
                                             }
-                                            placeholder="Tu nombre"
+                                            placeholder={t(
+                                                "form.placeholders.firstName",
+                                            )}
                                             disabled={loading}
                                         />
                                     </div>
 
                                     <div className="form-group">
                                         <label htmlFor="last_name">
-                                            Apellido
+                                            {t("auth.lastName")}
                                         </label>
                                         <input
                                             type="text"
@@ -385,7 +395,9 @@ const Login = () => {
                                                     last_name: e.target.value,
                                                 })
                                             }
-                                            placeholder="Tu apellido"
+                                            placeholder={t(
+                                                "form.placeholders.lastName",
+                                            )}
                                             disabled={loading}
                                         />
                                     </div>
@@ -394,7 +406,7 @@ const Login = () => {
                                 <div className="form-row">
                                     <div className="form-group">
                                         <label htmlFor="register-password">
-                                            Contraseña *
+                                            {t("auth.password")} *
                                         </label>
                                         <div className="password-input-wrapper">
                                             <input
@@ -412,7 +424,9 @@ const Login = () => {
                                                             e.target.value,
                                                     })
                                                 }
-                                                placeholder="Mínimo 8 caracteres"
+                                                placeholder={t(
+                                                    "form.placeholders.passwordMinimum",
+                                                )}
                                                 disabled={loading}
                                                 required
                                             />
@@ -427,8 +441,8 @@ const Login = () => {
                                                 disabled={loading}
                                                 title={
                                                     showRegisterPassword
-                                                        ? "Ocultar contraseña"
-                                                        : "Mostrar contraseña"
+                                                        ? t("auth.hidePassword")
+                                                        : t("auth.showPassword")
                                                 }
                                             >
                                                 {showRegisterPassword ? (
@@ -471,7 +485,7 @@ const Login = () => {
 
                                     <div className="form-group">
                                         <label htmlFor="password_confirm">
-                                            Confirmar Contraseña *
+                                            {t("auth.confirmPassword")} *
                                         </label>
                                         <div className="password-input-wrapper">
                                             <input
@@ -491,7 +505,9 @@ const Login = () => {
                                                             e.target.value,
                                                     })
                                                 }
-                                                placeholder="Repite tu contraseña"
+                                                placeholder={t(
+                                                    "form.placeholders.confirmPassword",
+                                                )}
                                                 disabled={loading}
                                                 required
                                             />
@@ -506,8 +522,8 @@ const Login = () => {
                                                 disabled={loading}
                                                 title={
                                                     showPasswordConfirm
-                                                        ? "Ocultar contraseña"
-                                                        : "Mostrar contraseña"
+                                                        ? t("auth.hidePassword")
+                                                        : t("auth.showPassword")
                                                 }
                                             >
                                                 {showPasswordConfirm ? (
@@ -567,8 +583,8 @@ const Login = () => {
                     <div className="panel-content">
                         <h2 className="panel-title">
                             {isLogin
-                                ? "¡Hola, Bienvenido!"
-                                : "¡Bienvenido de vuelta!"}
+                                ? t("auth.welcomeGreeting")
+                                : t("auth.welcomeBack")}
                         </h2>
                         <p className="panel-subtitle">
                             {isLogin

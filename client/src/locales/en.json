@@ -50,7 +50,19 @@
         "registerError": "Registration error",
         "invalidCredentials": "Invalid credentials",
         "dontHaveAccount": "Don't have an account?",
-        "haveAccount": "Already have an account?"
+        "haveAccount": "Already have an account?",
+        "welcomeBack": "Welcome back!",
+        "welcomeGreeting": "Hello, Welcome!",
+        "showPassword": "Show password",
+        "hidePassword": "Hide password",
+        "creatingAccount": "Creating account...",
+        "createAccount": "Create Account",
+        "alreadyHaveAccount": "Already have an account?",
+        "loginHere": "Login here",
+        "passwordsNotMatch": "Passwords do not match",
+        "passwordMinLength": "Password must be at least 8 characters",
+        "fillRequiredFields": "Please complete all required fields",
+        "errorLoadingDepartments": "Error loading departments"
     },
     "form": {
         "submit": "Submit",
@@ -63,7 +75,16 @@
         "selectPriority": "Select a priority",
         "selectStatus": "Select a status",
         "required": "This field is required",
-        "invalidEmail": "Invalid email"
+        "invalidEmail": "Invalid email",
+        "placeholders": {
+            "username": "Username",
+            "email": "email@example.com",
+            "password": "Enter your password",
+            "confirmPassword": "Repeat your password",
+            "firstName": "Your name",
+            "lastName": "Your last name",
+            "passwordMinimum": "Minimum 8 characters"
+        }
     },
     "priority": {
         "low": "Low",

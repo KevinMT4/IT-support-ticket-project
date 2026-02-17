@@ -50,7 +50,19 @@
         "registerError": "Error al registrarse",
         "invalidCredentials": "Credenciales inválidas",
         "dontHaveAccount": "¿No tienes cuenta?",
-        "haveAccount": "¿Ya tienes cuenta?"
+        "haveAccount": "¿Ya tienes cuenta?",
+        "welcomeBack": "¡Bienvenido de vuelta!",
+        "welcomeGreeting": "¡Hola, Bienvenido!",
+        "showPassword": "Mostrar contraseña",
+        "hidePassword": "Ocultar contraseña",
+        "creatingAccount": "Creando cuenta...",
+        "createAccount": "Crear Cuenta",
+        "alreadyHaveAccount": "¿Ya tienes cuenta?",
+        "loginHere": "Inicia sesión aquí",
+        "passwordsNotMatch": "Las contraseñas no coinciden",
+        "passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+        "fillRequiredFields": "Por favor completa los campos requeridos",
+        "errorLoadingDepartments": "Error al cargar los departamentos"
     },
     "form": {
         "submit": "Enviar",
@@ -63,7 +75,16 @@
         "selectPriority": "Selecciona una prioridad",
         "selectStatus": "Selecciona un estado",
         "required": "Este campo es requerido",
-        "invalidEmail": "Correo inválido"
+        "invalidEmail": "Correo inválido",
+        "placeholders": {
+            "username": "Nombre de usuario",
+            "email": "correo@ejemplo.com",
+            "password": "Ingresa tu contraseña",
+            "confirmPassword": "Repite tu contraseña",
+            "firstName": "Tu nombre",
+            "lastName": "Tu apellido",
+            "passwordMinimum": "Mínimo 8 caracteres"
+        }
     },
     "priority": {
         "low": "Baja",
