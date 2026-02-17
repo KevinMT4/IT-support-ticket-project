@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiDownload } from "react-icons/fi";
-import { useTranslation } from "react-i18next";
+import { useLanguage } from "../hooks/useLanguage";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/client";
 import Layout from "../components/Layout";
@@ -18,7 +18,7 @@ const TicketsList = () => {
     const [error, setError] = useState(null);
     const [filter, setFilter] = useState("all");
     const { isSuperuser } = useAuth();
-    const { t } = useTranslation();
+    const { t } = useLanguage();
     const { notifications, removeNotification } = useTicketNotifications(
         tickets,
         isSuperuser(),

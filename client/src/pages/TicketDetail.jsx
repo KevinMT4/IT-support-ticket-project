@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../hooks/useLanguage";
 import apiClient from "../api/client";
 import Layout from "../components/Layout";
 import Loading from "../components/Loading";
@@ -16,6 +17,7 @@ const TicketDetail = () => {
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState("");
     const { isSuperuser } = useAuth();
+    const { t, currentLanguage } = useLanguage();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,7 +31,7 @@ const TicketDetail = () => {
             setTicket(data);
             setError(null);
         } catch (err) {
-            setError("Error al cargar el ticket");
+            setError(t("ticketDetail.errorLoadingTicket"));
             console.error(err);
         } finally {
             setLoading(false);
@@ -45,10 +47,10 @@ const TicketDetail = () => {
             );
             setTicket(updatedTicket);
             playSuccessSound();
-            setSuccessMessage("Estado actualizado correctamente");
+            setSuccessMessage(t("messages.stateUpdatedSuccessfully"));
             setTimeout(() => setSuccessMessage(""), 3000);
         } catch (err) {
-            setError("Error al actualizar el estado");
+            setError(t("messages.errorUpdatingStatus"));
             console.error(err);
         } finally {
             setUpdating(false);
@@ -64,10 +66,10 @@ const TicketDetail = () => {
             );
             setTicket(updatedTicket);
             playSuccessSound();
-            setSuccessMessage("Prioridad actualizada correctamente");
+            setSuccessMessage(t("messages.priorityUpdatedSuccessfully"));
             setTimeout(() => setSuccessMessage(""), 3000);
         } catch (err) {
-            setError("Error al actualizar la prioridad");
+            setError(t("messages.errorUpdatingPriority"));
             console.error(err);
         } finally {
             setUpdating(false);
@@ -77,7 +79,8 @@ const TicketDetail = () => {
     const formatDate = (dateString) => {
         if (!dateString) return "N/A";
         const date = new Date(dateString);
-        return date.toLocaleDateString("es-ES", {
+        const locale = currentLanguage === "es" ? "es-ES" : "en-US";
+        return date.toLocaleDateString(locale, {
             year: "numeric",
             month: "long",
             day: "numeric",
@@ -122,7 +125,7 @@ const TicketDetail = () => {
                         onClick={() => navigate("/tickets")}
                         className="btn-back"
                     >
-                        Volver a Tickets
+                        {t("ticket.backToTickets")}
                     </button>
                 </div>
             </Layout>
@@ -134,11 +137,11 @@ const TicketDetail = () => {
             <div className="ticket-detail-container">
                 <div className="ticket-detail-header">
                     <Link to="/tickets" className="back-link">
-                        ← Volver a Tickets
+                        {t("ticket.backToTickets")}
                     </Link>
                     <div className="header-content">
                         <div className="header-left">
-                            <h1>Detalles del Ticket</h1>
+                            <h1>{t("ticket.details")}</h1>
                             <div className="ticket-badges-detail">
                                 <span
                                     className={`badge priority-badge ${getPriorityClass(ticket.prioridad)}`}

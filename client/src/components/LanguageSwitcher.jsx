@@ -1,32 +1,45 @@
-import { useTranslation } from "react-i18next";
 import { FiGlobe } from "react-icons/fi";
+import { useLanguage } from "../hooks/useLanguage";
 import "../styles/LanguageSwitcher.css";
 
 const LanguageSwitcher = () => {
-    const { i18n } = useTranslation();
+    const { currentLanguage, changeLanguage, getLanguageName } = useLanguage();
 
     const handleLanguageChange = (lang) => {
-        i18n.changeLanguage(lang);
-        localStorage.setItem("language", lang);
+        changeLanguage(lang);
     };
 
+    const languages = [
+        { code: "es", name: "Español", flag: "🇪🇸" },
+        { code: "en", name: "English", flag: "🇬🇧" },
+    ];
+
     return (
-        <div className="language-switcher">
-            <button
-                className={`lang-btn ${i18n.language === "es" ? "active" : ""}`}
-                onClick={() => handleLanguageChange("es")}
-                title="Español"
-            >
-                ES
-            </button>
-            <div className="lang-separator">|</div>
-            <button
-                className={`lang-btn ${i18n.language === "en" ? "active" : ""}`}
-                onClick={() => handleLanguageChange("en")}
-                title="English"
-            >
-                EN
-            </button>
+        <div
+            className="language-switcher"
+            role="group"
+            aria-label="Language selector"
+        >
+            <FiGlobe className="language-icon" aria-hidden="true" />
+            <div className="language-buttons">
+                {languages.map((lang) => (
+                    <button
+                        key={lang.code}
+                        className={`lang-btn ${
+                            currentLanguage === lang.code ? "active" : ""
+                        }`}
+                        onClick={() => handleLanguageChange(lang.code)}
+                        title={lang.name}
+                        aria-label={`${lang.name} (${lang.code.toUpperCase()})`}
+                        aria-pressed={currentLanguage === lang.code}
+                    >
+                        <span className="lang-flag">{lang.flag}</span>
+                        <span className="lang-code">
+                            {lang.code.toUpperCase()}
+                        </span>
+                    </button>
+                ))}
+            </div>
         </div>
     );
 };

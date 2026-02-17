@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { useLanguage } from "../hooks/useLanguage";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/client";
 import Layout from "../components/Layout";
@@ -10,7 +10,7 @@ import "../styles/CreateTicket.css";
 
 const CreateTicket = () => {
     const { isSuperuser } = useAuth();
-    const { t } = useTranslation();
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         motivo: "",
         asunto: "",

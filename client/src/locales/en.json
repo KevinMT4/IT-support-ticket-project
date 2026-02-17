@@ -33,7 +33,8 @@
         "actions": "Actions",
         "edit": "Edit",
         "delete": "Delete",
-        "details": "Ticket Details"
+        "details": "Ticket Details",
+        "backToTickets": "← Back to Tickets"
     },
     "auth": {
         "login": "Login",
@@ -80,6 +81,18 @@
         "ticketUpdatedSuccessfully": "Ticket updated successfully",
         "ticketDeletedSuccessfully": "Ticket deleted successfully",
         "pdfDownloadError": "Error downloading PDF report",
-        "pdfGeneratingError": "Error generating PDF"
+        "pdfGeneratingError": "Error generating PDF",
+        "stateUpdatedSuccessfully": "Status updated successfully",
+        "priorityUpdatedSuccessfully": "Priority updated successfully",
+        "errorUpdatingStatus": "Error updating status",
+        "errorUpdatingPriority": "Error updating priority",
+        "close": "Close",
+        "confirmDeleteTicket": "Are you sure you want to delete this ticket?",
+        "deleteConfirmed": "Ticket deleted",
+        "deleteError": "Error deleting ticket"
+    },
+    "ticketDetail": {
+        "errorLoadingTicket": "Error loading ticket",
+        "noAvailableActions": "No available actions"
     }
 }

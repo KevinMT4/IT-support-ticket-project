@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { useLanguage } from "../hooks/useLanguage";
 import { useAuth } from "../context/AuthContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ConfirmModal from "./ConfirmModal";
@@ -8,7 +8,7 @@ import "../styles/Layout.css";
 
 const Layout = ({ children }) => {
     const { user, logout, isSuperuser } = useAuth();
-    const { t } = useTranslation();
+    const { t } = useLanguage();
     const navigate = useNavigate();
     const [showLogoutModal, setShowLogoutModal] = useState(false);
 
@@ -28,9 +28,17 @@ const Layout = ({ children }) => {
 
     return (
         <div className="layout">
-            <nav className="navbar">
+            <nav
+                className="navbar"
+                role="navigation"
+                aria-label="Main navigation"
+            >
                 <div className="navbar-container">
-                    <Link to="/tickets" className="navbar-brand">
+                    <Link
+                        to="/tickets"
+                        className="navbar-brand"
+                        aria-label="Home"
+                    >
                         <img
                             src="/src/assets/image.png"
                             alt="COFATECH"
@@ -51,7 +59,10 @@ const Layout = ({ children }) => {
                                 <span className="user-info">
                                     {user.first_name || user.username}
                                     {isSuperuser() && (
-                                        <span className="badge-superuser">
+                                        <span
+                                            className="badge-superuser"
+                                            title="Administrator"
+                                        >
                                             {t("common.admin")}
                                         </span>
                                     )}
@@ -60,6 +71,7 @@ const Layout = ({ children }) => {
                                 <button
                                     onClick={handleLogoutClick}
                                     className="btn-logout"
+                                    aria-label={t("common.logout")}
                                 >
                                     {t("common.logout")}
                                 </button>
@@ -68,7 +80,9 @@ const Layout = ({ children }) => {
                     </div>
                 </div>
             </nav>
-            <main className="main-content">{children}</main>
+            <main className="main-content" role="main">
+                {children}
+            </main>
             <ConfirmModal
                 isOpen={showLogoutModal}
                 onClose={handleLogoutCancel}

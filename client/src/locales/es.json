@@ -33,7 +33,8 @@
         "actions": "Acciones",
         "edit": "Editar",
         "delete": "Eliminar",
-        "details": "Detalles del Ticket"
+        "details": "Detalles del Ticket",
+        "backToTickets": "← Volver a Tickets"
     },
     "auth": {
         "login": "Iniciar Sesión",
@@ -80,6 +81,18 @@
         "ticketUpdatedSuccessfully": "Ticket actualizado exitosamente",
         "ticketDeletedSuccessfully": "Ticket eliminado exitosamente",
         "pdfDownloadError": "Error al descargar el reporte PDF",
-        "pdfGeneratingError": "Error al generar el PDF"
+        "pdfGeneratingError": "Error al generar el PDF",
+        "stateUpdatedSuccessfully": "Estado actualizado correctamente",
+        "priorityUpdatedSuccessfully": "Prioridad actualizada correctamente",
+        "errorUpdatingStatus": "Error al actualizar el estado",
+        "errorUpdatingPriority": "Error al actualizar la prioridad",
+        "close": "Cerrar",
+        "confirmDeleteTicket": "¿Estás seguro de que deseas eliminar este ticket?",
+        "deleteConfirmed": "Ticket eliminado",
+        "deleteError": "Error al eliminar el ticket"
+    },
+    "ticketDetail": {
+        "errorLoadingTicket": "Error al cargar el ticket",
+        "noAvailableActions": "No hay acciones disponibles"
     }
 }

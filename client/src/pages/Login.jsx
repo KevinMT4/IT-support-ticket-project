@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { useLanguage } from "../hooks/useLanguage";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/client";
 import Alert from "../components/Alert";
@@ -8,7 +8,7 @@ import "../styles/Auth.css";
 
 const Login = () => {
     const location = useLocation();
-    const { t } = useTranslation();
+    const { t } = useLanguage();
     const [isLogin, setIsLogin] = useState(location.pathname === "/login");
     const [loginData, setLoginData] = useState({ email: "", password: "" });
     const [registerData, setRegisterData] = useState({
