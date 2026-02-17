@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { playNotificationSound } from '../utils/sounds';
 
 const STORAGE_KEY = 'ticket_last_known_state';
@@ -24,6 +25,7 @@ const saveStoredState = (state) => {
 };
 
 export const useTicketNotifications = (tickets, isSuperuser = false) => {
+  const { t } = useTranslation();
   const [notifications, setNotifications] = useState([]);
   const previousTicketsRef = useRef(null);
   const isFirstLoadRef = useRef(true);
@@ -77,7 +79,7 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
             id: `${ticket.id}-nuevo-${Date.now()}`,
             ticketId: ticket.id,
             type: 'nuevo',
-            message: `Nuevo ticket. ${ticket.usuario_nombre}: "${ticket.asunto}"`,
+            message: `${t('notifications.newTicket')}. ${ticket.usuario_nombre}: "${ticket.asunto}"`,
             newValue: ticket.asunto,
           });
           ticketStates[ticketKey] = {
@@ -95,11 +97,18 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
         }
 
         if (previousTicket.estado !== ticket.estado) {
+          const statusTranslations = {
+            'abierto': t('status.open'),
+            'en_proceso': t('status.inProgress'),
+            'resuelto': t('status.resolved')
+          };
+          const translatedStatus = statusTranslations[ticket.estado] || ticket.estado_display;
+
           changes.push({
             id: `${ticket.id}-estado-${Date.now()}-${Math.random()}`,
             ticketId: ticket.id,
             type: 'estado',
-            message: `Ticket "${ticket.asunto}": Estado cambiado a "${ticket.estado_display}"`,
+            message: `${t('notifications.ticket')} "${ticket.asunto}": ${t('notifications.statusChangedTo')} "${translatedStatus}"`,
             previousValue: previousTicket.estado_display,
             newValue: ticket.estado_display,
           });
@@ -107,11 +116,19 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
         }
 
         if (previousTicket.prioridad !== ticket.prioridad) {
+          const priorityTranslations = {
+            'baja': t('priority.low'),
+            'media': t('priority.medium'),
+            'alta': t('priority.high'),
+            'urgente': t('priority.urgent')
+          };
+          const translatedPriority = priorityTranslations[ticket.prioridad] || ticket.prioridad_display;
+
           changes.push({
             id: `${ticket.id}-prioridad-${Date.now()}-${Math.random()}`,
             ticketId: ticket.id,
             type: 'prioridad',
-            message: `Ticket "${ticket.asunto}": Prioridad cambiada a "${ticket.prioridad_display}"`,
+            message: `${t('notifications.ticket')} "${ticket.asunto}": ${t('notifications.priorityChangedTo')} "${translatedPriority}"`,
             previousValue: previousTicket.prioridad_display,
             newValue: ticket.prioridad_display,
           });
@@ -128,7 +145,7 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
     }
 
     previousTicketsRef.current = tickets;
-  }, [tickets, isSuperuser]);
+  }, [tickets, isSuperuser, t]);
 
   const removeNotification = (notificationId) => {
     setNotifications(prev => prev.filter(n => n.id !== notificationId));

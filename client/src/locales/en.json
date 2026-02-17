@@ -131,5 +131,11 @@
     "createTicket": {
         "subtitle": "Complete the form to create a new support ticket",
         "createError": "Error creating ticket"
+    },
+    "notifications": {
+        "newTicket": "New ticket",
+        "ticket": "Ticket",
+        "statusChangedTo": "Status changed to",
+        "priorityChangedTo": "Priority changed to"
     }
 }
