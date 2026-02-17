@@ -50,6 +50,9 @@
 
 .btn-pdf {
     background-color: var(--color-gray-700);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .btn-pdf:hover {

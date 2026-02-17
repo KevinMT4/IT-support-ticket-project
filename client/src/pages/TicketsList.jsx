@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { FiDownload } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/client";
 import Layout from "../components/Layout";
@@ -144,7 +145,7 @@ const TicketsList = () => {
                                 className="btn-pdf"
                                 onClick={handleDownloadPDF}
                             >
-                                PDF Semanal
+                                <FiDownload /> PDF Semanal
                             </button>
                         )}
                         {!isSuperuser() && (
