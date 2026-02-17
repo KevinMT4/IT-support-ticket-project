@@ -76,6 +76,9 @@
         "selectStatus": "Selecciona un estado",
         "required": "Este campo es requerido",
         "invalidEmail": "Correo inválido",
+        "createButton": "Crear Ticket",
+        "placeholderSubject": "Describe brevemente el problema",
+        "placeholderDescription": "Describe detalladamente el problema o solicitud",
         "placeholders": {
             "username": "Nombre de usuario",
             "email": "correo@ejemplo.com",
@@ -124,5 +127,9 @@
         "updateStatus": "Actualizar Estado",
         "information": "Información",
         "created": "Creado"
+    },
+    "createTicket": {
+        "subtitle": "Completa el formulario para crear un nuevo ticket de soporte",
+        "createError": "Error al crear el ticket"
     }
 }

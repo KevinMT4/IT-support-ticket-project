@@ -100,7 +100,7 @@ const CreateTicket = () => {
             await apiClient.createTicket(ticketData);
             navigate("/tickets");
         } catch (err) {
-            setError(err.message || t("messages.pdfGeneratingError"));
+            setError(err.message || t("createTicket.createError"));
             setSubmitting(false);
         }
     };
@@ -118,10 +118,7 @@ const CreateTicket = () => {
             <div className="create-ticket-container">
                 <div className="create-ticket-header">
                     <h1>{t("common.createNewTicket").replace("+ ", "")}</h1>
-                    <p className="subtitle">
-                        Completa el formulario para crear un nuevo ticket de
-                        soporte
-                    </p>
+                    <p className="subtitle">{t("createTicket.subtitle")}</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="ticket-form">
@@ -169,7 +166,7 @@ const CreateTicket = () => {
                             name="asunto"
                             value={formData.asunto}
                             onChange={handleChange}
-                            placeholder="Describe brevemente el problema"
+                            placeholder={t("form.placeholderSubject")}
                             required
                             disabled={submitting}
                         />
@@ -185,7 +182,7 @@ const CreateTicket = () => {
                             name="contenido"
                             value={formData.contenido}
                             onChange={handleChange}
-                            placeholder="Describe detalladamente el problema o solicitud"
+                            placeholder={t("form.placeholderDescription")}
                             rows={8}
                             required
                             disabled={submitting}
@@ -206,7 +203,9 @@ const CreateTicket = () => {
                             className="btn-submit"
                             disabled={submitting}
                         >
-                            {submitting ? t("common.loading") : "Crear Ticket"}
+                            {submitting
+                                ? t("common.loading")
+                                : t("form.createButton")}
                         </button>
                     </div>
                 </form>

@@ -76,6 +76,9 @@
         "selectStatus": "Select a status",
         "required": "This field is required",
         "invalidEmail": "Invalid email",
+        "createButton": "Create Ticket",
+        "placeholderSubject": "Briefly describe the problem",
+        "placeholderDescription": "Describe the problem or request in detail",
         "placeholders": {
             "username": "Username",
             "email": "email@example.com",
@@ -124,5 +127,9 @@
         "updateStatus": "Update Status",
         "information": "Information",
         "created": "Created"
+    },
+    "createTicket": {
+        "subtitle": "Complete the form to create a new support ticket",
+        "createError": "Error creating ticket"
     }
 }
