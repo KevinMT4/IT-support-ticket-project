@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import SessionTimeoutHandler from "./components/SessionTimeoutHandler";
 import Login from "./pages/Login";
 import TicketsList from "./pages/TicketsList";
 import CreateTicket from "./pages/CreateTicket";
@@ -13,8 +14,9 @@ import TicketDetail from "./pages/TicketDetail";
 
 function App() {
     return (
-        <AuthProvider>
-            <Router>
+        <Router>
+            <AuthProvider>
+                <SessionTimeoutHandler />
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/registro" element={<Login />} />
@@ -47,8 +49,8 @@ function App() {
                         element={<Navigate to="/tickets" replace />}
                     />
                 </Routes>
-            </Router>
-        </AuthProvider>
+            </AuthProvider>
+        </Router>
     );
 }
 

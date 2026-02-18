@@ -137,5 +137,11 @@
         "ticket": "Ticket",
         "statusChangedTo": "Estado cambiado a",
         "priorityChangedTo": "Prioridad cambiada a"
+    },
+    "session": {
+        "warningTitle": "Sesión por expirar",
+        "warningMessage": "Tu sesión está por expirar debido a inactividad. ¿Deseas continuar?",
+        "continueSession": "Continuar sesión",
+        "sessionExpired": "Tu sesión ha expirado por inactividad. Por favor, inicia sesión nuevamente."
     }
 }

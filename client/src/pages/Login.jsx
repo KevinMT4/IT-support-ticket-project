@@ -34,6 +34,13 @@ const Login = () => {
         setIsLogin(location.pathname === "/login");
     }, [location.pathname]);
 
+    useEffect(() => {
+        if (location.state?.sessionExpired) {
+            setError(t("session.sessionExpired"));
+            navigate(location.pathname, { replace: true, state: {} });
+        }
+    }, [location.state, t, navigate, location.pathname]);
+
     const loadDepartamentos = async () => {
         if (departamentos.length > 0) return;
         setLoadingDepartments(true);

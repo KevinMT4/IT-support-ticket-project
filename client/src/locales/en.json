@@ -137,5 +137,11 @@
         "ticket": "Ticket",
         "statusChangedTo": "Status changed to",
         "priorityChangedTo": "Priority changed to"
+    },
+    "session": {
+        "warningTitle": "Session expiring soon",
+        "warningMessage": "Your session is about to expire due to inactivity. Do you want to continue?",
+        "continueSession": "Continue session",
+        "sessionExpired": "Your session has expired due to inactivity. Please log in again."
     }
 }

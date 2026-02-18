@@ -1,11 +1,14 @@
 import { createContext, useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import apiClient from "../api/client";
+import { useSessionTimeout } from "../hooks/useSessionTimeout";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [showSessionWarning, setShowSessionWarning] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem("authToken");
@@ -43,10 +46,13 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const logout = async () => {
-        await apiClient.logout();
+    const logout = async (silent = false) => {
+        if (!silent) {
+            await apiClient.logout();
+        }
         setUser(null);
         localStorage.removeItem("userData");
+        setShowSessionWarning(false);
     };
 
     const isSuperuser = () => {
@@ -55,7 +61,16 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ user, login, register, logout, loading, isSuperuser }}
+            value={{
+                user,
+                login,
+                register,
+                logout,
+                loading,
+                isSuperuser,
+                showSessionWarning,
+                setShowSessionWarning
+            }}
         >
             {children}
         </AuthContext.Provider>
