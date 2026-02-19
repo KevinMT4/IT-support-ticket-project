@@ -31,6 +31,11 @@ from .serializers import (
     TicketSerializer,
     TicketCreateSerializer
 )
+from .email_utils import (
+    send_ticket_created_email,
+    send_ticket_status_updated_email,
+    send_ticket_priority_updated_email
+)
 
 
 class LogoHeader(Flowable):
@@ -176,7 +181,8 @@ class TicketViewSet(viewsets.ModelViewSet):
         if self.request.user.rol == 'superuser':
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied('Los administradores no pueden crear tickets')
-        serializer.save(usuario=self.request.user)
+        ticket = serializer.save(usuario=self.request.user)
+        send_ticket_created_email(ticket)
 
     @action(detail=True, methods=['post'])
     def update_estado(self, request, pk=None):
@@ -195,8 +201,12 @@ class TicketViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Estado inválido'},
                             status=status.HTTP_400_BAD_REQUEST)
 
+        previous_estado = ticket.estado
         ticket.estado = nuevo_estado
         ticket.save()
+
+        if previous_estado != nuevo_estado:
+            send_ticket_status_updated_email(ticket, previous_estado)
 
         return Response(TicketSerializer(ticket).data)
 
@@ -217,8 +227,12 @@ class TicketViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Prioridad inválida'},
                             status=status.HTTP_400_BAD_REQUEST)
 
+        previous_prioridad = ticket.prioridad
         ticket.prioridad = nueva_prioridad
         ticket.save()
+
+        if previous_prioridad != nueva_prioridad:
+            send_ticket_priority_updated_email(ticket, previous_prioridad)
 
         return Response(TicketSerializer(ticket).data)
 
