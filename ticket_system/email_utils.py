@@ -1,11 +1,15 @@
-from django.core.mail import send_mail
+import os
+from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from email.mime.image import MIMEImage
 
 
 def send_ticket_created_email_to_user(ticket):
     subject = f'Nuevo Ticket Creado #{ticket.id}: {ticket.asunto}'
+    # logo HTML (inline image referenced by CID)
+    logo_html = '<div style="text-align:center;margin-bottom:20px;"><img src="cid:logo_image" alt="Logo" style="max-width:200px;height:auto;"></div>'
 
     html_message = f"""
     <html>
@@ -57,25 +61,16 @@ def send_ticket_created_email_to_user(ticket):
     Este correo ha sido enviado automáticamente por el Sistema de Gestión de Tickets.
     """
 
-    try:
-        send_mail(
-            subject=subject,
-            message=plain_message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[ticket.usuario.email],
-            html_message=html_message,
-            fail_silently=False,
-        )
-        return True
-    except Exception as e:
-        print(f"Error enviando email: {e}")
-        return False
+    # send with inline logo
+    return _send_email_with_logo(subject, plain_message, logo_html + html_message, [ticket.usuario.email])
 
 
 def send_ticket_created_email_to_admins(ticket):
     from .models import Usuario
 
     subject = f'Nuevo Ticket Creado #{ticket.id}: {ticket.asunto}'
+
+    logo_html = '<div style="text-align:center;margin-bottom:20px;"><img src="cid:logo_image" alt="Logo" style="max-width:200px;height:auto;"></div>'
 
     html_message = f"""
     <html>
@@ -143,24 +138,16 @@ def send_ticket_created_email_to_admins(ticket):
         print("No hay administradores con email configurado para notificar")
         return False
 
-    try:
-        send_mail(
-            subject=subject,
-            message=plain_message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=admin_emails,
-            html_message=html_message,
-            fail_silently=False,
-        )
+    # send with inline logo
+    success = _send_email_with_logo(subject, plain_message, logo_html + html_message, admin_emails)
+    if success:
         print(f"Email enviado a administradores: {', '.join(admin_emails)}")
-        return True
-    except Exception as e:
-        print(f"Error enviando email a administradores: {e}")
-        return False
+    return success
 
 
 def send_ticket_status_updated_email(ticket, previous_status):
     subject = f'Ticket #{ticket.id} - Estado Actualizado'
+    logo_html = '<div style="text-align:center;margin-bottom:20px;"><img src="cid:logo_image" alt="Logo" style="max-width:200px;height:auto;"></div>'
 
     html_message = f"""
     <html>
@@ -210,19 +197,7 @@ def send_ticket_status_updated_email(ticket, previous_status):
     Este correo ha sido enviado automáticamente por el Sistema de Gestión de Tickets.
     """
 
-    try:
-        send_mail(
-            subject=subject,
-            message=plain_message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[ticket.usuario.email],
-            html_message=html_message,
-            fail_silently=False,
-        )
-        return True
-    except Exception as e:
-        print(f"Error enviando email: {e}")
-        return False
+    return _send_email_with_logo(subject, plain_message, logo_html + html_message, [ticket.usuario.email])
 
 
 def send_ticket_priority_updated_email(ticket, previous_priority):
@@ -234,6 +209,8 @@ def send_ticket_priority_updated_email(ticket, previous_priority):
         'alta': '#fb923c',
         'urgente': '#ef4444'
     }
+
+    logo_html = '<div style="text-align:center;margin-bottom:20px;"><img src="cid:logo_image" alt="Logo" style="max-width:200px;height:auto;"></div>'
 
     html_message = f"""
     <html>
@@ -283,15 +260,35 @@ def send_ticket_priority_updated_email(ticket, previous_priority):
     Este correo ha sido enviado automáticamente por el Sistema de Gestión de Tickets.
     """
 
+    return _send_email_with_logo(subject, plain_message, logo_html + html_message, [ticket.usuario.email])
+
+
+def _send_email_with_logo(subject, plain_message, html_message, recipient_list):
+    """Send an email with HTML body and embed the project logo as an inline image (CID).
+    Returns True on success, False on failure."""
     try:
-        send_mail(
-            subject=subject,
-            message=plain_message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[ticket.usuario.email],
-            html_message=html_message,
-            fail_silently=False,
-        )
+        msg = EmailMultiAlternatives(subject=subject, body=plain_message, from_email=settings.DEFAULT_FROM_EMAIL, to=recipient_list)
+        msg.attach_alternative(html_message, "text/html")
+
+        # find logo path
+        logo_path = os.path.join(settings.BASE_DIR, 'ticket_system', 'static', 'ticket_system', 'images', 'logo.png')
+        if not os.path.exists(logo_path):
+            # try with .jpg
+            logo_path_jpg = os.path.join(settings.BASE_DIR, 'ticket_system', 'static', 'ticket_system', 'images', 'logo.jpg')
+            if os.path.exists(logo_path_jpg):
+                logo_path = logo_path_jpg
+
+        if os.path.exists(logo_path):
+            with open(logo_path, 'rb') as f:
+                img_data = f.read()
+                image = MIMEImage(img_data)
+                image.add_header('Content-ID', '<logo_image>')
+                image.add_header('Content-Disposition', 'inline', filename=os.path.basename(logo_path))
+                msg.attach(image)
+        else:
+            print(f"Logo not found at {logo_path}; sending email without inline logo")
+
+        msg.send(fail_silently=False)
         return True
     except Exception as e:
         print(f"Error enviando email: {e}")
