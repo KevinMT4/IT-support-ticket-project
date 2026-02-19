@@ -164,6 +164,8 @@ VITE_WARNING_TIME_MINUTES=2
 - `VITE_API_BASE_URL`: URL base del backend de Django.
 - `VITE_API_PROXY_PATH`: Ruta del proxy para las peticiones API.
 - `VITE_DEV_SERVER_PORT`: Puerto donde se ejecutará el servidor de desarrollo de Vite.
+- `VITE_INACTIVITY_TIMEOUT_MINUTES`: Tiempo de inactividad.
+- `VITE_WARNING_TIME_MINUTES`: Ventana emergente que avisa en cuento tiempo cerrará sesión.
 
 #### Iniciar el servidor de desarrollo
 
