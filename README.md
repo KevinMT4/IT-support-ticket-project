@@ -11,8 +11,8 @@ Este sistema permite a los usuarios crear y gestionar tickets de soporte dirigid
 - **Autenticación y autorización**: Sistema de login y registro de usuarios
 - **Gestión de tickets**: Creación, visualización y seguimiento de tickets
 - **Roles de usuario**:
-  - **Usuario**: Puede crear y ver sus propios tickets
-  - **Administrador**: Puede ver todos los tickets, cambiar estados y prioridades
+    - **Usuario**: Puede crear y ver sus propios tickets
+    - **Administrador**: Puede ver todos los tickets, cambiar estados y prioridades
 - **Departamentos y motivos**: Organización de tickets por departamentos y categorías
 - **Reportes PDF**: Generación de reportes estadísticos semanales (solo administradores)
 - **Notificaciones en tiempo real**: Alertas visuales y sonoras cuando cambia el estado de un ticket
@@ -21,6 +21,7 @@ Este sistema permite a los usuarios crear y gestionar tickets de soporte dirigid
 ## Tecnologías Utilizadas
 
 ### Backend
+
 - Python 3.x
 - Django 4.2.11
 - Django REST Framework 3.14.0
@@ -28,6 +29,7 @@ Este sistema permite a los usuarios crear y gestionar tickets de soporte dirigid
 - MySQL (base de datos)
 
 ### Frontend
+
 - React 19.2.0
 - React Router DOM 7.13.0
 - Vite 7.2.4
@@ -97,6 +99,7 @@ python manage.py migrate
 #### Crear datos iniciales
 
 El sistema incluye migraciones que crean automáticamente:
+
 - 8 departamentos predefinidos (Calidad, Finanzas, Compras, Ventas, Ingeniería, Logística, Recursos Humanos, TI)
 - 4 motivos para el departamento de TI (Internet, Programas, Contraseñas, Equipo)
 
@@ -162,45 +165,45 @@ El frontend estará disponible en `http://localhost:5173`
 ### Para Usuarios Regulares
 
 1. **Registro**:
-   - Accede a `http://localhost:5173`
-   - Haz clic en "Registrarse"
-   - Completa el formulario con tu información
-   - Selecciona tu departamento
-   - Crea una contraseña segura (mínimo 8 caracteres)
+    - Accede a `http://localhost:5173`
+    - Haz clic en "Registrarse"
+    - Completa el formulario con tu información
+    - Selecciona tu departamento
+    - Crea una contraseña segura (mínimo 8 caracteres)
 
 2. **Crear un Ticket**:
-   - Después de iniciar sesión, haz clic en "Nuevo Ticket"
-   - Selecciona un motivo (opcional)
-   - Escribe un asunto descriptivo
-   - Describe detalladamente tu problema o solicitud
-   - Haz clic en "Crear Ticket"
+    - Después de iniciar sesión, haz clic en "Nuevo Ticket"
+    - Selecciona un motivo (opcional)
+    - Escribe un asunto descriptivo
+    - Describe detalladamente tu problema o solicitud
+    - Haz clic en "Crear Ticket"
 
 3. **Ver tus Tickets**:
-   - En el panel principal verás todos tus tickets
-   - Puedes filtrar por estado haciendo clic en las tarjetas de estadísticas
-   - Haz clic en cualquier ticket para ver sus detalles completos
+    - En el panel principal verás todos tus tickets
+    - Puedes filtrar por estado haciendo clic en las tarjetas de estadísticas
+    - Haz clic en cualquier ticket para ver sus detalles completos
 
 ### Para Administradores
 
 1. **Acceso al Sistema**:
-   - Inicia sesión con las credenciales del superusuario creado
-   - Verás una etiqueta "Admin" junto a tu nombre
+    - Inicia sesión con las credenciales del superusuario creado
+    - Verás una etiqueta "Admin" junto a tu nombre
 
 2. **Gestión de Tickets**:
-   - Visualiza todos los tickets del sistema
-   - Accede a cualquier ticket para ver detalles
-   - Cambia el estado: Abierto → En Proceso → Resuelto → Cerrado
-   - Ajusta la prioridad: Baja, Media, Alta, Urgente
+    - Visualiza todos los tickets del sistema
+    - Accede a cualquier ticket para ver detalles
+    - Cambia el estado: Abierto → En Proceso → Resuelto → Cerrado
+    - Ajusta la prioridad: Baja, Media, Alta, Urgente
 
 3. **Reportes PDF**:
-   - Haz clic en "PDF Semanal" en el panel principal
-   - Se generará un reporte con estadísticas de los últimos 7 días
-   - Incluye gráficas de tickets por departamento, usuario, motivo y prioridad
+    - Haz clic en "PDF Semanal" en el panel principal
+    - Se generará un reporte con estadísticas de los últimos 7 días
+    - Incluye gráficas de tickets por departamento, usuario, motivo y prioridad
 
 4. **Panel de Administración Django**:
-   - Accede a `http://localhost:8000/admin`
-   - Gestiona usuarios, departamentos, motivos y tickets
-   - Crea nuevos departamentos o motivos según sea necesario
+    - Accede a `http://localhost:8000/admin`
+    - Gestiona usuarios, departamentos, motivos y tickets
+    - Crea nuevos departamentos o motivos según sea necesario
 
 ## Estructura del Proyecto
 
@@ -236,11 +239,13 @@ project/
 ## Modelos de Datos
 
 ### Usuario (Usuario)
+
 - Extiende el modelo User de Django
 - Campos adicionales: `departamento`, `rol`
 - Roles disponibles: user, admin, superuser
 
 ### Departamento
+
 - `nombre`: Nombre del departamento
 - `gerente`: Nombre del gerente
 - `email`: Email del departamento
@@ -248,11 +253,13 @@ project/
 - `activo`: Estado del departamento
 
 ### Motivo
+
 - `nombre`: Nombre del motivo
 - `descripcion`: Descripción del motivo
 - `departamento`: Departamento al que pertenece
 
 ### Ticket
+
 - `usuario`: Usuario que creó el ticket
 - `departamento`: Departamento de TI (siempre)
 - `motivo`: Motivo del ticket (opcional)
@@ -266,11 +273,13 @@ project/
 ## API Endpoints
 
 ### Autenticación
+
 - `POST /api/login/` - Iniciar sesión
 - `POST /api/logout/` - Cerrar sesión
 - `POST /api/registro/` - Registrar nuevo usuario
 
 ### Tickets
+
 - `GET /api/tickets/` - Listar tickets
 - `POST /api/tickets/` - Crear ticket
 - `GET /api/tickets/{id}/` - Detalle de ticket
@@ -278,25 +287,30 @@ project/
 - `POST /api/tickets/{id}/update_prioridad/` - Actualizar prioridad
 
 ### Catálogos
+
 - `GET /api/departamentos/` - Listar departamentos
 - `GET /api/motivos/` - Listar motivos
 - `GET /api/motivos/?departamento={id}` - Motivos por departamento
 
 ### Reportes
+
 - `GET /api/reportes/pdf-estadisticas/` - Generar PDF de estadísticas
 
 ## Características Adicionales
 
 ### Notificaciones en Tiempo Real
+
 - El sistema actualiza automáticamente la lista de tickets cada 2 segundos
 - Muestra notificaciones visuales cuando cambia el estado o prioridad
 - Reproduce sonidos para alertar cambios importantes
 
 ### Diseño Responsivo
+
 - Interfaz adaptable a diferentes tamaños de pantalla
 - Optimizado para desktop, tablet y móvil
 
 ### Seguridad
+
 - Autenticación basada en tokens
 - Row Level Security para acceso a datos
 - Validación de permisos en backend y frontend
@@ -305,16 +319,19 @@ project/
 ## Solución de Problemas
 
 ### Error: No se puede conectar al backend
+
 - Verifica que el servidor Django esté ejecutándose en `http://localhost:8000`
 - Revisa las variables de entorno del frontend
 - Comprueba que no haya conflictos de puertos
 
 ### Error: Migraciones pendientes
+
 ```bash
 python manage.py migrate
 ```
 
 ### Error: Módulo no encontrado
+
 ```bash
 # Backend
 pip install -r requirements.txt
@@ -325,6 +342,7 @@ npm install
 ```
 
 ### Error: Puerto en uso
+
 ```bash
 # Cambiar puerto del backend (en manage.py o comando)
 python manage.py runserver 8001
@@ -333,9 +351,64 @@ python manage.py runserver 8001
 VITE_DEV_SERVER_PORT=5174
 ```
 
+### Error: Gmail no acepta las credenciales (535 5.7.8)
+
+Este error ocurre cuando Gmail rechaza las credenciales de correo. Para solucionarlo:
+
+**Paso 1: Activa la verificación en dos pasos en tu cuenta de Google**
+
+1. Ve a https://myaccount.google.com/security
+2. En "Iniciar sesión en Google", selecciona "Verificación en dos pasos"
+3. Sigue las instrucciones para activarla
+
+**Paso 2: Genera una contraseña de aplicación**
+
+1. Ve a https://myaccount.google.com/apppasswords
+2. Selecciona "Correo" como la aplicación
+3. Selecciona "Otro (nombre personalizado)" como el dispositivo
+4. Escribe "Sistema de Tickets" o el nombre que prefieras
+5. Haz clic en "Generar"
+6. Google te mostrará una contraseña de 16 caracteres (sin espacios)
+
+**Paso 3: Configura las variables de entorno**
+
+Edita tu archivo `.env` en la raíz del proyecto:
+
+```env
+# Email Configuration
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=tu-correo@gmail.com
+EMAIL_HOST_PASSWORD=tu-contraseña-de-aplicacion-de-16-caracteres
+DEFAULT_FROM_EMAIL=tu-correo@gmail.com
+```
+
+**IMPORTANTE**:
+
+- La contraseña de aplicación NO es tu contraseña normal de Gmail
+- Son 16 caracteres generados por Google
+- NO debe tener espacios
+- Mantén esta contraseña segura
+
+**Paso 4: Reinicia el servidor Django**
+
+```bash
+# Detén el servidor (Ctrl+C) y vuelve a iniciarlo
+python manage.py runserver
+```
+
+**Para probar que funciona**:
+
+- Crea un nuevo ticket como usuario regular
+- El sistema debe enviarte un correo de confirmación
+- Verifica tu bandeja de entrada y spam
+
 ## Comandos Útiles
 
 ### Backend
+
 ```bash
 # Crear migraciones
 python manage.py makemigrations
@@ -354,6 +427,7 @@ python manage.py collectstatic
 ```
 
 ### Frontend
+
 ```bash
 # Desarrollo
 npm run dev
