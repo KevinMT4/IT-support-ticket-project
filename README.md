@@ -153,6 +153,10 @@ VITE_API_PROXY_PATH=/api
 
 # Development Server
 VITE_DEV_SERVER_PORT=5173
+
+#Timepo de inactividad
+VITE_INACTIVITY_TIMEOUT_MINUTES=40
+VITE_WARNING_TIME_MINUTES=2
 ```
 
 **Notas sobre las variables de entorno del frontend:**

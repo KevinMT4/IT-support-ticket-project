@@ -1,7 +1,14 @@
 import { useEffect, useRef, useCallback } from "react";
 
-const INACTIVITY_TIMEOUT = 20 * 60 * 1000;
-const WARNING_TIME = 1 * 60 * 1000;
+const getEnvMinutes = (name, defaultMinutes) => {
+    const raw = import.meta.env[name];
+    const n = Number(raw);
+    if (Number.isFinite(n) && n > 0) return n;
+    return defaultMinutes;
+};
+
+const INACTIVITY_TIMEOUT = getEnvMinutes('VITE_INACTIVITY_TIMEOUT_MINUTES', 40) * 60 * 1000;
+const WARNING_TIME = getEnvMinutes('VITE_WARNING_TIME_MINUTES', 2) * 60 * 1000;
 
 export const useSessionTimeout = (onTimeout, onWarning) => {
     const timeoutIdRef = useRef(null);
