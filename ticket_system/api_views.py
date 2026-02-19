@@ -524,6 +524,20 @@ def generar_pdf_ticket(request, ticket_id):
     elements.append(subtitle)
     elements.append(Spacer(1, 0.3 * inch))
 
+    tiempo_resolucion = 'Pendiente'
+    if ticket.estado == 'resuelto':
+        tiempo_transcurrido = timezone.now() - ticket.fecha_creacion
+        dias = tiempo_transcurrido.days
+        horas = tiempo_transcurrido.seconds // 3600
+        minutos = (tiempo_transcurrido.seconds % 3600) // 60
+
+        if dias > 0:
+            tiempo_resolucion = f"{dias} día{'s' if dias != 1 else ''}, {horas} hora{'s' if horas != 1 else ''}"
+        elif horas > 0:
+            tiempo_resolucion = f"{horas} hora{'s' if horas != 1 else ''}, {minutos} minuto{'s' if minutos != 1 else ''}"
+        else:
+            tiempo_resolucion = f"{minutos} minuto{'s' if minutos != 1 else ''}"
+
     info_data = [
         ['Campo', 'Información'],
         ['Asunto', ticket.asunto],
@@ -533,6 +547,7 @@ def generar_pdf_ticket(request, ticket_id):
         ['Departamento', ticket.usuario.departamento.nombre if ticket.usuario.departamento else 'N/A'],
         ['Motivo', ticket.motivo.nombre if ticket.motivo else 'N/A'],
         ['Fecha de creación', ticket.fecha_creacion.strftime('%d/%m/%Y %H:%M')],
+        ['Tiempo de resolución', tiempo_resolucion],
     ]
 
     if ticket.fecha_cierre:
