@@ -81,6 +81,15 @@ DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,localhost:8000,127.0.0.1:8000
 
 # Database Configuration (SQLite por defecto)
 DATABASE_URL=sqlite:///db.sqlite3
+
+# Email Configuration
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=tu-correo@gmail.com
+EMAIL_HOST_PASSWORD=tu-contraseña-de-aplicacion-de-16-caracteres
+DEFAULT_FROM_EMAIL=tu-correo@gmail.com
 ```
 
 **Notas importantes sobre las variables de entorno:**
@@ -369,21 +378,6 @@ Este error ocurre cuando Gmail rechaza las credenciales de correo. Para solucion
 4. Escribe "Sistema de Tickets" o el nombre que prefieras
 5. Haz clic en "Generar"
 6. Google te mostrará una contraseña de 16 caracteres (sin espacios)
-
-**Paso 3: Configura las variables de entorno**
-
-Edita tu archivo `.env` en la raíz del proyecto:
-
-```env
-# Email Configuration
-EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_HOST_USER=tu-correo@gmail.com
-EMAIL_HOST_PASSWORD=tu-contraseña-de-aplicacion-de-16-caracteres
-DEFAULT_FROM_EMAIL=tu-correo@gmail.com
-```
 
 **IMPORTANTE**:
 
