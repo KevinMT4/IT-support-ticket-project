@@ -32,7 +32,8 @@ from .serializers import (
     TicketCreateSerializer
 )
 from .email_utils import (
-    send_ticket_created_email,
+    send_ticket_created_email_to_user,
+    send_ticket_created_email_to_admins,
     send_ticket_status_updated_email,
     send_ticket_priority_updated_email
 )
@@ -182,7 +183,8 @@ class TicketViewSet(viewsets.ModelViewSet):
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied('Los administradores no pueden crear tickets')
         ticket = serializer.save(usuario=self.request.user)
-        send_ticket_created_email(ticket)
+        send_ticket_created_email_to_user(ticket)
+        send_ticket_created_email_to_admins(ticket)
 
     @action(detail=True, methods=['post'])
     def update_estado(self, request, pk=None):
