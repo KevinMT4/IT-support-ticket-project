@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from "react";
 
-const INACTIVITY_TIMEOUT = 2 * 60 * 1000;
+const INACTIVITY_TIMEOUT = 20 * 60 * 1000;
 const WARNING_TIME = 1 * 60 * 1000;
 
 export const useSessionTimeout = (onTimeout, onWarning) => {
