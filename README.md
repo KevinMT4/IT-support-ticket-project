@@ -2,7 +2,7 @@
 
 Sistema web para la gestión de tickets de soporte técnico, desarrollado con Django (backend) y React (frontend).
 
-## Descripción
+## Descripción.
 
 Este sistema permite a los usuarios crear y gestionar tickets de soporte dirigidos al departamento de Tecnologías de la Información. Los administradores pueden visualizar todos los tickets, cambiar su estado y prioridad, así como generar reportes en PDF.
 
