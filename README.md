@@ -88,7 +88,7 @@ EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
 EMAIL_HOST_USER=tu-correo@gmail.com
-EMAIL_HOST_PASSWORD=tu-contraseña-de-aplicacion-de-16-caracteres
+EMAIL_HOST_PASSWORD=tu-contraseña-de-aplicacion-de-16-caracteres (https://myaccount.google.com/apppasswords)
 DEFAULT_FROM_EMAIL=tu-correo@gmail.com
 ```
 
