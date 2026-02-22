@@ -126,6 +126,13 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# location where `collectstatic` will gather static files for production
+# set this to a filesystem path (e.g. /var/www/tickets/static or BASE_DIR / 'staticfiles')
+STATIC_ROOT = os.getenv('DJANGO_STATIC_ROOT', BASE_DIR / 'staticfiles')
+
+# additional directories to look for static files (e.g. built frontend assets)
+# STATICFILES_DIRS = [BASE_DIR / 'client' / 'dist']
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
