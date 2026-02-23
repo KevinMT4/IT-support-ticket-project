@@ -7,7 +7,7 @@ from email.mime.image import MIMEImage
 
 
 def send_ticket_created_email_to_user(ticket):
-    subject = f'Nuevo Ticket Creado #{ticket.id}: {ticket.asunto}'
+    subject = f'Nuevo Ticket Creado: {ticket.asunto}'
     # logo HTML (inline image referenced by CID)
     logo_html = '<div style="text-align:center;margin-bottom:20px;"><img src="cid:logo_image" alt="Logo" style="max-width:200px;height:auto;"></div>'
 
