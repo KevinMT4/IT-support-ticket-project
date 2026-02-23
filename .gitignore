@@ -17,6 +17,7 @@ client/.env.*.local
 client/node_modules/
 static/
 staticfiles/
+Downloads/
 
 # Logs de venv
 *.egg-info/
