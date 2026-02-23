@@ -1,6 +1,6 @@
 __pycache__/
 *.db
-# .env
+.env
 venv
 *.log
 db.sqlite3
@@ -8,3 +8,18 @@ node_modules/
 .vscode/
 
 reportes_pdf/
+
+# Archivos estáticos compilados para producción
+client/dist/
+client/build/
+client/.env.local
+client/.env.*.local
+client/node_modules/
+static/
+staticfiles/
+
+# Logs de venv
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
