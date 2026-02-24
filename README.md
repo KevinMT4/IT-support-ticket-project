@@ -142,7 +142,7 @@ cd client
 npm install
 ```
 
-#### Configurar variables de entorno del frontend.
+#### Configurar variables de entorno del frontend
 
 Crear un archivo `.env` en la carpeta `client` con el siguiente contenido:
 
