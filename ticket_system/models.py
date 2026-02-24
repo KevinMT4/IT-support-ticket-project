@@ -105,6 +105,8 @@ class Ticket(models.Model):
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='abierto')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_cierre = models.DateTimeField(null=True, blank=True)
+    solucion_texto = models.TextField(blank=True, null=True)
+    solucion_imagenes = models.JSONField(blank=True, null=True)  # Lista de URLs de imágenes
 
     class Meta:
         db_table = 'ticket'

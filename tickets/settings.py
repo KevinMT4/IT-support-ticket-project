@@ -133,6 +133,10 @@ STATIC_ROOT = os.getenv('DJANGO_STATIC_ROOT', BASE_DIR / 'staticfiles')
 # additional directories to look for static files (e.g. built frontend assets)
 STATICFILES_DIRS = [BASE_DIR / 'client' / 'dist']
 
+# Media files (uploaded files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 

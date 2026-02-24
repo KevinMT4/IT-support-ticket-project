@@ -16,6 +16,9 @@ const TicketDetail = () => {
     const [updating, setUpdating] = useState(false);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState("");
+    const [showResolutionModal, setShowResolutionModal] = useState(false);
+    const [resolutionText, setResolutionText] = useState("");
+    const [resolutionImages, setResolutionImages] = useState([]);
     const { isSuperuser } = useAuth();
     const { t, currentLanguage } = useLanguage();
     const navigate = useNavigate();
@@ -39,6 +42,11 @@ const TicketDetail = () => {
     };
 
     const handleStatusChange = async (newStatus) => {
+        if (newStatus === 'resuelto') {
+            setShowResolutionModal(true);
+            return;
+        }
+
         try {
             setUpdating(true);
             const updatedTicket = await apiClient.updateTicketStatus(
@@ -74,6 +82,52 @@ const TicketDetail = () => {
         } finally {
             setUpdating(false);
         }
+    };
+
+    const handleResolutionSubmit = async () => {
+        try {
+            setUpdating(true);
+            const updatedTicket = await apiClient.updateTicketStatus(
+                id,
+                'resuelto',
+                { solucion_texto: resolutionText, solucion_imagenes: resolutionImages }
+            );
+            setTicket(updatedTicket);
+            playSuccessSound();
+            setSuccessMessage(t("messages.stateUpdatedSuccessfully"));
+            setTimeout(() => setSuccessMessage(""), 3000);
+            setShowResolutionModal(false);
+            setResolutionText("");
+            setResolutionImages([]);
+        } catch (err) {
+            setError(t("messages.errorUpdatingStatus"));
+            console.error(err);
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+    const handleImageUpload = async (event) => {
+        const files = Array.from(event.target.files);
+        const uploadedUrls = [];
+
+        for (const file of files) {
+            try {
+                const formData = new FormData();
+                formData.append('imagen', file);
+                const response = await apiClient.uploadImage(formData);
+                uploadedUrls.push(response.url);
+            } catch (err) {
+                setError(t("messages.errorUploadingImage"));
+                console.error(err);
+            }
+        }
+
+        setResolutionImages([...resolutionImages, ...uploadedUrls]);
+    };
+
+    const removeImage = (index) => {
+        setResolutionImages(resolutionImages.filter((_, i) => i !== index));
     };
 
     const formatDate = (dateString) => {
@@ -212,6 +266,22 @@ const TicketDetail = () => {
                                 {ticket.contenido}
                             </div>
                         </div>
+
+                        {ticket.estado === 'resuelto' && ticket.solucion_texto && (
+                            <div className="ticket-section">
+                                <h3>{t("ticketDetail.resolutionDetails")}</h3>
+                                <div className="ticket-description">
+                                    {ticket.solucion_texto}
+                                </div>
+                                {ticket.solucion_imagenes && ticket.solucion_imagenes.length > 0 && (
+                                    <div className="solution-images">
+                                        {ticket.solucion_imagenes.map((url, index) => (
+                                            <img key={index} src={url} alt={`Imagen de solución ${index + 1}`} />
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                         {isSuperuser() && (
                             <>
@@ -363,6 +433,67 @@ const TicketDetail = () => {
                     </div>
                 </div>
             </div>
+
+            {showResolutionModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h3>{t("ticketDetail.resolutionModalTitle")}</h3>
+                        <div className="modal-body">
+                            <div className="form-group">
+                                <label htmlFor="resolutionText">{t("ticketDetail.resolutionText")}</label>
+                                <textarea
+                                    id="resolutionText"
+                                    value={resolutionText}
+                                    onChange={(e) => setResolutionText(e.target.value)}
+                                    placeholder={t("ticketDetail.resolutionTextPlaceholder")}
+                                    rows="4"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="resolutionImages">{t("ticketDetail.resolutionImages")}</label>
+                                <input
+                                    type="file"
+                                    id="resolutionImages"
+                                    multiple
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                />
+                                {resolutionImages.length > 0 && (
+                                    <div className="image-preview">
+                                        {resolutionImages.map((url, index) => (
+                                            <div key={index} className="image-item">
+                                                <img src={url} alt={`Imagen ${index + 1}`} />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImage(index)}
+                                                    className="remove-image-btn"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <div className="modal-actions">
+                            <button
+                                onClick={() => setShowResolutionModal(false)}
+                                className="btn-secondary"
+                            >
+                                {t("common.cancel")}
+                            </button>
+                            <button
+                                onClick={handleResolutionSubmit}
+                                className="btn-primary"
+                                disabled={updating}
+                            >
+                                {updating ? t("common.saving") : t("common.save")}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </Layout>
     );
 };

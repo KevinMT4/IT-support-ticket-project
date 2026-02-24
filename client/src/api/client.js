@@ -93,10 +93,10 @@ class ApiClient {
     });
   }
 
-  async updateTicketStatus(id, estado) {
+  async updateTicketStatus(id, estado, extraData = {}) {
     return this.request(`/tickets/${id}/update_estado/`, {
       method: 'POST',
-      body: JSON.stringify({ estado }),
+      body: JSON.stringify({ estado, ...extraData }),
     });
   }
 
@@ -114,6 +114,35 @@ class ApiClient {
   async getMotivos(departamentoId = null) {
     const query = departamentoId ? `?departamento=${departamentoId}` : '';
     return this.request(`/motivos/${query}`);
+  }
+
+  async uploadImage(formData) {
+    const url = `${this.baseURL}/upload-image/`;
+    const headers = {};
+
+    const token = this.getToken();
+    if (token) {
+      headers['Authorization'] = `Token ${token}`;
+    }
+
+    const config = {
+      method: 'POST',
+      headers,
+      body: formData,
+    };
+
+    try {
+      const response = await fetch(url, config);
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: 'Error en la petición' }));
+        throw new Error(error.error || `Error ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

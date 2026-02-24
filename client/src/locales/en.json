@@ -12,7 +12,10 @@
         "loading": "Loading...",
         "errorLoadingTickets": "Error loading tickets",
         "noTicketsToShow": "No tickets to show",
-        "createOne": "Create one"
+        "createOne": "Create one",
+        "save": "Save",
+        "saving": "Saving...",
+        "cancel": "Cancel"
     },
     "stats": {
         "total": "Total",
@@ -110,6 +113,7 @@
         "priorityUpdatedSuccessfully": "Priority updated successfully",
         "errorUpdatingStatus": "Error updating status",
         "errorUpdatingPriority": "Error updating priority",
+        "errorUploadingImage": "Error uploading image",
         "close": "Close",
         "confirmDeleteTicket": "Are you sure you want to delete this ticket?",
         "deleteConfirmed": "Ticket deleted",
@@ -126,7 +130,12 @@
         "updatePriority": "Update Priority",
         "updateStatus": "Update Status",
         "information": "Information",
-        "created": "Created"
+        "created": "Created",
+        "resolutionModalTitle": "Resolution Details",
+        "resolutionText": "Solution Description",
+        "resolutionTextPlaceholder": "Describe how the problem was resolved...",
+        "resolutionImages": "Images (optional)",
+        "resolutionDetails": "Resolution Details"
     },
     "createTicket": {
         "subtitle": "Complete the form to create a new support ticket",

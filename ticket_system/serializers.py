@@ -67,7 +67,7 @@ class TicketSerializer(serializers.ModelSerializer):
         fields = ['id', 'usuario', 'usuario_nombre', 'usuario_departamento_nombre',
                   'departamento', 'departamento_nombre', 'motivo', 'motivo_nombre',
                   'asunto', 'contenido', 'prioridad', 'prioridad_display', 'estado',
-                  'estado_display', 'fecha_creacion', 'fecha_cierre']
+                  'estado_display', 'fecha_creacion', 'fecha_cierre', 'solucion_texto', 'solucion_imagenes']
         read_only_fields = ['id', 'fecha_creacion', 'usuario']
 
     def get_usuario_nombre(self, obj):

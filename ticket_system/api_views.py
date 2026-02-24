@@ -205,6 +205,14 @@ class TicketViewSet(viewsets.ModelViewSet):
 
         previous_estado = ticket.estado
         ticket.estado = nuevo_estado
+
+        # Si el estado es 'resuelto', actualizar campos de solución
+        if nuevo_estado == 'resuelto':
+            ticket.solucion_texto = request.data.get('solucion_texto', '')
+            ticket.solucion_imagenes = request.data.get('solucion_imagenes', [])
+            if not ticket.fecha_cierre:
+                ticket.fecha_cierre = timezone.now()
+
         ticket.save()
 
         if previous_estado != nuevo_estado:
@@ -618,3 +626,40 @@ def generar_pdf_ticket(request, ticket_id):
     response = HttpResponse(pdf_content, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_image(request):
+    if request.user.rol != 'superuser':
+        return Response({'error': 'No tienes permisos para subir imágenes'},
+                        status=status.HTTP_403_FORBIDDEN)
+
+    if 'imagen' not in request.FILES:
+        return Response({'error': 'No se proporcionó ninguna imagen'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    imagen = request.FILES['imagen']
+    # Validar tipo de archivo
+    if not imagen.content_type in ['image/jpeg', 'image/png', 'image/gif']:
+        return Response({'error': 'Tipo de archivo no permitido. Solo imágenes JPEG, PNG o GIF'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # Crear directorio si no existe
+    upload_dir = os.path.join(settings.MEDIA_ROOT, 'soluciones')
+    os.makedirs(upload_dir, exist_ok=True)
+
+    # Generar nombre único
+    import uuid
+    ext = os.path.splitext(imagen.name)[1]
+    filename = f"{uuid.uuid4()}{ext}"
+    filepath = os.path.join(upload_dir, filename)
+
+    # Guardar archivo
+    with open(filepath, 'wb+') as destination:
+        for chunk in imagen.chunks():
+            destination.write(chunk)
+
+    # Devolver URL
+    image_url = f"{settings.MEDIA_URL}soluciones/{filename}"
+    return Response({'url': image_url})

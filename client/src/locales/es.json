@@ -12,7 +12,10 @@
         "loading": "Cargando...",
         "errorLoadingTickets": "Error al cargar los tickets",
         "noTicketsToShow": "No hay tickets para mostrar",
-        "createOne": "Crea uno"
+        "createOne": "Crea uno",
+        "save": "Guardar",
+        "saving": "Guardando...",
+        "cancel": "Cancelar"
     },
     "stats": {
         "total": "Total",
@@ -110,6 +113,7 @@
         "priorityUpdatedSuccessfully": "Prioridad actualizada correctamente",
         "errorUpdatingStatus": "Error al actualizar el estado",
         "errorUpdatingPriority": "Error al actualizar la prioridad",
+        "errorUploadingImage": "Error al subir la imagen",
         "close": "Cerrar",
         "confirmDeleteTicket": "¿Estás seguro de que deseas eliminar este ticket?",
         "deleteConfirmed": "Ticket eliminado",
@@ -126,7 +130,12 @@
         "updatePriority": "Actualizar Prioridad",
         "updateStatus": "Actualizar Estado",
         "information": "Información",
-        "created": "Creado"
+        "created": "Creado",
+        "resolutionModalTitle": "Detalles de la Resolución",
+        "resolutionText": "Descripción de la Solución",
+        "resolutionTextPlaceholder": "Describe cómo se resolvió el problema...",
+        "resolutionImages": "Imágenes (opcional)",
+        "resolutionDetails": "Detalles de la Resolución"
     },
     "createTicket": {
         "subtitle": "Completa el formulario para crear un nuevo ticket de soporte",
