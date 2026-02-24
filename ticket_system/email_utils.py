@@ -271,10 +271,10 @@ def _send_email_with_logo(subject, plain_message, html_message, recipient_list):
         msg.attach_alternative(html_message, "text/html")
 
         # find logo path
-        logo_path = os.path.join(settings.BASE_DIR, 'ticket_system', 'static', 'ticket_system', 'images', 'logo.png')
+        logo_path = os.path.join(settings.BASE_DIR, 'client', 'public', 'image.png')
         if not os.path.exists(logo_path):
             # try with .jpg
-            logo_path_jpg = os.path.join(settings.BASE_DIR, 'ticket_system', 'static', 'ticket_system', 'images', 'logo.jpg')
+            logo_path_jpg = os.path.join(settings.BASE_DIR, 'client', 'public', 'image.jpg')
             if os.path.exists(logo_path_jpg):
                 logo_path = logo_path_jpg
 
