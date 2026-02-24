@@ -29,10 +29,25 @@ const TicketDetail = () => {
         loadTicket();
     }, [id]);
 
+    const getAbsoluteImageUrl = (url) => {
+        if (!url) return url;
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            return url;
+        }
+        const API_BASE_URL =
+            import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+        return `${API_BASE_URL}${url}`;
+    };
+
     const loadTicket = async () => {
         try {
             setLoading(true);
             const data = await apiClient.getTicket(id);
+            if (data.solucion_imagenes && data.solucion_imagenes.length > 0) {
+                data.solucion_imagenes = data.solucion_imagenes.map((url) =>
+                    getAbsoluteImageUrl(url),
+                );
+            }
             setTicket(data);
             setError(null);
         } catch (err) {

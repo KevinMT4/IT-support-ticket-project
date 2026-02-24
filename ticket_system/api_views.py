@@ -660,6 +660,6 @@ def upload_image(request):
         for chunk in imagen.chunks():
             destination.write(chunk)
 
-    # Devolver URL
-    image_url = f"{settings.MEDIA_URL}soluciones/{filename}"
+    # Devolver URL completa
+    image_url = request.build_absolute_uri(f"{settings.MEDIA_URL}soluciones/{filename}")
     return Response({'url': image_url})
