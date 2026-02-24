@@ -6,6 +6,7 @@ venv
 db.sqlite3
 node_modules/
 .vscode/
+media/
 
 reportes_pdf/
 
