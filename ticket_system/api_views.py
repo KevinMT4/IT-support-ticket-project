@@ -281,7 +281,7 @@ def generar_pdf_estadisticas(request):
     tickets_semana = Ticket.objects.filter(fecha_creacion__gte=fecha_inicio)
     todos_tickets = Ticket.objects.all()
 
-    logo_path = os.path.join(settings.BASE_DIR, 'ticket_system', 'static', 'ticket_system', 'images', 'logo.png')
+    logo_path = os.path.join(settings.BASE_DIR, 'client', 'public', 'image.png')
     logo_header = LogoHeader(7.5 * inch, 60, logo_path)
     elements.append(logo_header)
     elements.append(Spacer(1, 0.15 * inch))
@@ -502,7 +502,7 @@ def generar_pdf_ticket(request, ticket_id):
         spaceAfter=6
     )
 
-    logo_path = os.path.join(settings.BASE_DIR, 'ticket_system', 'static', 'ticket_system', 'images', 'logo.png')
+    logo_path = os.path.join(settings.BASE_DIR, 'client', 'public', 'image.png')
     logo_header = LogoHeader(7.5 * inch, 60, logo_path)
     elements.append(logo_header)
     elements.append(Spacer(1, 0.15 * inch))
