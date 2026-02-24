@@ -135,7 +135,10 @@
         "resolutionText": "Descripción de la Solución",
         "resolutionTextPlaceholder": "Describe cómo se resolvió el problema...",
         "resolutionImages": "Imágenes (opcional)",
-        "resolutionDetails": "Detalles de la Resolución"
+        "resolutionDetails": "Detalles de la Resolución",
+        "uploading": "Subiendo...",
+        "clickToPreview": "Haz clic para ver en grande",
+        "clickToEnlarge": "Haz clic para ampliar"
     },
     "createTicket": {
         "subtitle": "Completa el formulario para crear un nuevo ticket de soporte",

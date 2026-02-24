@@ -19,6 +19,8 @@ const TicketDetail = () => {
     const [showResolutionModal, setShowResolutionModal] = useState(false);
     const [resolutionText, setResolutionText] = useState("");
     const [resolutionImages, setResolutionImages] = useState([]);
+    const [uploadingImage, setUploadingImage] = useState(false);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(null);
     const { isSuperuser } = useAuth();
     const { t, currentLanguage } = useLanguage();
     const navigate = useNavigate();
@@ -84,13 +86,67 @@ const TicketDetail = () => {
         }
     };
 
+    const handleImageUpload = async (event) => {
+        const files = Array.from(event.target.files);
+
+        for (const file of files) {
+            try {
+                setUploadingImage(true);
+                // Crear una previsualización local mientras se sube
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    // Agregar previsualización local temporalmente
+                    setResolutionImages(prev => [...prev, {
+                        url: e.target.result,
+                        isLocal: true,
+                        fileName: file.name
+                    }]);
+                };
+                reader.readAsDataURL(file);
+
+                // Subir a servidor
+                const formData = new FormData();
+                formData.append('imagen', file);
+                const response = await apiClient.uploadImage(formData);
+                
+                // Reemplazar previsualización con URL del servidor
+                setResolutionImages(prev => {
+                    const index = prev.findIndex(img => img.fileName === file.name && img.isLocal);
+                    if (index !== -1) {
+                        const updated = [...prev];
+                        updated[index] = { url: response.url, isLocal: false };
+                        return updated;
+                    }
+                    return [...prev, { url: response.url, isLocal: false }];
+                });
+            } catch (err) {
+                setError(t("messages.errorUploadingImage"));
+                console.error(err);
+                // Remover la previsualización si falla la subida
+                setResolutionImages(prev => prev.filter(img => img.fileName !== file.name));
+            } finally {
+                setUploadingImage(false);
+            }
+        }
+    };
+
+    const removeImage = (index) => {
+        setResolutionImages(resolutionImages.filter((_, i) => i !== index));
+        setSelectedImageIndex(null);
+    };
+
     const handleResolutionSubmit = async () => {
         try {
             setUpdating(true);
+            // Mapear solo las URLs del servidor (no las previsualizaciones locales)
+            const serverImages = resolutionImages
+                .filter(img => !img.isLocal)
+                .map(img => img.url);
+            
             const updatedTicket = await apiClient.updateTicketStatus(
                 id,
                 'resuelto',
-                { solucion_texto: resolutionText, solucion_imagenes: resolutionImages }
+                { solucion_texto: resolutionText, solucion_imagenes: serverImages }
             );
             setTicket(updatedTicket);
             playSuccessSound();
@@ -105,29 +161,6 @@ const TicketDetail = () => {
         } finally {
             setUpdating(false);
         }
-    };
-
-    const handleImageUpload = async (event) => {
-        const files = Array.from(event.target.files);
-        const uploadedUrls = [];
-
-        for (const file of files) {
-            try {
-                const formData = new FormData();
-                formData.append('imagen', file);
-                const response = await apiClient.uploadImage(formData);
-                uploadedUrls.push(response.url);
-            } catch (err) {
-                setError(t("messages.errorUploadingImage"));
-                console.error(err);
-            }
-        }
-
-        setResolutionImages([...resolutionImages, ...uploadedUrls]);
-    };
-
-    const removeImage = (index) => {
-        setResolutionImages(resolutionImages.filter((_, i) => i !== index));
     };
 
     const formatDate = (dateString) => {
@@ -276,7 +309,18 @@ const TicketDetail = () => {
                                 {ticket.solucion_imagenes && ticket.solucion_imagenes.length > 0 && (
                                     <div className="solution-images">
                                         {ticket.solucion_imagenes.map((url, index) => (
-                                            <img key={index} src={url} alt={`Imagen de solución ${index + 1}`} />
+                                            <div 
+                                                key={index} 
+                                                className="solution-image-thumb"
+                                                onClick={() => setSelectedImageIndex(index)}
+                                                style={{ cursor: 'pointer' }}
+                                            >
+                                                <img 
+                                                    src={url} 
+                                                    alt={`Imagen de solución ${index + 1}`}
+                                                    title={t("ticketDetail.clickToEnlarge")}
+                                                />
+                                            </div>
                                         ))}
                                     </div>
                                 )}
@@ -457,16 +501,28 @@ const TicketDetail = () => {
                                     multiple
                                     accept="image/*"
                                     onChange={handleImageUpload}
+                                    disabled={uploadingImage}
                                 />
+                                {uploadingImage && <p className="uploading-text">{t("ticketDetail.uploading")}</p>}
                                 {resolutionImages.length > 0 && (
                                     <div className="image-preview">
-                                        {resolutionImages.map((url, index) => (
+                                        {resolutionImages.map((imageObj, index) => (
                                             <div key={index} className="image-item">
-                                                <img src={url} alt={`Imagen ${index + 1}`} />
+                                                <div className="image-wrapper">
+                                                    <img 
+                                                        src={imageObj.url} 
+                                                        alt={`Imagen ${index + 1}`}
+                                                        onClick={() => setSelectedImageIndex(index)}
+                                                        style={{ cursor: 'pointer' }}
+                                                        title={t("ticketDetail.clickToPreview")}
+                                                    />
+                                                    {imageObj.isLocal && <span className="uploading-badge">{t("ticketDetail.uploading")}</span>}
+                                                </div>
                                                 <button
                                                     type="button"
                                                     onClick={() => removeImage(index)}
                                                     className="remove-image-btn"
+                                                    disabled={imageObj.isLocal}
                                                 >
                                                     ×
                                                 </button>
@@ -490,6 +546,74 @@ const TicketDetail = () => {
                             >
                                 {updating ? t("common.saving") : t("common.save")}
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Galería modal para ver imágenes en grande */}
+            {selectedImageIndex !== null && ticket?.solucion_imagenes && (
+                <div className="image-gallery-modal" onClick={() => setSelectedImageIndex(null)}>
+                    <div className="gallery-content" onClick={(e) => e.stopPropagation()}>
+                        <button
+                            className="gallery-close-btn"
+                            onClick={() => setSelectedImageIndex(null)}
+                        >
+                            ✕
+                        </button>
+                        <button
+                            className="gallery-nav-btn gallery-prev"
+                            onClick={() => setSelectedImageIndex((selectedImageIndex - 1 + ticket.solucion_imagenes.length) % ticket.solucion_imagenes.length)}
+                        >
+                            ‹
+                        </button>
+                        <img
+                            src={ticket.solucion_imagenes[selectedImageIndex]}
+                            alt={`Imagen ${selectedImageIndex + 1}`}
+                            className="gallery-image"
+                        />
+                        <button
+                            className="gallery-nav-btn gallery-next"
+                            onClick={() => setSelectedImageIndex((selectedImageIndex + 1) % ticket.solucion_imagenes.length)}
+                        >
+                            ›
+                        </button>
+                        <div className="gallery-counter">
+                            {selectedImageIndex + 1} / {ticket.solucion_imagenes.length}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Galería modal para imágenes en el modal de resolución */}
+            {selectedImageIndex !== null && showResolutionModal && resolutionImages.length > 0 && (
+                <div className="image-gallery-modal" onClick={() => setSelectedImageIndex(null)}>
+                    <div className="gallery-content" onClick={(e) => e.stopPropagation()}>
+                        <button
+                            className="gallery-close-btn"
+                            onClick={() => setSelectedImageIndex(null)}
+                        >
+                            ✕
+                        </button>
+                        <button
+                            className="gallery-nav-btn gallery-prev"
+                            onClick={() => setSelectedImageIndex((selectedImageIndex - 1 + resolutionImages.length) % resolutionImages.length)}
+                        >
+                            ‹
+                        </button>
+                        <img
+                            src={resolutionImages[selectedImageIndex].url}
+                            alt={`Imagen ${selectedImageIndex + 1}`}
+                            className="gallery-image"
+                        />
+                        <button
+                            className="gallery-nav-btn gallery-next"
+                            onClick={() => setSelectedImageIndex((selectedImageIndex + 1) % resolutionImages.length)}
+                        >
+                            ›
+                        </button>
+                        <div className="gallery-counter">
+                            {selectedImageIndex + 1} / {resolutionImages.length}
                         </div>
                     </div>
                 </div>
