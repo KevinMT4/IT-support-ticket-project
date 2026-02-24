@@ -44,7 +44,7 @@ const TicketDetail = () => {
     };
 
     const handleStatusChange = async (newStatus) => {
-        if (newStatus === 'resuelto') {
+        if (newStatus === "resuelto") {
             setShowResolutionModal(true);
             return;
         }
@@ -96,22 +96,27 @@ const TicketDetail = () => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     // Agregar previsualización local temporalmente
-                    setResolutionImages(prev => [...prev, {
-                        url: e.target.result,
-                        isLocal: true,
-                        fileName: file.name
-                    }]);
+                    setResolutionImages((prev) => [
+                        ...prev,
+                        {
+                            url: e.target.result,
+                            isLocal: true,
+                            fileName: file.name,
+                        },
+                    ]);
                 };
                 reader.readAsDataURL(file);
 
                 // Subir a servidor
                 const formData = new FormData();
-                formData.append('imagen', file);
+                formData.append("imagen", file);
                 const response = await apiClient.uploadImage(formData);
-                
+
                 // Reemplazar previsualización con URL del servidor
-                setResolutionImages(prev => {
-                    const index = prev.findIndex(img => img.fileName === file.name && img.isLocal);
+                setResolutionImages((prev) => {
+                    const index = prev.findIndex(
+                        (img) => img.fileName === file.name && img.isLocal,
+                    );
                     if (index !== -1) {
                         const updated = [...prev];
                         updated[index] = { url: response.url, isLocal: false };
@@ -123,7 +128,9 @@ const TicketDetail = () => {
                 setError(t("messages.errorUploadingImage"));
                 console.error(err);
                 // Remover la previsualización si falla la subida
-                setResolutionImages(prev => prev.filter(img => img.fileName !== file.name));
+                setResolutionImages((prev) =>
+                    prev.filter((img) => img.fileName !== file.name),
+                );
             } finally {
                 setUploadingImage(false);
             }
@@ -140,13 +147,16 @@ const TicketDetail = () => {
             setUpdating(true);
             // Mapear solo las URLs del servidor (no las previsualizaciones locales)
             const serverImages = resolutionImages
-                .filter(img => !img.isLocal)
-                .map(img => img.url);
-            
+                .filter((img) => !img.isLocal)
+                .map((img) => img.url);
+
             const updatedTicket = await apiClient.updateTicketStatus(
                 id,
-                'resuelto',
-                { solucion_texto: resolutionText, solucion_imagenes: serverImages }
+                "resuelto",
+                {
+                    solucion_texto: resolutionText,
+                    solucion_imagenes: serverImages,
+                },
             );
             setTicket(updatedTicket);
             playSuccessSound();
@@ -300,32 +310,47 @@ const TicketDetail = () => {
                             </div>
                         </div>
 
-                        {ticket.estado === 'resuelto' && ticket.solucion_texto && (
-                            <div className="ticket-section">
-                                <h3>{t("ticketDetail.resolutionDetails")}</h3>
-                                <div className="ticket-description">
-                                    {ticket.solucion_texto}
-                                </div>
-                                {ticket.solucion_imagenes && ticket.solucion_imagenes.length > 0 && (
-                                    <div className="solution-images">
-                                        {ticket.solucion_imagenes.map((url, index) => (
-                                            <div 
-                                                key={index} 
-                                                className="solution-image-thumb"
-                                                onClick={() => setSelectedImageIndex(index)}
-                                                style={{ cursor: 'pointer' }}
-                                            >
-                                                <img 
-                                                    src={url} 
-                                                    alt={`Imagen de solución ${index + 1}`}
-                                                    title={t("ticketDetail.clickToEnlarge")}
-                                                />
+                        {ticket.estado === "resuelto" &&
+                            (ticket.solucion_texto ||
+                                (ticket.solucion_imagenes &&
+                                    ticket.solucion_imagenes.length > 0)) && (
+                                <div className="ticket-section">
+                                    <h3>
+                                        {t("ticketDetail.resolutionDetails")}
+                                    </h3>
+                                    {ticket.solucion_texto && (
+                                        <div className="ticket-description">
+                                            {ticket.solucion_texto}
+                                        </div>
+                                    )}
+                                    {ticket.solucion_imagenes &&
+                                        ticket.solucion_imagenes.length > 0 && (
+                                            <div className="solution-images-container">
+                                                {ticket.solucion_imagenes.map(
+                                                    (url, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="solution-image-thumb"
+                                                            onClick={() =>
+                                                                setSelectedImageIndex(
+                                                                    index,
+                                                                )
+                                                            }
+                                                        >
+                                                            <img
+                                                                src={url}
+                                                                alt={`Imagen de solución ${index + 1}`}
+                                                                title={t(
+                                                                    "ticketDetail.clickToEnlarge",
+                                                                )}
+                                                            />
+                                                        </div>
+                                                    ),
+                                                )}
                                             </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                                        )}
+                                </div>
+                            )}
 
                         {isSuperuser() && (
                             <>
@@ -484,17 +509,25 @@ const TicketDetail = () => {
                         <h3>{t("ticketDetail.resolutionModalTitle")}</h3>
                         <div className="modal-body">
                             <div className="form-group">
-                                <label htmlFor="resolutionText">{t("ticketDetail.resolutionText")}</label>
+                                <label htmlFor="resolutionText">
+                                    {t("ticketDetail.resolutionText")}
+                                </label>
                                 <textarea
                                     id="resolutionText"
                                     value={resolutionText}
-                                    onChange={(e) => setResolutionText(e.target.value)}
-                                    placeholder={t("ticketDetail.resolutionTextPlaceholder")}
+                                    onChange={(e) =>
+                                        setResolutionText(e.target.value)
+                                    }
+                                    placeholder={t(
+                                        "ticketDetail.resolutionTextPlaceholder",
+                                    )}
                                     rows="4"
                                 />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="resolutionImages">{t("ticketDetail.resolutionImages")}</label>
+                                <label htmlFor="resolutionImages">
+                                    {t("ticketDetail.resolutionImages")}
+                                </label>
                                 <input
                                     type="file"
                                     id="resolutionImages"
@@ -503,31 +536,58 @@ const TicketDetail = () => {
                                     onChange={handleImageUpload}
                                     disabled={uploadingImage}
                                 />
-                                {uploadingImage && <p className="uploading-text">{t("ticketDetail.uploading")}</p>}
+                                {uploadingImage && (
+                                    <p className="uploading-text">
+                                        {t("ticketDetail.uploading")}
+                                    </p>
+                                )}
                                 {resolutionImages.length > 0 && (
                                     <div className="image-preview">
-                                        {resolutionImages.map((imageObj, index) => (
-                                            <div key={index} className="image-item">
-                                                <div className="image-wrapper">
-                                                    <img 
-                                                        src={imageObj.url} 
-                                                        alt={`Imagen ${index + 1}`}
-                                                        onClick={() => setSelectedImageIndex(index)}
-                                                        style={{ cursor: 'pointer' }}
-                                                        title={t("ticketDetail.clickToPreview")}
-                                                    />
-                                                    {imageObj.isLocal && <span className="uploading-badge">{t("ticketDetail.uploading")}</span>}
-                                                </div>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeImage(index)}
-                                                    className="remove-image-btn"
-                                                    disabled={imageObj.isLocal}
+                                        {resolutionImages.map(
+                                            (imageObj, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="image-item"
                                                 >
-                                                    ×
-                                                </button>
-                                            </div>
-                                        ))}
+                                                    <div className="image-wrapper">
+                                                        <img
+                                                            src={imageObj.url}
+                                                            alt={`Imagen ${index + 1}`}
+                                                            onClick={() =>
+                                                                setSelectedImageIndex(
+                                                                    index,
+                                                                )
+                                                            }
+                                                            style={{
+                                                                cursor: "pointer",
+                                                            }}
+                                                            title={t(
+                                                                "ticketDetail.clickToPreview",
+                                                            )}
+                                                        />
+                                                        {imageObj.isLocal && (
+                                                            <span className="uploading-badge">
+                                                                {t(
+                                                                    "ticketDetail.uploading",
+                                                                )}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            removeImage(index)
+                                                        }
+                                                        className="remove-image-btn"
+                                                        disabled={
+                                                            imageObj.isLocal
+                                                        }
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
+                                            ),
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -544,7 +604,9 @@ const TicketDetail = () => {
                                 className="btn-primary"
                                 disabled={updating}
                             >
-                                {updating ? t("common.saving") : t("common.save")}
+                                {updating
+                                    ? t("common.saving")
+                                    : t("common.save")}
                             </button>
                         </div>
                     </div>
@@ -553,8 +615,14 @@ const TicketDetail = () => {
 
             {/* Galería modal para ver imágenes en grande */}
             {selectedImageIndex !== null && ticket?.solucion_imagenes && (
-                <div className="image-gallery-modal" onClick={() => setSelectedImageIndex(null)}>
-                    <div className="gallery-content" onClick={(e) => e.stopPropagation()}>
+                <div
+                    className="image-gallery-modal"
+                    onClick={() => setSelectedImageIndex(null)}
+                >
+                    <div
+                        className="gallery-content"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <button
                             className="gallery-close-btn"
                             onClick={() => setSelectedImageIndex(null)}
@@ -563,7 +631,14 @@ const TicketDetail = () => {
                         </button>
                         <button
                             className="gallery-nav-btn gallery-prev"
-                            onClick={() => setSelectedImageIndex((selectedImageIndex - 1 + ticket.solucion_imagenes.length) % ticket.solucion_imagenes.length)}
+                            onClick={() =>
+                                setSelectedImageIndex(
+                                    (selectedImageIndex -
+                                        1 +
+                                        ticket.solucion_imagenes.length) %
+                                        ticket.solucion_imagenes.length,
+                                )
+                            }
                         >
                             ‹
                         </button>
@@ -574,50 +649,77 @@ const TicketDetail = () => {
                         />
                         <button
                             className="gallery-nav-btn gallery-next"
-                            onClick={() => setSelectedImageIndex((selectedImageIndex + 1) % ticket.solucion_imagenes.length)}
+                            onClick={() =>
+                                setSelectedImageIndex(
+                                    (selectedImageIndex + 1) %
+                                        ticket.solucion_imagenes.length,
+                                )
+                            }
                         >
                             ›
                         </button>
                         <div className="gallery-counter">
-                            {selectedImageIndex + 1} / {ticket.solucion_imagenes.length}
+                            {selectedImageIndex + 1} /{" "}
+                            {ticket.solucion_imagenes.length}
                         </div>
                     </div>
                 </div>
             )}
 
             {/* Galería modal para imágenes en el modal de resolución */}
-            {selectedImageIndex !== null && showResolutionModal && resolutionImages.length > 0 && (
-                <div className="image-gallery-modal" onClick={() => setSelectedImageIndex(null)}>
-                    <div className="gallery-content" onClick={(e) => e.stopPropagation()}>
-                        <button
-                            className="gallery-close-btn"
-                            onClick={() => setSelectedImageIndex(null)}
+            {selectedImageIndex !== null &&
+                showResolutionModal &&
+                resolutionImages.length > 0 && (
+                    <div
+                        className="image-gallery-modal"
+                        onClick={() => setSelectedImageIndex(null)}
+                    >
+                        <div
+                            className="gallery-content"
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            ✕
-                        </button>
-                        <button
-                            className="gallery-nav-btn gallery-prev"
-                            onClick={() => setSelectedImageIndex((selectedImageIndex - 1 + resolutionImages.length) % resolutionImages.length)}
-                        >
-                            ‹
-                        </button>
-                        <img
-                            src={resolutionImages[selectedImageIndex].url}
-                            alt={`Imagen ${selectedImageIndex + 1}`}
-                            className="gallery-image"
-                        />
-                        <button
-                            className="gallery-nav-btn gallery-next"
-                            onClick={() => setSelectedImageIndex((selectedImageIndex + 1) % resolutionImages.length)}
-                        >
-                            ›
-                        </button>
-                        <div className="gallery-counter">
-                            {selectedImageIndex + 1} / {resolutionImages.length}
+                            <button
+                                className="gallery-close-btn"
+                                onClick={() => setSelectedImageIndex(null)}
+                            >
+                                ✕
+                            </button>
+                            <button
+                                className="gallery-nav-btn gallery-prev"
+                                onClick={() =>
+                                    setSelectedImageIndex(
+                                        (selectedImageIndex -
+                                            1 +
+                                            resolutionImages.length) %
+                                            resolutionImages.length,
+                                    )
+                                }
+                            >
+                                ‹
+                            </button>
+                            <img
+                                src={resolutionImages[selectedImageIndex].url}
+                                alt={`Imagen ${selectedImageIndex + 1}`}
+                                className="gallery-image"
+                            />
+                            <button
+                                className="gallery-nav-btn gallery-next"
+                                onClick={() =>
+                                    setSelectedImageIndex(
+                                        (selectedImageIndex + 1) %
+                                            resolutionImages.length,
+                                    )
+                                }
+                            >
+                                ›
+                            </button>
+                            <div className="gallery-counter">
+                                {selectedImageIndex + 1} /{" "}
+                                {resolutionImages.length}
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
         </Layout>
     );
 };
