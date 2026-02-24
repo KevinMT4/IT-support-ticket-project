@@ -40,7 +40,7 @@ const Layout = ({ children }) => {
                         aria-label="Home"
                     >
                         <img
-                            src="/src/assets/image.png"
+                            src="/image.png"
                             alt="COFATECH"
                             className="navbar-logo"
                         />

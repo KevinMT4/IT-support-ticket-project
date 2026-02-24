@@ -96,7 +96,7 @@ const Register = () => {
             <div className="register-box">
                 <div className="register-logo-container">
                     <img
-                        src="/src/assets/image.png"
+                        src="/image.png"
                         alt="COFATECH"
                         className="register-logo"
                     />

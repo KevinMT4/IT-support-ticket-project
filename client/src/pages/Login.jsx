@@ -139,7 +139,7 @@ const Login = () => {
                         <div className="form-content">
                             <div className="auth-logo-container">
                                 <img
-                                    src="/src/assets/image.png"
+                                    src="/image.png"
                                     alt="COFATECH"
                                     className="auth-logo"
                                 />
@@ -271,7 +271,7 @@ const Login = () => {
                         <div className="form-content">
                             <div className="auth-logo-container">
                                 <img
-                                    src="/src/assets/image.png"
+                                    src="/image.png"
                                     alt="COFATECH"
                                     className="auth-logo"
                                 />
