@@ -271,8 +271,8 @@ const TicketsList = () => {
                         >
                             <FiFilter />
                             {showFilters
-                                ? t("filters.hideFilters")
-                                : t("filters.showFilters")}
+                                ? t("Ocultar Filtros")
+                                : t("Mostrar Filtros")}
                         </button>
 
                         {showFilters && (
@@ -283,9 +283,7 @@ const TicketsList = () => {
                                             <FiSearch />
                                             <input
                                                 type="text"
-                                                placeholder={t(
-                                                    "filters.searchPlaceholder",
-                                                )}
+                                                placeholder={t("Buscar")}
                                                 value={searchTerm}
                                                 onChange={(e) =>
                                                     setSearchTerm(
@@ -308,7 +306,7 @@ const TicketsList = () => {
                                             className="filter-select"
                                         >
                                             <option value="">
-                                                {t("filters.allReasons")}
+                                                {t("Filtros por Motivo")}
                                             </option>
                                             {motivos.map((motivo) => (
                                                 <option
@@ -359,7 +357,7 @@ const TicketsList = () => {
 
                                 <div className="filter-results">
                                     {filteredTickets.length}{" "}
-                                    {t("filters.resultsFound")}
+                                    {t("Resultados Encontrados")}
                                 </div>
                             </div>
                         )}
