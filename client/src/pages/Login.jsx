@@ -266,6 +266,17 @@ const Login = () => {
                                         : t("auth.login")}
                                 </button>
                             </form>
+
+                            <div className="auth-footer">
+                                <p>{t("auth.dontHaveAccount")}</p>
+                                <button
+                                    onClick={handleToggle}
+                                    className="btn-mobile-toggle"
+                                    type="button"
+                                >
+                                    {t("auth.register")}
+                                </button>
+                            </div>
                         </div>
                     ) : (
                         <div className="form-content">
@@ -582,6 +593,17 @@ const Login = () => {
                                         : t("auth.register")}
                                 </button>
                             </form>
+
+                            <div className="auth-footer">
+                                <p>{t("auth.haveAccount")}</p>
+                                <button
+                                    onClick={handleToggle}
+                                    className="btn-mobile-toggle"
+                                    type="button"
+                                >
+                                    {t("auth.login")}
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>
