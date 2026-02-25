@@ -30,6 +30,7 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
   const previousTicketsRef = useRef(null);
   const isFirstLoadRef = useRef(true);
   const knownStateRef = useRef(getStoredState());
+  const hasInitializedRef = useRef(false);
 
   useEffect(() => {
     const state = knownStateRef.current;
@@ -49,19 +50,30 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
 
       tickets.forEach(ticket => {
         const ticketKey = `ticket-${ticket.id}`;
-        if (!knownStateRef.current.ticketStates[ticketKey]) {
+        const storedTicket = knownStateRef.current.ticketStates[ticketKey];
+
+        if (!storedTicket) {
           knownStateRef.current.ticketStates[ticketKey] = {
             estado: ticket.estado,
             prioridad: ticket.prioridad,
             created: true,
+            timestamp: Date.now()
+          };
+        } else {
+          knownStateRef.current.ticketStates[ticketKey] = {
+            ...storedTicket,
+            estado: ticket.estado,
+            prioridad: ticket.prioridad,
           };
         }
       });
+
       saveStoredState(knownStateRef.current);
+      hasInitializedRef.current = true;
       return;
     }
 
-    if (!previousTicketsRef.current || tickets.length === 0) {
+    if (!hasInitializedRef.current || !previousTicketsRef.current || tickets.length === 0) {
       previousTicketsRef.current = tickets;
       return;
     }
@@ -74,7 +86,9 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
       const ticketKey = `ticket-${ticket.id}`;
 
       if (!previousTicket) {
-        if (isSuperuser && !ticketStates[ticketKey]) {
+        const storedTicket = ticketStates[ticketKey];
+
+        if (isSuperuser && !storedTicket) {
           changes.push({
             id: `${ticket.id}-nuevo-${Date.now()}`,
             ticketId: ticket.id,
@@ -86,53 +100,64 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
             estado: ticket.estado,
             prioridad: ticket.prioridad,
             created: true,
+            timestamp: Date.now()
+          };
+        } else if (!storedTicket) {
+          ticketStates[ticketKey] = {
+            estado: ticket.estado,
+            prioridad: ticket.prioridad,
+            created: true,
+            timestamp: Date.now()
           };
         }
       } else {
-        if (!ticketStates[ticketKey]) {
+        const storedTicket = ticketStates[ticketKey];
+
+        if (!storedTicket) {
           ticketStates[ticketKey] = {
-            estado: previousTicket.estado,
-            prioridad: previousTicket.prioridad,
+            estado: ticket.estado,
+            prioridad: ticket.prioridad,
+            timestamp: Date.now()
           };
-        }
+        } else {
+          if (storedTicket.estado !== ticket.estado && previousTicket.estado !== ticket.estado) {
+            const statusTranslations = {
+              'abierto': t('status.open'),
+              'en_proceso': t('status.inProgress'),
+              'resuelto': t('status.resolved')
+            };
+            const translatedStatus = statusTranslations[ticket.estado] || ticket.estado_display;
 
-        if (previousTicket.estado !== ticket.estado) {
-          const statusTranslations = {
-            'abierto': t('status.open'),
-            'en_proceso': t('status.inProgress'),
-            'resuelto': t('status.resolved')
-          };
-          const translatedStatus = statusTranslations[ticket.estado] || ticket.estado_display;
+            changes.push({
+              id: `${ticket.id}-estado-${Date.now()}-${Math.random()}`,
+              ticketId: ticket.id,
+              type: 'estado',
+              message: `${t('notifications.ticket')} "${ticket.asunto}": ${t('notifications.statusChangedTo')} "${translatedStatus}"`,
+              previousValue: previousTicket.estado_display,
+              newValue: ticket.estado_display,
+            });
+            ticketStates[ticketKey].estado = ticket.estado;
+          }
 
-          changes.push({
-            id: `${ticket.id}-estado-${Date.now()}-${Math.random()}`,
-            ticketId: ticket.id,
-            type: 'estado',
-            message: `${t('notifications.ticket')} "${ticket.asunto}": ${t('notifications.statusChangedTo')} "${translatedStatus}"`,
-            previousValue: previousTicket.estado_display,
-            newValue: ticket.estado_display,
-          });
-          ticketStates[ticketKey].estado = ticket.estado;
-        }
+          if (storedTicket.prioridad !== ticket.prioridad && previousTicket.prioridad !== ticket.prioridad) {
+            const priorityTranslations = {
+              'baja': t('priority.low'),
+              'media': t('priority.medium'),
+              'alta': t('priority.high'),
+              'urgente': t('priority.urgent')
+            };
+            const translatedPriority = priorityTranslations[ticket.prioridad] || ticket.prioridad_display;
 
-        if (previousTicket.prioridad !== ticket.prioridad) {
-          const priorityTranslations = {
-            'baja': t('priority.low'),
-            'media': t('priority.medium'),
-            'alta': t('priority.high'),
-            'urgente': t('priority.urgent')
-          };
-          const translatedPriority = priorityTranslations[ticket.prioridad] || ticket.prioridad_display;
-
-          changes.push({
-            id: `${ticket.id}-prioridad-${Date.now()}-${Math.random()}`,
-            ticketId: ticket.id,
-            type: 'prioridad',
-            message: `${t('notifications.ticket')} "${ticket.asunto}": ${t('notifications.priorityChangedTo')} "${translatedPriority}"`,
-            previousValue: previousTicket.prioridad_display,
-            newValue: ticket.prioridad_display,
-          });
-          ticketStates[ticketKey].prioridad = ticket.prioridad;
+            changes.push({
+              id: `${ticket.id}-prioridad-${Date.now()}-${Math.random()}`,
+              ticketId: ticket.id,
+              type: 'prioridad',
+              message: `${t('notifications.ticket')} "${ticket.asunto}": ${t('notifications.priorityChangedTo')} "${translatedPriority}"`,
+              previousValue: previousTicket.prioridad_display,
+              newValue: ticket.prioridad_display,
+            });
+            ticketStates[ticketKey].prioridad = ticket.prioridad;
+          }
         }
       }
     });
