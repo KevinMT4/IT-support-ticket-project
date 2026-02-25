@@ -194,6 +194,10 @@ class TicketViewSet(viewsets.ModelViewSet):
             return Response({'error': 'No tienes permisos para actualizar el estado'},
                             status=status.HTTP_403_FORBIDDEN)
 
+        if ticket.estado == 'resuelto':
+            return Response({'error': 'No se puede cambiar el estado de un ticket resuelto'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
         nuevo_estado = request.data.get('estado')
         if not nuevo_estado:
             return Response({'error': 'El estado es requerido'},
@@ -227,6 +231,10 @@ class TicketViewSet(viewsets.ModelViewSet):
         if request.user.rol != 'superuser':
             return Response({'error': 'No tienes permisos para actualizar la prioridad'},
                             status=status.HTTP_403_FORBIDDEN)
+
+        if ticket.estado == 'resuelto':
+            return Response({'error': 'No se puede cambiar la prioridad de un ticket resuelto'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         nueva_prioridad = request.data.get('prioridad')
         if not nueva_prioridad:

@@ -367,7 +367,7 @@ const TicketDetail = () => {
                                 </div>
                             )}
 
-                        {isSuperuser() && (
+                        {isSuperuser() && ticket.estado !== "resuelto" && (
                             <>
                                 <div className="ticket-section">
                                     <h3>{t("ticketDetail.updatePriority")}</h3>
