@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FiDownload } from "react-icons/fi";
+import { FiDownload, FiSearch, FiFilter, FiX } from "react-icons/fi";
 import { useLanguage } from "../hooks/useLanguage";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/client";
@@ -17,6 +17,12 @@ const TicketsList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [filter, setFilter] = useState("all");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedMotivo, setSelectedMotivo] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [motivos, setMotivos] = useState([]);
+    const [showFilters, setShowFilters] = useState(false);
     const { isSuperuser } = useAuth();
     const { t } = useLanguage();
     const { notifications, removeNotification } = useTicketNotifications(
@@ -26,6 +32,9 @@ const TicketsList = () => {
 
     useEffect(() => {
         loadTickets();
+        if (isSuperuser()) {
+            loadMotivos();
+        }
 
         const interval = setInterval(() => {
             loadTickets();
@@ -67,10 +76,73 @@ const TicketsList = () => {
         }
     };
 
+    const loadMotivos = async () => {
+        try {
+            const data = await apiClient.getMotivos();
+            setMotivos(data);
+        } catch (err) {
+            console.error("Error loading motivos:", err);
+        }
+    };
+
     const filteredTickets = tickets.filter((ticket) => {
-        if (filter === "all") return true;
-        return ticket.estado === filter;
+        if (filter !== "all" && ticket.estado !== filter) {
+            return false;
+        }
+
+        if (searchTerm) {
+            const search = searchTerm.toLowerCase();
+            const matchesSubject = ticket.asunto.toLowerCase().includes(search);
+            const matchesContent = ticket.contenido
+                .toLowerCase()
+                .includes(search);
+            const matchesUser = ticket.usuario_nombre
+                .toLowerCase()
+                .includes(search);
+
+            if (!matchesSubject && !matchesContent && !matchesUser) {
+                return false;
+            }
+        }
+
+        if (selectedMotivo && ticket.motivo !== parseInt(selectedMotivo)) {
+            return false;
+        }
+
+        if (startDate) {
+            const ticketDate = new Date(ticket.fecha_creacion);
+            const filterStartDate = new Date(startDate);
+            if (ticketDate < filterStartDate) {
+                return false;
+            }
+        }
+
+        if (endDate) {
+            const ticketDate = new Date(ticket.fecha_creacion);
+            const filterEndDate = new Date(endDate);
+            filterEndDate.setHours(23, 59, 59, 999);
+            if (ticketDate > filterEndDate) {
+                return false;
+            }
+        }
+
+        return true;
     });
+
+    const clearFilters = () => {
+        setSearchTerm("");
+        setSelectedMotivo("");
+        setStartDate("");
+        setEndDate("");
+        setFilter("all");
+    };
+
+    const hasActiveFilters =
+        searchTerm ||
+        selectedMotivo ||
+        startDate ||
+        endDate ||
+        filter !== "all";
 
     const getTicketStats = () => {
         return {
@@ -190,6 +262,109 @@ const TicketsList = () => {
                         <div className="stat-label">{t("stats.resolved")}</div>
                     </div>
                 </div>
+
+                {isSuperuser() && (
+                    <div className="filters-section">
+                        <button
+                            className="btn-toggle-filters"
+                            onClick={() => setShowFilters(!showFilters)}
+                        >
+                            <FiFilter />
+                            {showFilters
+                                ? t("filters.hideFilters")
+                                : t("filters.showFilters")}
+                        </button>
+
+                        {showFilters && (
+                            <div className="advanced-filters">
+                                <div className="filter-row">
+                                    <div className="filter-group filter-search">
+                                        <label>
+                                            <FiSearch />
+                                            <input
+                                                type="text"
+                                                placeholder={t(
+                                                    "filters.searchPlaceholder",
+                                                )}
+                                                value={searchTerm}
+                                                onChange={(e) =>
+                                                    setSearchTerm(
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                className="filter-input"
+                                            />
+                                        </label>
+                                    </div>
+
+                                    <div className="filter-group">
+                                        <select
+                                            value={selectedMotivo}
+                                            onChange={(e) =>
+                                                setSelectedMotivo(
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className="filter-select"
+                                        >
+                                            <option value="">
+                                                {t("filters.allReasons")}
+                                            </option>
+                                            {motivos.map((motivo) => (
+                                                <option
+                                                    key={motivo.id}
+                                                    value={motivo.id}
+                                                >
+                                                    {motivo.nombre}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="filter-group">
+                                        <input
+                                            type="date"
+                                            value={startDate}
+                                            onChange={(e) =>
+                                                setStartDate(e.target.value)
+                                            }
+                                            className="filter-input"
+                                            placeholder={t("filters.startDate")}
+                                        />
+                                    </div>
+
+                                    <div className="filter-group">
+                                        <input
+                                            type="date"
+                                            value={endDate}
+                                            onChange={(e) =>
+                                                setEndDate(e.target.value)
+                                            }
+                                            className="filter-input"
+                                            placeholder={t("filters.endDate")}
+                                        />
+                                    </div>
+
+                                    {hasActiveFilters && (
+                                        <button
+                                            className="btn-clear-filters"
+                                            onClick={clearFilters}
+                                            title={t("filters.clearFilters")}
+                                        >
+                                            <FiX />
+                                            {t("filters.clearFilters")}
+                                        </button>
+                                    )}
+                                </div>
+
+                                <div className="filter-results">
+                                    {filteredTickets.length}{" "}
+                                    {t("filters.resultsFound")}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {error && (
                     <Alert
