@@ -4,6 +4,7 @@ import { useLanguage } from "../hooks/useLanguage";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/client";
 import Alert from "../components/Alert";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 import "../styles/Auth.css";
 
 const Login = () => {
@@ -131,6 +132,9 @@ const Login = () => {
 
     return (
         <div className="auth-container">
+            <div className="auth-language-switcher">
+                <LanguageSwitcher />
+            </div>
             <div
                 className={`auth-wrapper ${isLogin ? "login-mode" : "register-mode"}`}
             >

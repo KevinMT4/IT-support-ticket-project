@@ -5,6 +5,14 @@
     justify-content: center;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     padding: var(--spacing-lg);
+    position: relative;
+}
+
+.auth-language-switcher {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    z-index: 100;
 }
 
 .auth-wrapper {
@@ -315,5 +323,10 @@
 
     .panel-title {
         font-size: 1.875rem;
+    }
+
+    .auth-language-switcher {
+        top: 16px;
+        right: 16px;
     }
 }
