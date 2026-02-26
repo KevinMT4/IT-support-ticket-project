@@ -479,6 +479,75 @@ def generar_pdf_ticket(request, ticket_id):
         return Response({'error': 'Ticket no encontrado'},
                         status=status.HTTP_404_NOT_FOUND)
 
+    lang = request.GET.get('lang', 'es')
+
+    translations = {
+        'es': {
+            'title': 'Detalles del Ticket',
+            'generated': 'Generado el',
+            'at': 'a las',
+            'field': 'Campo',
+            'information': 'Información',
+            'subject': 'Asunto',
+            'status': 'Estado',
+            'priority': 'Prioridad',
+            'created_by': 'Creado por',
+            'department': 'Departamento',
+            'reason': 'Motivo',
+            'creation_date': 'Fecha de creación',
+            'resolution_time': 'Tiempo de resolución',
+            'pending': 'Pendiente',
+            'close_date': 'Fecha de cierre',
+            'description': 'Descripción del Ticket',
+            'day': 'día',
+            'days': 'días',
+            'hour': 'hora',
+            'hours': 'horas',
+            'minute': 'minuto',
+            'minutes': 'minutos',
+            'status_open': 'Abierto',
+            'status_in_progress': 'En Proceso',
+            'status_resolved': 'Resuelto',
+            'priority_low': 'Baja',
+            'priority_medium': 'Media',
+            'priority_high': 'Alta',
+            'priority_urgent': 'Urgente'
+        },
+        'en': {
+            'title': 'Ticket Details',
+            'generated': 'Generated on',
+            'at': 'at',
+            'field': 'Field',
+            'information': 'Information',
+            'subject': 'Subject',
+            'status': 'Status',
+            'priority': 'Priority',
+            'created_by': 'Created by',
+            'department': 'Department',
+            'reason': 'Reason',
+            'creation_date': 'Creation date',
+            'resolution_time': 'Resolution time',
+            'pending': 'Pending',
+            'close_date': 'Close date',
+            'description': 'Ticket Description',
+            'day': 'day',
+            'days': 'days',
+            'hour': 'hour',
+            'hours': 'hours',
+            'minute': 'minute',
+            'minutes': 'minutes',
+            'status_open': 'Open',
+            'status_in_progress': 'In Progress',
+            'status_resolved': 'Resolved',
+            'priority_low': 'Low',
+            'priority_medium': 'Medium',
+            'priority_high': 'High',
+            'priority_urgent': 'Urgent'
+        }
+    }
+
+    t = translations.get(lang, translations['es'])
+
     pdf_dir = os.path.join(settings.BASE_DIR, 'reportes_pdf', 'tickets')
     os.makedirs(pdf_dir, exist_ok=True)
 
@@ -533,14 +602,33 @@ def generar_pdf_ticket(request, ticket_id):
         alignment=TA_CENTER,
         textColor=colors.HexColor('#6b7280')
     )
+
+    if lang == 'en':
+        date_format = timezone.now().strftime('%m/%d/%Y at %I:%M %p')
+    else:
+        date_format = timezone.now().strftime('%d/%m/%Y a las %H:%M')
+
     subtitle = Paragraph(
-        f"Generado el {timezone.now().strftime('%d/%m/%Y a las %H:%M')}",
+        f"{t['generated']} {date_format}",
         subtitle_style
     )
     elements.append(subtitle)
     elements.append(Spacer(1, 0.3 * inch))
 
-    tiempo_resolucion = 'Pendiente'
+    status_translations = {
+        'abierto': t['status_open'],
+        'en_proceso': t['status_in_progress'],
+        'resuelto': t['status_resolved']
+    }
+
+    priority_translations = {
+        'baja': t['priority_low'],
+        'media': t['priority_medium'],
+        'alta': t['priority_high'],
+        'urgente': t['priority_urgent']
+    }
+
+    tiempo_resolucion = t['pending']
     if ticket.estado == 'resuelto':
         tiempo_transcurrido = timezone.now() - ticket.fecha_creacion
         dias = tiempo_transcurrido.days
@@ -548,26 +636,36 @@ def generar_pdf_ticket(request, ticket_id):
         minutos = (tiempo_transcurrido.seconds % 3600) // 60
 
         if dias > 0:
-            tiempo_resolucion = f"{dias} día{'s' if dias != 1 else ''}, {horas} hora{'s' if horas != 1 else ''}"
+            day_word = t['days'] if dias != 1 else t['day']
+            hour_word = t['hours'] if horas != 1 else t['hour']
+            tiempo_resolucion = f"{dias} {day_word}, {horas} {hour_word}"
         elif horas > 0:
-            tiempo_resolucion = f"{horas} hora{'s' if horas != 1 else ''}, {minutos} minuto{'s' if minutos != 1 else ''}"
+            hour_word = t['hours'] if horas != 1 else t['hour']
+            minute_word = t['minutes'] if minutos != 1 else t['minute']
+            tiempo_resolucion = f"{horas} {hour_word}, {minutos} {minute_word}"
         else:
-            tiempo_resolucion = f"{minutos} minuto{'s' if minutos != 1 else ''}"
+            minute_word = t['minutes'] if minutos != 1 else t['minute']
+            tiempo_resolucion = f"{minutos} {minute_word}"
+
+    if lang == 'en':
+        date_format_ticket = '%m/%d/%Y %I:%M %p'
+    else:
+        date_format_ticket = '%d/%m/%Y %H:%M'
 
     info_data = [
-        ['Campo', 'Información'],
-        ['Asunto', ticket.asunto],
-        ['Estado', ticket.get_estado_display()],
-        ['Prioridad', ticket.get_prioridad_display()],
-        ['Creado por', f"{ticket.usuario.first_name} {ticket.usuario.last_name}" if ticket.usuario.first_name else ticket.usuario.username],
-        ['Departamento', ticket.usuario.departamento.nombre if ticket.usuario.departamento else 'N/A'],
-        ['Motivo', ticket.motivo.nombre if ticket.motivo else 'N/A'],
-        ['Fecha de creación', ticket.fecha_creacion.strftime('%d/%m/%Y %H:%M')],
-        ['Tiempo de resolución', tiempo_resolucion],
+        [t['field'], t['information']],
+        [t['subject'], ticket.asunto],
+        [t['status'], status_translations.get(ticket.estado, ticket.get_estado_display())],
+        [t['priority'], priority_translations.get(ticket.prioridad, ticket.get_prioridad_display())],
+        [t['created_by'], f"{ticket.usuario.first_name} {ticket.usuario.last_name}" if ticket.usuario.first_name else ticket.usuario.username],
+        [t['department'], ticket.usuario.departamento.nombre if ticket.usuario.departamento else 'N/A'],
+        [t['reason'], ticket.motivo.nombre if ticket.motivo else 'N/A'],
+        [t['creation_date'], ticket.fecha_creacion.strftime(date_format_ticket)],
+        [t['resolution_time'], tiempo_resolucion],
     ]
 
     if ticket.fecha_cierre:
-        info_data.append(['Fecha de cierre', ticket.fecha_cierre.strftime('%d/%m/%Y %H:%M')])
+        info_data.append([t['close_date'], ticket.fecha_cierre.strftime(date_format_ticket)])
 
     info_table = Table(info_data, colWidths=[2 * inch, 5 * inch])
     info_table.setStyle(TableStyle([
@@ -592,7 +690,7 @@ def generar_pdf_ticket(request, ticket_id):
     elements.append(info_table)
     elements.append(Spacer(1, 0.3 * inch))
 
-    elements.append(Paragraph("Descripción del Ticket", heading_style))
+    elements.append(Paragraph(t['description'], heading_style))
     elements.append(Spacer(1, 0.1 * inch))
 
     content_style = ParagraphStyle(
