@@ -262,6 +262,43 @@ def generar_pdf_estadisticas(request):
         return Response({'error': 'No tienes permisos para generar reportes'},
                         status=status.HTTP_403_FORBIDDEN)
 
+    # determine language (default to spanish)
+    lang = request.GET.get('lang', 'es')
+    # simple translations for static text used in the report
+    translations = {
+        'es': {
+            'title': 'Reporte Semanal de Tickets',
+            'period': 'Periodo:',
+            'tickets_by_reason': 'Tickets por Motivo',
+            'tickets_by_dept': 'Tickets por Departamento',
+            'users_most_tickets': 'Usuarios con Más Tickets',
+            'tickets_by_priority': 'Tickets por Prioridad',
+            'no_dept': 'Sin dept.',
+            'priority_names': {
+                'baja': 'Baja',
+                'media': 'Media',
+                'alta': 'Alta',
+                'urgente': 'Urgente'
+            }
+        },
+        'en': {
+            'title': 'Weekly Ticket Report',
+            'period': 'Period:',
+            'tickets_by_reason': 'Tickets by Reason',
+            'tickets_by_dept': 'Tickets by Department',
+            'users_most_tickets': 'Users with Most Tickets',
+            'tickets_by_priority': 'Tickets by Priority',
+            'no_dept': 'No dept.',
+            'priority_names': {
+                'baja': 'Low',
+                'media': 'Medium',
+                'alta': 'High',
+                'urgente': 'Urgent'
+            }
+        }
+    }
+    txt = translations.get(lang, translations['es'])
+
     pdf_dir = os.path.join(settings.BASE_DIR, 'reportes_pdf', 'semanales')
     os.makedirs(pdf_dir, exist_ok=True)
 
@@ -302,7 +339,7 @@ def generar_pdf_estadisticas(request):
     elements.append(logo_header)
     elements.append(Spacer(1, 0.15 * inch))
 
-    title = Paragraph("Reporte Semanal de Tickets", title_style)
+    title = Paragraph(txt['title'], title_style)
     elements.append(title)
 
     subtitle_style = ParagraphStyle(
@@ -312,7 +349,7 @@ def generar_pdf_estadisticas(request):
         alignment=TA_CENTER
     )
     subtitle = Paragraph(
-        f"Periodo: {fecha_inicio.strftime('%d/%m/%Y')} - {timezone.now().strftime('%d/%m/%Y')}",
+        f"{txt['period']} {fecha_inicio.strftime('%d/%m/%Y')} - {timezone.now().strftime('%d/%m/%Y')}",
         subtitle_style
     )
     elements.append(subtitle)
@@ -331,12 +368,13 @@ def generar_pdf_estadisticas(request):
     ).order_by('-total')
 
     prioridad_stats = todos_tickets.values('prioridad').annotate(total=Count('id')).order_by('-total')
-    prioridad_nombres = {
+    # use translated priority names
+    prioridad_nombres = txt.get('priority_names', {
         'baja': 'Baja',
         'media': 'Media',
         'alta': 'Alta',
         'urgente': 'Urgente'
-    }
+    })
 
     drawing_dept = Drawing(310, 210)
     if dept_stats:
@@ -345,7 +383,7 @@ def generar_pdf_estadisticas(request):
         bc_dept.y = 30
         bc_dept.height = 150
         bc_dept.width = 190
-        dept_names = [stat['usuario__departamento__nombre'] or 'Sin dept.' for stat in dept_stats]
+        dept_names = [stat['usuario__departamento__nombre'] or txt['no_dept'] for stat in dept_stats]
         dept_values = [[stat['total'] for stat in dept_stats]]
         bc_dept.data = dept_values
         bc_dept.categoryAxis.categoryNames = dept_names
@@ -432,9 +470,9 @@ def generar_pdf_estadisticas(request):
         drawing_prioridad.add(pie_prioridad)
 
     tabla_graficas = Table([
-        [Paragraph("Tickets por Motivo", heading_style), Paragraph("Tickets por Departamento", heading_style)],
+        [Paragraph(txt['tickets_by_reason'], heading_style), Paragraph(txt['tickets_by_dept'], heading_style)],
         [drawing_motivos, drawing_dept],
-        [Paragraph("Usuarios con Más Tickets", heading_style), Paragraph("Tickets por Prioridad", heading_style)],
+        [Paragraph(txt['users_most_tickets'], heading_style), Paragraph(txt['tickets_by_priority'], heading_style)],
         [drawing_users, drawing_prioridad],
     ], colWidths=[310, 310])
 

@@ -309,7 +309,7 @@ project/
 
 ### Reportes
 
-- `GET /api/reportes/pdf-estadisticas/` - Generar PDF de estadísticas
+- `GET /api/reportes/pdf-estadisticas/` - Generar PDF de estadísticas. Acepta parámetro opcional `?lang=es|en` para traducir el contenido según el idioma.
 
 ## Características Adicionales
 

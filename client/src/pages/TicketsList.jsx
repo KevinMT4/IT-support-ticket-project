@@ -24,7 +24,7 @@ const TicketsList = () => {
     const [motivos, setMotivos] = useState([]);
     const [showFilters, setShowFilters] = useState(false);
     const { isSuperuser } = useAuth();
-    const { t } = useLanguage();
+    const { t, currentLanguage } = useLanguage();
     const { notifications, removeNotification } = useTicketNotifications(
         tickets,
         isSuperuser(),
@@ -161,7 +161,7 @@ const TicketsList = () => {
             const API_BASE_URL = import.meta.env.VITE_API_PROXY_PATH || "/api";
 
             const response = await fetch(
-                `${API_BASE_URL}/reportes/pdf-estadisticas/`,
+                `${API_BASE_URL}/reportes/pdf-estadisticas/?lang=${currentLanguage}`,
                 {
                     method: "GET",
                     headers: {
