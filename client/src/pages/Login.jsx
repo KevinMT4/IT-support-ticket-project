@@ -371,7 +371,9 @@ const Login = () => {
                                                 key={dept.id}
                                                 value={dept.id}
                                             >
-                                                {dept.nombre}
+                                                {t(
+                                                    `departments.${dept.nombre}`,
+                                                ) || dept.nombre}
                                             </option>
                                         ))}
                                     </select>

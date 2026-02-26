@@ -155,5 +155,17 @@
         "warningMessage": "Your session is about to expire due to inactivity. Do you want to continue?",
         "continueSession": "Continue session",
         "sessionExpired": "Your session has expired due to inactivity. Please log in again."
+    },
+    "departments": {
+        "Calidad": "Quality",
+        "Finanzas": "Finance",
+        "Compras": "Purchasing",
+        "Ventas": "Sales",
+        "Ingenieria": "Engineering",
+        "Logistica": "Logistics",
+        "Recursos Humanos": "Human Resources",
+        "Tecnologias de la Informacion": "Information Technology",
+        "Mantenimiento": "Maintenance",
+        "Produccion": "Production"
     }
 }

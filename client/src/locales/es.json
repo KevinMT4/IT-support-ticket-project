@@ -155,5 +155,17 @@
         "warningMessage": "Tu sesión está por expirar debido a inactividad. ¿Deseas continuar?",
         "continueSession": "Continuar sesión",
         "sessionExpired": "Tu sesión ha expirado por inactividad. Por favor, inicia sesión nuevamente."
+    },
+    "departments": {
+        "Calidad": "Calidad",
+        "Finanzas": "Finanzas",
+        "Compras": "Compras",
+        "Ventas": "Ventas",
+        "Ingenieria": "Ingeniería",
+        "Logistica": "Logística",
+        "Recursos Humanos": "Recursos Humanos",
+        "Tecnologias de la Informacion": "Tecnologías de la Información",
+        "Mantenimiento": "Mantenimiento",
+        "Produccion": "Producción"
     }
 }
