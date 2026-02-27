@@ -25,6 +25,18 @@ export const useLanguage = () => {
         };
     }, [i18n]);
 
+    // whenever the currentLanguage state is updated we also inform the
+    // API client so that it will send the appropriate Accept-Language
+    // header on subsequent requests.  this keeps the backend and frontend
+    // in sync without having to append ``?lang=`` to every call.
+    useEffect(() => {
+        import("../api/client").then(({ default: apiClient }) => {
+            if (apiClient && apiClient.setLanguage) {
+                apiClient.setLanguage(currentLanguage);
+            }
+        });
+    }, [currentLanguage]);
+
     const changeLanguage = useCallback(
         (lang) => {
             if (["es", "en"].includes(lang)) {

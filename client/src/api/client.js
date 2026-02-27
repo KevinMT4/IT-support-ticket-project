@@ -4,6 +4,8 @@ class ApiClient {
   constructor() {
     this.baseURL = API_BASE_URL;
     this.token = localStorage.getItem('authToken');
+    // store the preferred language for API requests; default to spanish
+    this.language = localStorage.getItem('language') || 'es';
   }
 
   setToken(token) {
@@ -15,6 +17,15 @@ class ApiClient {
     }
   }
 
+  setLanguage(lang) {
+    this.language = lang;
+    localStorage.setItem('language', lang);
+  }
+
+  getLanguage() {
+    return this.language;
+  }
+
   getToken() {
     return this.token || localStorage.getItem('authToken');
   }
@@ -23,6 +34,7 @@ class ApiClient {
     const url = `${this.baseURL}${endpoint}`;
     const headers = {
       'Content-Type': 'application/json',
+      'Accept-Language': this.language || 'es',
       ...options.headers,
     };
 

@@ -112,6 +112,16 @@ El sistema incluye migraciones que crean automáticamente:
 - 8 departamentos predefinidos (Calidad, Finanzas, Compras, Ventas, Ingeniería, Logística, Recursos Humanos, TI)
 - 4 motivos para el departamento de TI (Internet, Programas, Contraseñas, Equipo)
 
+### Internationalization
+
+Motivos (reasons) now support an English translation field (`nombre_en`).
+When the frontend or API request is made with English as the current language
+(either via the React i18n settings or `Accept-Language: en` header), the
+system will display the English name if available.  New motivos can be edited
+in the Django admin and the English name entered manually.  The database
+contains a migration that seeds common reasons with reasonable English
+equivalents.
+
 #### Crear superusuario (administrador)
 
 ```bash

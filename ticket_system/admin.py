@@ -32,10 +32,11 @@ class UsuarioAdmin(UserAdmin):
 
 @admin.register(Motivo)
 class MotivoAdmin(admin.ModelAdmin):
-    list_display = ['nombre', 'departamento', 'descripcion']
+    list_display = ['nombre', 'nombre_en', 'departamento', 'descripcion']
     list_filter = ['departamento']
-    search_fields = ['nombre', 'descripcion']
+    search_fields = ['nombre', 'nombre_en', 'descripcion']
     ordering = ['departamento', 'nombre']
+    fields = ['nombre', 'nombre_en', 'departamento', 'descripcion']
 
 
 @admin.register(Ticket)

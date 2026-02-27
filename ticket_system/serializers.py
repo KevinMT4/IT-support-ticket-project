@@ -49,6 +49,14 @@ class UsuarioRegistroSerializer(serializers.ModelSerializer):
 
 class MotivoSerializer(serializers.ModelSerializer):
     departamento_nombre = serializers.CharField(source='departamento.nombre', read_only=True)
+    # override field so that the name is translated based on the active
+    # language.  we return exactly the value that ``Motivo.get_nombre_por_idioma``
+    # provides so front‑end components can continue to use ``motivo.nombre``
+    # without any change.
+    nombre = serializers.SerializerMethodField()
+
+    def get_nombre(self, obj):
+        return obj.get_nombre_por_idioma()
 
     class Meta:
         model = Motivo
@@ -58,7 +66,16 @@ class TicketSerializer(serializers.ModelSerializer):
     usuario_nombre = serializers.SerializerMethodField()
     usuario_departamento_nombre = serializers.SerializerMethodField()
     departamento_nombre = serializers.CharField(source='departamento.nombre', read_only=True)
-    motivo_nombre = serializers.CharField(source='motivo.nombre', read_only=True, allow_null=True)
+    # use a method field so that the translation helper is executed for
+    # ticket instances.  previously this was a simple CharField using
+    # ``source='motivo.nombre'`` which would always return the raw Spanish
+    # text stored in the database.
+    motivo_nombre = serializers.SerializerMethodField()
+
+    def get_motivo_nombre(self, obj):
+        if obj.motivo:
+            return obj.motivo.get_nombre_por_idioma()
+        return None
     estado_display = serializers.CharField(source='get_estado_display', read_only=True)
     prioridad_display = serializers.CharField(source='get_prioridad_display', read_only=True)
 

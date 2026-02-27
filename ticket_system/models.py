@@ -52,6 +52,9 @@ class Usuario(AbstractUser):
 
 class Motivo(models.Model):
     nombre = models.CharField(max_length=100)
+    # field added to hold the English translation of the reason; most
+    # existing records will be populated via a data migration.
+    nombre_en = models.CharField(max_length=100, blank=True, null=True)
     descripcion = models.TextField(blank=True)
     departamento = models.ForeignKey(
         Departamento,
@@ -64,8 +67,27 @@ class Motivo(models.Model):
         verbose_name = 'Motivo'
         verbose_name_plural = 'Motivos'
 
-    def __str__(self):
+    def get_nombre_por_idioma(self):
+        """Return the name appropriate for the current language.
+
+        We rely on Django's translation utilities which are driven by the
+        middleware (Accept-Language header, session, etc.). When the active
+        language begins with ``en`` and ``nombre_en`` is populated we return
+        the English version, otherwise fall back to the original Spanish
+        ``nombre``.
+        """
+        from django.utils import translation
+
+        lang = translation.get_language() or ''
+        if lang.startswith('en') and self.nombre_en:
+            return self.nombre_en
         return self.nombre
+
+    def __str__(self):
+        # show translated name in the admin shell/representations so that
+        # people immediately see the name that corresponds to the active
+        # language.
+        return self.get_nombre_por_idioma()
 
 
 class Ticket(models.Model):

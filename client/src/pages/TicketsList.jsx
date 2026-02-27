@@ -161,11 +161,12 @@ const TicketsList = () => {
             const API_BASE_URL = import.meta.env.VITE_API_PROXY_PATH || "/api";
 
             const response = await fetch(
-                `${API_BASE_URL}/reportes/pdf-estadisticas/?lang=${currentLanguage}`,
+                `${API_BASE_URL}/reportes/pdf-estadisticas/`,
                 {
                     method: "GET",
                     headers: {
                         Authorization: `Token ${token}`,
+                        "Accept-Language": currentLanguage,
                     },
                 },
             );

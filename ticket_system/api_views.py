@@ -262,8 +262,15 @@ def generar_pdf_estadisticas(request):
         return Response({'error': 'No tienes permisos para generar reportes'},
                         status=status.HTTP_403_FORBIDDEN)
 
-    # determine language (default to spanish)
-    lang = request.GET.get('lang', 'es')
+    # determine language by query parameter first, then Accept-Language header
+    lang = request.GET.get('lang')
+    if not lang:
+        header = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
+        if header:
+            # take primary subtag
+            lang = header.split(',')[0].split('-')[0]
+    if lang not in ('es', 'en'):
+        lang = 'es'
     # simple translations for static text used in the report
     translations = {
         'es': {
@@ -363,7 +370,9 @@ def generar_pdf_estadisticas(request):
         total=Count('id')
     ).order_by('-total')[:5]
 
-    motivo_stats = todos_tickets.filter(motivo__isnull=False).values('motivo__nombre').annotate(
+    # include the motivo id so we can look up the object later and
+    # obtain a translated name instead of the raw Spanish field value.
+    motivo_stats = todos_tickets.filter(motivo__isnull=False).values('motivo__id', 'motivo__nombre').annotate(
         total=Count('id')
     ).order_by('-total')
 
@@ -428,7 +437,17 @@ def generar_pdf_estadisticas(request):
         pie_motivo.y = 45
         pie_motivo.width = 130
         pie_motivo.height = 130
-        motivo_labels = [stat['motivo__nombre'] for stat in motivo_stats]
+        # compute a translated label list by looking up motive objects
+        motivo_labels = []
+        for stat in motivo_stats:
+            label = stat['motivo__nombre']
+            if lang.startswith('en'):
+                try:
+                    motivo_obj = Motivo.objects.get(id=stat['motivo__id'])
+                    label = motivo_obj.get_nombre_por_idioma()
+                except Motivo.DoesNotExist:
+                    pass
+            motivo_labels.append(label)
         motivo_values = [stat['total'] for stat in motivo_stats]
         pie_motivo.data = motivo_values
         pie_motivo.labels = motivo_labels
@@ -517,7 +536,14 @@ def generar_pdf_ticket(request, ticket_id):
         return Response({'error': 'Ticket no encontrado'},
                         status=status.HTTP_404_NOT_FOUND)
 
-    lang = request.GET.get('lang', 'es')
+    # same fallback mechanism for individual ticket pdf
+    lang = request.GET.get('lang')
+    if not lang:
+        header = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
+        if header:
+            lang = header.split(',')[0].split('-')[0]
+    if lang not in ('es', 'en'):
+        lang = 'es'
 
     translations = {
         'es': {
@@ -697,7 +723,7 @@ def generar_pdf_ticket(request, ticket_id):
         [t['priority'], priority_translations.get(ticket.prioridad, ticket.get_prioridad_display())],
         [t['created_by'], f"{ticket.usuario.first_name} {ticket.usuario.last_name}" if ticket.usuario.first_name else ticket.usuario.username],
         [t['department'], ticket.usuario.departamento.nombre if ticket.usuario.departamento else 'N/A'],
-        [t['reason'], ticket.motivo.nombre if ticket.motivo else 'N/A'],
+        [t['reason'], ticket.motivo.get_nombre_por_idioma() if ticket.motivo else 'N/A'],
         [t['creation_date'], ticket.fecha_creacion.strftime(date_format_ticket)],
         [t['resolution_time'], tiempo_resolucion],
     ]
