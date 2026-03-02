@@ -27,7 +27,7 @@ const TicketDetail = () => {
 
     useEffect(() => {
         loadTicket();
-    }, [id]);
+    }, [id, currentLanguage]);
 
     const getAbsoluteImageUrl = (url) => {
         if (!url) return url;
