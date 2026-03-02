@@ -44,6 +44,10 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
   }, []);
 
   useEffect(() => {
+    if (tickets.length === 0) {
+      return;
+    }
+
     if (isFirstLoadRef.current) {
       previousTicketsRef.current = tickets;
       isFirstLoadRef.current = false;
@@ -52,20 +56,12 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
         const ticketKey = `ticket-${ticket.id}`;
         const storedTicket = knownStateRef.current.ticketStates[ticketKey];
 
-        if (!storedTicket) {
-          knownStateRef.current.ticketStates[ticketKey] = {
-            estado: ticket.estado,
-            prioridad: ticket.prioridad,
-            created: true,
-            timestamp: Date.now()
-          };
-        } else {
-          knownStateRef.current.ticketStates[ticketKey] = {
-            ...storedTicket,
-            estado: ticket.estado,
-            prioridad: ticket.prioridad,
-          };
-        }
+        knownStateRef.current.ticketStates[ticketKey] = {
+          estado: ticket.estado,
+          prioridad: ticket.prioridad,
+          created: storedTicket ? storedTicket.created : true,
+          timestamp: storedTicket ? storedTicket.timestamp : Date.now()
+        };
       });
 
       saveStoredState(knownStateRef.current);
@@ -73,54 +69,51 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
       return;
     }
 
-    if (!hasInitializedRef.current || !previousTicketsRef.current || tickets.length === 0) {
+    if (!hasInitializedRef.current || !previousTicketsRef.current) {
       previousTicketsRef.current = tickets;
       return;
     }
 
     const changes = [];
     const ticketStates = knownStateRef.current.ticketStates;
+    const now = Date.now();
 
     tickets.forEach(ticket => {
       const previousTicket = previousTicketsRef.current.find(t => t.id === ticket.id);
       const ticketKey = `ticket-${ticket.id}`;
+      const storedTicket = ticketStates[ticketKey];
 
       if (!previousTicket) {
-        const storedTicket = ticketStates[ticketKey];
+        if (!storedTicket) {
+          const fiveSecondsAgo = now - 5000;
+          const recentlyCreated = new Date(ticket.fecha_creacion).getTime() > fiveSecondsAgo;
 
-        if (isSuperuser && !storedTicket) {
-          changes.push({
-            id: `${ticket.id}-nuevo-${Date.now()}`,
-            ticketId: ticket.id,
-            type: 'nuevo',
-            message: `${t('notifications.newTicket')}. ${ticket.usuario_nombre}: "${ticket.asunto}"`,
-            newValue: ticket.asunto,
-          });
+          if (isSuperuser && recentlyCreated) {
+            changes.push({
+              id: `${ticket.id}-nuevo-${Date.now()}`,
+              ticketId: ticket.id,
+              type: 'nuevo',
+              message: `${t('notifications.newTicket')}. ${ticket.usuario_nombre}: "${ticket.asunto}"`,
+              newValue: ticket.asunto,
+            });
+          }
+
           ticketStates[ticketKey] = {
             estado: ticket.estado,
             prioridad: ticket.prioridad,
             created: true,
-            timestamp: Date.now()
-          };
-        } else if (!storedTicket) {
-          ticketStates[ticketKey] = {
-            estado: ticket.estado,
-            prioridad: ticket.prioridad,
-            created: true,
-            timestamp: Date.now()
+            timestamp: now
           };
         }
       } else {
-        const storedTicket = ticketStates[ticketKey];
-
         if (!storedTicket) {
           ticketStates[ticketKey] = {
             estado: ticket.estado,
             prioridad: ticket.prioridad,
-            timestamp: Date.now()
+            timestamp: now
           };
         } else {
-          if (storedTicket.estado !== ticket.estado && previousTicket.estado !== ticket.estado) {
+          if (storedTicket.estado !== ticket.estado) {
             const statusTranslations = {
               'abierto': t('status.open'),
               'en_proceso': t('status.inProgress'),
@@ -139,7 +132,7 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
             ticketStates[ticketKey].estado = ticket.estado;
           }
 
-          if (storedTicket.prioridad !== ticket.prioridad && previousTicket.prioridad !== ticket.prioridad) {
+          if (storedTicket.prioridad !== ticket.prioridad) {
             const priorityTranslations = {
               'baja': t('priority.low'),
               'media': t('priority.medium'),
@@ -165,7 +158,7 @@ export const useTicketNotifications = (tickets, isSuperuser = false) => {
     if (changes.length > 0) {
       playNotificationSound();
       setNotifications(prev => [...prev, ...changes]);
-      knownStateRef.current.lastUpdate = Date.now();
+      knownStateRef.current.lastUpdate = now;
       saveStoredState(knownStateRef.current);
     }
 
