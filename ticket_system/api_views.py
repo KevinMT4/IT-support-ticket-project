@@ -562,6 +562,9 @@ def generar_pdf_ticket(request, ticket_id):
     if lang not in ('es', 'en'):
         lang = 'es'
 
+    from django.utils import translation
+    translation.activate(lang)
+
     translations = {
         'es': {
             'title': 'Detalles del Ticket',
@@ -592,7 +595,8 @@ def generar_pdf_ticket(request, ticket_id):
             'priority_low': 'Baja',
             'priority_medium': 'Media',
             'priority_high': 'Alta',
-            'priority_urgent': 'Urgente'
+            'priority_urgent': 'Urgente',
+            'department_names': {}
         },
         'en': {
             'title': 'Ticket Details',
@@ -623,7 +627,19 @@ def generar_pdf_ticket(request, ticket_id):
             'priority_low': 'Low',
             'priority_medium': 'Medium',
             'priority_high': 'High',
-            'priority_urgent': 'Urgent'
+            'priority_urgent': 'Urgent',
+            'department_names': {
+                'Calidad': 'Quality',
+                'Finanzas': 'Finance',
+                'Compras': 'Purchasing',
+                'Ventas': 'Sales',
+                'Ingenieria': 'Engineering',
+                'Logistica': 'Logistics',
+                'Recursos Humanos': 'Human Resources',
+                'Tecnologias de la Informacion': 'Information Technology',
+                'Mantenimiento': 'Maintenance',
+                'Produccion': 'Production'
+            }
         }
     }
 
