@@ -117,8 +117,8 @@ El sistema incluye migraciones que crean automáticamente:
 Motivos (reasons) now support an English translation field (`nombre_en`).
 When the frontend or API request is made with English as the current language
 (either via the React i18n settings or `Accept-Language: en` header), the
-system will display the English name if available.  New motivos can be edited
-in the Django admin and the English name entered manually.  The database
+system will display the English name if available. New motivos can be edited
+in the Django admin and the English name entered manually. The database
 contains a migration that seeds common reasons with reasonable English
 equivalents.
 
@@ -467,9 +467,12 @@ Para desplegar en producción, considera:
 
 ## Licencia
 
-[Especificar licencia]
+MIT License
 
-## Contacto
+Copyright (c) 2026 [LuisAngelHidalgoVazquez] && [MurilloTorresKevinRafael]
 
-[Información de contacto del equipo de desarrollo]
-texto
+Se concede permiso, de forma gratuita, a cualquier persona que obtenga una copia de este software y de los archivos de documentación asociados (el "Software"), para tratar el Software sin restricción, incluyendo sin limitación los derechos de usar, copiar, modificar, fusionar, publicar, distribuir, sublicenciar y/o vender copias del Software, y permitir a las personas a quienes se les proporcione el Software que lo hagan, sujeto a las siguientes condiciones:
+
+El aviso de copyright anterior y este aviso de permiso se incluirán en todas las copias o partes sustanciales del Software.
+
+EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O IMPLÍCITA, INCLUYENDO PERO NO LIMITADO A GARANTÍAS DE COMERCIALIZACIÓN, IDONEIDAD PARA UN PROPÓSITO PARTICULAR E INCUMPLIMIENTO. EN NINGÚN CASO LOS AUTORES O TITULARES DEL COPYRIGHT SERÁN RESPONSABLES DE NINGUNA RECLAMACIÓN, DAÑO U OTRA RESPONSABILIDAD, YA SEA EN UNA ACCIÓN DE CONTRATO, AGRAVIO O CUALQUIER OTRA FORMA, DERIVADA DE O EN CONEXIÓN CON EL SOFTWARE O EL USO U OTRAS TRANSACCIONES EN EL SOFTWARE.
