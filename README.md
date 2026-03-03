@@ -452,7 +452,7 @@ npm run preview
 npm run lint
 ```
 
-## Notas de Producción
+## Notas de Producción.
 
 Para desplegar en producción, considera:
 
