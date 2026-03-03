@@ -8,14 +8,14 @@ def create_new_departments(apps, schema_editor):
         {
             'nombre': 'Mantenimiento',
             'gerente': 'Gerente de Mantenimiento',
-            'email': 'mantenimiento@empresa.com',
+            'email': 'mantenimiento@cofat.com',
             'descripcion': 'Departamento de Mantenimiento',
             'activo': True
         },
         {
             'nombre': 'Produccion',
             'gerente': 'Gerente de Produccion',
-            'email': 'produccion@empresa.com',
+            'email': 'produccion@cofat.com',
             'descripcion': 'Departamento de Produccion',
             'activo': True
         },
