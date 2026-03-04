@@ -72,14 +72,16 @@ class Motivo(models.Model):
 
         We rely on Django's translation utilities which are driven by the
         middleware (Accept-Language header, session, etc.). When the active
-        language begins with ``en`` and ``nombre_en`` is populated we return
-        the English version, otherwise fall back to the original Spanish
-        ``nombre``.
+        language begins with ``es`` and we have the Spanish ``nombre``, we
+        return it. When it's ``en`` and we have ``nombre_en``, we return
+        the English version.
         """
         from django.utils import translation
 
         lang = translation.get_language() or ''
-        if lang.startswith('en') and self.nombre_en:
+        if lang.startswith('es'):
+            return self.nombre
+        elif lang.startswith('en') and self.nombre_en:
             return self.nombre_en
         return self.nombre
 

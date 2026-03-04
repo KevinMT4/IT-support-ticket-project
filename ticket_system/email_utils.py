@@ -20,7 +20,6 @@ def send_ticket_created_email_to_user(ticket):
                 </h2>
 
                 <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <p><strong>Número de Ticket:</strong> #{ticket.id}</p>
                     <p><strong>Asunto:</strong> {ticket.asunto}</p>
                     <p><strong>Prioridad:</strong> {ticket.get_prioridad_display()}</p>
                     <p><strong>Estado:</strong> {ticket.get_estado_display()}</p>
@@ -47,7 +46,6 @@ def send_ticket_created_email_to_user(ticket):
     plain_message = f"""
     Nuevo Ticket Creado
 
-    Número de Ticket: #{ticket.id}
     Asunto: {ticket.asunto}
     Prioridad: {ticket.get_prioridad_display()}
     Estado: {ticket.get_estado_display()}
@@ -81,7 +79,6 @@ def send_ticket_created_email_to_admins(ticket):
                 </h2>
 
                 <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <p><strong>Número de Ticket:</strong> #{ticket.id}</p>
                     <p><strong>Creado por:</strong> {ticket.usuario.get_full_name() or ticket.usuario.username}</p>
                     <p><strong>Email del usuario:</strong> {ticket.usuario.email}</p>
                     <p><strong>Departamento del usuario:</strong> {ticket.usuario.departamento.nombre if ticket.usuario.departamento else 'N/A'}</p>
@@ -112,7 +109,6 @@ def send_ticket_created_email_to_admins(ticket):
     plain_message = f"""
     Nuevo Ticket Creado - Notificación para Administrador
 
-    Número de Ticket: #{ticket.id}
     Creado por: {ticket.usuario.get_full_name() or ticket.usuario.username}
     Email del usuario: {ticket.usuario.email}
     Departamento del usuario: {ticket.usuario.departamento.nombre if ticket.usuario.departamento else 'N/A'}
@@ -158,7 +154,6 @@ def send_ticket_status_updated_email(ticket, previous_status):
                 </h2>
 
                 <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <p><strong>Número de Ticket:</strong> #{ticket.id}</p>
                     <p><strong>Asunto:</strong> {ticket.asunto}</p>
                     <p style="margin: 15px 0;">
                         <strong>Estado anterior:</strong>
@@ -187,7 +182,6 @@ def send_ticket_status_updated_email(ticket, previous_status):
     plain_message = f"""
     Estado del Ticket Actualizado
 
-    Número de Ticket: #{ticket.id}
     Asunto: {ticket.asunto}
     Estado anterior: {dict(ticket.ESTADO_CHOICES).get(previous_status, previous_status)}
     Estado actual: {ticket.get_estado_display()}
@@ -221,7 +215,6 @@ def send_ticket_priority_updated_email(ticket, previous_priority):
                 </h2>
 
                 <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <p><strong>Número de Ticket:</strong> #{ticket.id}</p>
                     <p><strong>Asunto:</strong> {ticket.asunto}</p>
                     <p><strong>Estado:</strong> {ticket.get_estado_display()}</p>
                     <p style="margin: 15px 0;">
@@ -250,7 +243,6 @@ def send_ticket_priority_updated_email(ticket, previous_priority):
     plain_message = f"""
     Prioridad del Ticket Actualizada
 
-    Número de Ticket: #{ticket.id}
     Asunto: {ticket.asunto}
     Estado: {ticket.get_estado_display()}
     Prioridad anterior: {dict(ticket.PRIORIDAD_CHOICES).get(previous_priority, previous_priority)}

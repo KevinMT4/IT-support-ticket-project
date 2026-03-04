@@ -351,7 +351,7 @@ const TicketsList = () => {
                                             title={t("filters.clearFilters")}
                                         >
                                             <FiX />
-                                            {t("filters.clearFilters")}
+                                            {t("Borrar")}
                                         </button>
                                     )}
                                 </div>
