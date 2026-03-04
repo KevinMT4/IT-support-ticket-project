@@ -1,6 +1,7 @@
 # Guía de Despliegue en AWS - TicketsCofat
 
 ## Tabla de Contenidos
+
 1. [Prerequisites y Configuración EC2](#prerequisites-y-configuración-ec2)
 2. [Instalación de Dependencias](#instalación-de-dependencias)
 3. [Configuración del Backend](#configuración-del-backend)
@@ -17,15 +18,17 @@
 ## Prerequisites y Configuración EC2
 
 ### Lanzar Instancia EC2
+
 - **Sistema Operativo**: Ubuntu 22.04 LTS o 20.04 LTS
 - **Tipo de Instancia**: t3.small (o t3.medium según carga)
 - **Almacenamiento**: 20 GB gp3
 - **Security Group**: Abrir puertos:
-  - TCP 22 (SSH)
-  - TCP 80 (HTTP)
-  - TCP 443 (HTTPS)
+    - TCP 22 (SSH)
+    - TCP 80 (HTTP)
+    - TCP 443 (HTTPS)
 
 ### Conectarse a la Instancia
+
 ```bash
 ssh -i /ruta/a/tu-key.pem ubuntu@<PUBLIC_IP>
 ```
@@ -35,11 +38,13 @@ ssh -i /ruta/a/tu-key.pem ubuntu@<PUBLIC_IP>
 ## Instalación de Dependencias
 
 ### Actualizar Sistema
+
 ```bash
 sudo apt update && sudo apt upgrade -y
 ```
 
 ### Instalar Python y Herramientas Necesarias
+
 ```bash
 sudo apt install -y \
   python3 python3-venv python3-pip \
@@ -48,6 +53,7 @@ sudo apt install -y \
 ```
 
 ### Instalar Node.js (para Frontend)
+
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt install -y nodejs
@@ -58,6 +64,7 @@ sudo apt install -y nodejs
 ## Configuración del Backend
 
 ### 1. Clonar o Descargar el Repositorio
+
 ```bash
 cd /home/ubuntu
 git clone <tu-repo-url> TicketsCofat
@@ -67,7 +74,9 @@ sudo chown -R ubuntu:ubuntu /home/ubuntu/TicketsCofat
 ```
 
 ### 2. Crear Variables de Entorno (.env)
+
 Crea `/home/ubuntu/TicketsCofat/.env` con:
+
 ```
 DJANGO_SECRET_KEY=tu_secreto_largo_aqui_cambiar_en_produccion
 DJANGO_DEBUG=False
@@ -82,6 +91,7 @@ DEFAULT_FROM_EMAIL=tu-email@example.com
 ```
 
 ### 3. Crear Entorno Virtual e Instalar Dependencias
+
 ```bash
 cd /home/ubuntu/TicketsCofat
 python3 -m venv venv
@@ -92,6 +102,7 @@ pip install gunicorn
 ```
 
 ### 4. Ejecutar Migraciones de Base de Datos
+
 ```bash
 export $(grep -v '^#' .env | xargs)
 python manage.py migrate
@@ -99,6 +110,7 @@ python manage.py collectstatic --noinput
 ```
 
 ### 5. Crear Superusuario (Opcional)
+
 ```bash
 python manage.py createsuperuser
 ```
@@ -108,22 +120,26 @@ python manage.py createsuperuser
 ## Configuración del Frontend
 
 ### 1. Instalar Dependencias
+
 ```bash
 cd /home/ubuntu/TicketsCofat/client
 npm ci
 ```
 
 ### 2. Copiar Logo a Carpeta Pública
+
 ```bash
 cp /home/ubuntu/TicketsCofat/client/src/assets/image.png /home/ubuntu/TicketsCofat/client/public/image.png
 ```
 
 ### 3. Build para Producción
+
 ```bash
 npm run build
 ```
 
 Verifica que se generó `dist/`:
+
 ```bash
 ls -la dist/
 ```
@@ -133,12 +149,15 @@ ls -la dist/
 ## Configuración de Nginx
 
 ### 1. Crear Configuración de Sitio
+
 Edita o crea `/etc/nginx/sites-available/tickets`:
+
 ```bash
 sudo nano /etc/nginx/sites-available/tickets
 ```
 
 Copia y pega (reemplaza `<TU_IP_O_DOMINIO>` con tu IP pública o dominio):
+
 ```nginx
 server {
     listen 80;
@@ -175,12 +194,14 @@ server {
 ```
 
 ### 2. Activar Sitio y Validar Configuración
+
 ```bash
 sudo ln -s /etc/nginx/sites-available/tickets /etc/nginx/sites-enabled/
 sudo nginx -t
 ```
 
 ### 3. Ajustar Permisos y Reiniciar Nginx
+
 ```bash
 sudo chmod 755 /home/ubuntu
 sudo chmod 755 /home/ubuntu/TicketsCofat
@@ -193,7 +214,8 @@ sudo systemctl restart nginx
 
 ## Configuración de Firewall
 
-### Habilitar UFW y Permitir Puertos
+### Habilitar UFW y Permitir Puertos.
+
 ```bash
 sudo ufw allow OpenSSH
 sudo ufw allow 'Nginx Full'
@@ -206,12 +228,15 @@ sudo ufw status
 ## Servicios con Systemd
 
 ### 1. Crear Unidad para Gunicorn
+
 Edita `/etc/systemd/system/gunicorn.service`:
+
 ```bash
 sudo nano /etc/systemd/system/gunicorn.service
 ```
 
 Copia y pega:
+
 ```ini
 [Unit]
 Description=gunicorn daemon for TicketsCofat
@@ -231,6 +256,7 @@ WantedBy=multi-user.target
 ```
 
 ### 2. Activar y Iniciar Gunicorn
+
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl start gunicorn
@@ -243,6 +269,7 @@ sudo systemctl status gunicorn
 ## Verificación y Debugging
 
 ### Verificar Servicios Activos
+
 ```bash
 # Gunicorn
 sudo systemctl status gunicorn
@@ -255,6 +282,7 @@ sudo tail -f /var/log/nginx/tickets_access.log
 ```
 
 ### Pruebas de Conectividad
+
 ```bash
 # Desde dentro de la instancia
 curl -I http://127.0.0.1/
@@ -266,6 +294,7 @@ curl -I http://<TU_IP>/api/
 ```
 
 ### Si hay Errores de Permisos
+
 ```bash
 sudo chown -R ubuntu:ubuntu /home/ubuntu/TicketsCofat/
 sudo systemctl restart gunicorn
@@ -276,6 +305,7 @@ sudo systemctl restart gunicorn
 ## HTTPS con Let's Encrypt (Opcional)
 
 Si tienes un dominio apuntando a tu IP:
+
 ```bash
 sudo certbot --nginx -d tu-dominio.com -d www.tu-dominio.com
 ```
@@ -287,6 +317,7 @@ sudo certbot --nginx -d tu-dominio.com -d www.tu-dominio.com
 ## Despliegues Futuros
 
 ### Actualizar Backend
+
 ```bash
 cd /home/ubuntu/TicketsCofat
 git pull
@@ -298,6 +329,7 @@ sudo systemctl restart gunicorn
 ```
 
 ### Actualizar Frontend
+
 ```bash
 cd /home/ubuntu/TicketsCofat/client
 git pull
@@ -308,6 +340,7 @@ sudo systemctl reload nginx
 ```
 
 ### Ver Logs en Tiempo Real
+
 ```bash
 # Backend
 sudo journalctl -u gunicorn -f
@@ -321,26 +354,34 @@ sudo tail -f /var/log/nginx/tickets_error.log | grep -E 'error|warn'
 ## Troubleshooting
 
 ### Admin no carga (DisallowedHost)
+
 Añade la IP publica a `tickets/settings.py`:
+
 ```python
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,<TU_IP>').split(',')
 ```
+
 O en el `.env`:
+
 ```
 DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,<TU_IP>
 ```
+
 Luego reinicia Gunicorn:
+
 ```bash
 sudo systemctl restart gunicorn
 ```
 
 ### Logo no aparece en Frontend
+
 El logo se sirve desde `/image.png` (archivo público de Nginx) en la carpeta `client/public/`.
 
 ### Timeout al conectar HTTP
+
 Verifica Security Group en AWS Console:
+
 - EC2 → Instances → Security → Inbound rules
 - Asegúrate que HTTP (80) está abierto desde `0.0.0.0/0`
 
 ---
-
