@@ -272,8 +272,8 @@ const TicketsList = () => {
                         >
                             <FiFilter />
                             {showFilters
-                                ? t("Ocultar Filtros")
-                                : t("Mostrar Filtros")}
+                                ? t("filters.hideFilters")
+                                : t("filters.showFilters")}
                         </button>
 
                         {showFilters && (
@@ -284,7 +284,9 @@ const TicketsList = () => {
                                             <FiSearch />
                                             <input
                                                 type="text"
-                                                placeholder={t("Buscar")}
+                                                placeholder={t(
+                                                    "filters.search",
+                                                )}
                                                 value={searchTerm}
                                                 onChange={(e) =>
                                                     setSearchTerm(
@@ -307,7 +309,7 @@ const TicketsList = () => {
                                             className="filter-select"
                                         >
                                             <option value="">
-                                                {t("Filtros por Motivo")}
+                                                {t("filters.filterByReason")}
                                             </option>
                                             {motivos.map((motivo) => (
                                                 <option
@@ -351,14 +353,14 @@ const TicketsList = () => {
                                             title={t("filters.clearFilters")}
                                         >
                                             <FiX />
-                                            {t("Borrar")}
+                                            {t("filters.clearFilters")}
                                         </button>
                                     )}
                                 </div>
 
                                 <div className="filter-results">
                                     {filteredTickets.length}{" "}
-                                    {t("Resultados Encontrados")}
+                                    {t("filters.resultsFound")}
                                 </div>
                             </div>
                         )}

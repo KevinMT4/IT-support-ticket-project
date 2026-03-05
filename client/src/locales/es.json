@@ -167,5 +167,15 @@
         "Tecnologias de la Informacion": "Tecnologías de la Información",
         "Mantenimiento": "Mantenimiento",
         "Produccion": "Producción"
+    },
+    "filters": {
+        "showFilters": "Mostrar Filtros",
+        "hideFilters": "Ocultar Filtros",
+        "search": "Buscar",
+        "filterByReason": "Filtrar por Motivo",
+        "startDate": "Fecha de inicio",
+        "endDate": "Fecha de fin",
+        "clearFilters": "Borrar",
+        "resultsFound": "Resultados Encontrados"
     }
 }
