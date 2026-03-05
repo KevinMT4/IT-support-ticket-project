@@ -700,10 +700,11 @@ def generar_pdf_ticket(request, ticket_id):
         textColor=colors.HexColor('#6b7280')
     )
 
+    now = timezone.localtime(timezone.now())
     if lang == 'en':
-        date_format = timezone.now().strftime('%m/%d/%Y at %I:%M %p')
+        date_format = now.strftime('%m/%d/%Y at %I:%M %p')
     else:
-        date_format = timezone.now().strftime('%d/%m/%Y a las %H:%M')
+        date_format = now.strftime('%d/%m/%Y a las %H:%M')
 
     subtitle = Paragraph(
         f"{t['generated']} {date_format}",
@@ -754,6 +755,8 @@ def generar_pdf_ticket(request, ticket_id):
     if lang.startswith('en') and ticket.usuario.departamento:
         dept_label = translations['en']['department_names'].get(dept_label, dept_label)
 
+    fecha_creacion_local = timezone.localtime(ticket.fecha_creacion)
+
     info_data = [
         [t['field'], t['information']],
         [t['subject'], ticket.asunto],
@@ -762,12 +765,13 @@ def generar_pdf_ticket(request, ticket_id):
         [t['created_by'], f"{ticket.usuario.first_name} {ticket.usuario.last_name}" if ticket.usuario.first_name else ticket.usuario.username],
         [t['department'], dept_label],
         [t['reason'], ticket.motivo.get_nombre_por_idioma() if ticket.motivo else 'N/A'],
-        [t['creation_date'], ticket.fecha_creacion.strftime(date_format_ticket)],
+        [t['creation_date'], fecha_creacion_local.strftime(date_format_ticket)],
         [t['resolution_time'], tiempo_resolucion],
     ]
 
     if ticket.fecha_cierre:
-        info_data.append([t['close_date'], ticket.fecha_cierre.strftime(date_format_ticket)])
+        fecha_cierre_local = timezone.localtime(ticket.fecha_cierre)
+        info_data.append([t['close_date'], fecha_cierre_local.strftime(date_format_ticket)])
 
     info_table = Table(info_data, colWidths=[2 * inch, 5 * inch])
     info_table.setStyle(TableStyle([
