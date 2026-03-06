@@ -82,13 +82,7 @@ DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,localhost:8000,127.0.0.1:8000
 # Database Configuration (SQLite por defecto)
 DATABASE_URL=sqlite:///db.sqlite3
 
-# Email Configuration
-EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_HOST_USER=tu-correo@gmail.com
-EMAIL_HOST_PASSWORD=tu-contraseña-de-aplicacion-de-16-caracteres (https://myaccount.google.com/apppasswords)
+# Email Configuration con OAuth2
 DEFAULT_FROM_EMAIL=tu-correo@gmail.com
 ```
 
@@ -98,6 +92,63 @@ DEFAULT_FROM_EMAIL=tu-correo@gmail.com
 - `DJANGO_DEBUG`: Debe ser `True` para desarrollo y `False` para producción.
 - `DJANGO_ALLOWED_HOSTS`: Lista de hosts permitidos separados por comas.
 - `DATABASE_URL`: URL de conexión a la base de datos. Por defecto usa SQLite.
+- `DEFAULT_FROM_EMAIL`: Email desde el cual se enviarán las notificaciones.
+
+#### Configurar OAuth2 para Gmail
+
+El sistema ahora usa OAuth2 para autenticarse con Gmail, lo cual es más seguro que usar contraseñas de aplicación.
+
+**Paso 1: Crear proyecto en Google Cloud Console**
+
+1. Ve a [Google Cloud Console](https://console.cloud.google.com)
+2. Crea un nuevo proyecto o selecciona uno existente
+3. Habilita Gmail API:
+    - En el menú, ve a "APIs y servicios" > "Biblioteca"
+    - Busca "Gmail API" y haz clic en "Habilitar"
+
+**Paso 2: Crear credenciales OAuth 2.0**
+
+1. Ve a "APIs y servicios" > "Credenciales"
+2. Haz clic en "+ CREAR CREDENCIALES" > "ID de cliente de OAuth"
+3. Si es necesario, configura la pantalla de consentimiento:
+    - Tipo: Externo
+    - Completa la información básica
+    - En "Ámbitos", agrega el ámbito: `https://www.googleapis.com/auth/gmail.send`
+    - En "Usuarios de prueba", añade tu email de Gmail
+4. Vuelve a "Credenciales" y crea el ID de cliente de OAuth:
+    - Tipo de aplicación: "Aplicación de escritorio"
+    - Dale un nombre (ej: "Sistema de Tickets")
+    - Haz clic en "Crear"
+
+**Paso 3: Descargar credenciales**
+
+1. Haz clic en el icono de descarga (⬇️) junto a las credenciales creadas
+2. Guarda el archivo como `credentials.json`
+3. Colócalo en la raíz del proyecto (mismo nivel que `manage.py`)
+
+**Paso 4: Autorizar la aplicación**
+
+```bash
+python setup_gmail_oauth.py
+```
+
+Este script:
+
+- Abrirá una ventana del navegador
+- Te pedirá que inicies sesión con tu cuenta de Gmail
+- Solicitará permisos para enviar emails
+- Guardará el token de acceso en `token.pickle`
+
+**IMPORTANTE**:
+
+- Si aparece "Esta app no está verificada", haz clic en "Opciones avanzadas" y luego en "Ir a [nombre del proyecto] (no seguro)"
+- Esto es normal porque la app está en modo de desarrollo
+- El token se renovará automáticamente cuando expire
+
+**Archivos generados (NO subir al repositorio)**:
+
+- `credentials.json` - Credenciales OAuth2 de Google Cloud
+- `token.pickle` - Token de acceso generado automáticamente
 
 #### Aplicar migraciones
 
