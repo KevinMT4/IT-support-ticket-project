@@ -42,6 +42,7 @@ const Login = () => {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
     const [forgotPasswordError, setForgotPasswordError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
     const { login, register } = useAuth();
     const navigate = useNavigate();
 
@@ -217,10 +218,11 @@ const Login = () => {
             handleCloseForgotPasswordModal();
             setError("");
             setLoginData({ email: "", password: "" });
+            setSuccessMessage(t("auth.passwordChangedSuccess"));
 
             setTimeout(() => {
-                alert(t("auth.passwordChangedSuccess"));
-            }, 100);
+                setSuccessMessage("");
+            }, 5000);
         } catch (err) {
             setForgotPasswordError(
                 err.message || t("auth.passwordChangeError"),
@@ -254,6 +256,13 @@ const Login = () => {
                                 onSubmit={handleLoginSubmit}
                                 className="auth-form"
                             >
+                                {successMessage && (
+                                    <Alert
+                                        type="success"
+                                        message={successMessage}
+                                        onClose={() => setSuccessMessage("")}
+                                    />
+                                )}
                                 {error && (
                                     <Alert
                                         type="error"
