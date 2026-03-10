@@ -90,6 +90,16 @@ class ApiClient {
     }
   }
 
+  async verificarUsuario(username, email) {
+    return this.request('/verificar-usuario/', {
+      method: 'POST',
+      body: JSON.stringify({ username, email }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+
   async getTickets() {
     return this.request('/tickets/');
   }

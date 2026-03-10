@@ -841,6 +841,24 @@ def generar_pdf_ticket(request, ticket_id):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
+def verificar_usuario(request):
+    username = request.data.get('username')
+    email = request.data.get('email')
+
+    if not username or not email:
+        return Response({'error': 'Usuario y correo son requeridos'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        usuario = Usuario.objects.get(username=username, email=email)
+        return Response({'exists': True, 'message': 'Usuario verificado'})
+    except Usuario.DoesNotExist:
+        return Response({'exists': False, 'error': 'Usuario o correo no encontrado'},
+                        status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_image(request):
     if request.user.rol != 'superuser':

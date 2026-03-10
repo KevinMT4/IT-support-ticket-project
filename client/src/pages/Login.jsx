@@ -144,7 +144,7 @@ const Login = () => {
         setLoading(false);
     };
 
-    const handleVerifyUserEmail = () => {
+    const handleVerifyUserEmail = async () => {
         setForgotPasswordError("");
 
         if (!forgotPasswordData.username || !forgotPasswordData.email) {
@@ -152,7 +152,24 @@ const Login = () => {
             return;
         }
 
-        setShowNewPasswordFields(true);
+        setLoading(true);
+
+        try {
+            const response = await apiClient.verificarUsuario(
+                forgotPasswordData.username,
+                forgotPasswordData.email,
+            );
+
+            if (response.exists) {
+                setShowNewPasswordFields(true);
+            }
+        } catch (err) {
+            setForgotPasswordError(
+                err.message || "Usuario o correo no encontrado",
+            );
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleCloseForgotPasswordModal = () => {
@@ -921,15 +938,7 @@ const Login = () => {
                                     >
                                         {t("form.submit")}
                                     </button>
-                                ) : (
-                                    <button
-                                        type="button"
-                                        className="btn-modal-confirm"
-                                        disabled
-                                    >
-                                        {t("form.submit")}
-                                    </button>
-                                )}
+                                ) : null}
                             </div>
                         </form>
                     </div>
