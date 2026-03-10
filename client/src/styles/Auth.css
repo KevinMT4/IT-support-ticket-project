@@ -198,6 +198,33 @@
     gap: 8px;
 }
 
+.forgot-password-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+}
+
+.btn-forgot-password {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: all 0.2s;
+}
+
+.btn-forgot-password:hover:not(:disabled) {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+}
+
+.btn-forgot-password:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .btn-auth-submit {
     padding: 9px 20px;
     background-color: var(--color-primary);

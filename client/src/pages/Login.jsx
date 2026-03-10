@@ -260,6 +260,16 @@ const Login = () => {
                                     </div>
                                 </div>
 
+                                <div className="forgot-password-container">
+                                    <button
+                                        type="button"
+                                        className="btn-forgot-password"
+                                        disabled={loading}
+                                    >
+                                        {t("auth.forgotPassword")}
+                                    </button>
+                                </div>
+
                                 <button
                                     type="submit"
                                     className="btn-auth-submit"

@@ -65,7 +65,8 @@
         "passwordsNotMatch": "Las contraseñas no coinciden",
         "passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
         "fillRequiredFields": "Por favor completa los campos requeridos",
-        "errorLoadingDepartments": "Error al cargar los departamentos"
+        "errorLoadingDepartments": "Error al cargar los departamentos",
+        "forgotPassword": "¿Olvidó su contraseña?"
     },
     "form": {
         "submit": "Enviar",

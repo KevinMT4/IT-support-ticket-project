@@ -65,7 +65,8 @@
         "passwordsNotMatch": "Passwords do not match",
         "passwordMinLength": "Password must be at least 8 characters",
         "fillRequiredFields": "Please complete all required fields",
-        "errorLoadingDepartments": "Error loading departments"
+        "errorLoadingDepartments": "Error loading departments",
+        "forgotPassword": "Forgot your password?"
     },
     "form": {
         "submit": "Submit",
