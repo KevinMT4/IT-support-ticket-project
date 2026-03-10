@@ -123,7 +123,7 @@ python manage.py createsuperuser
 
 ```bash
 cd /home/ubuntu/TicketsCofat/client
-npm ci
+npm i
 ```
 
 ### 2. Copiar Logo a Carpeta Pública
