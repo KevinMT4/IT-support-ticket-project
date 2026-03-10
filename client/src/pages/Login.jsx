@@ -28,6 +28,12 @@ const Login = () => {
     const [showLoginPassword, setShowLoginPassword] = useState(false);
     const [showRegisterPassword, setShowRegisterPassword] = useState(false);
     const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+    const [showForgotPasswordModal, setShowForgotPasswordModal] =
+        useState(false);
+    const [forgotPasswordData, setForgotPasswordData] = useState({
+        username: "",
+        email: "",
+    });
     const { login, register } = useAuth();
     const navigate = useNavigate();
 
@@ -265,6 +271,9 @@ const Login = () => {
                                         type="button"
                                         className="btn-forgot-password"
                                         disabled={loading}
+                                        onClick={() =>
+                                            setShowForgotPasswordModal(true)
+                                        }
                                     >
                                         {t("auth.forgotPassword")}
                                     </button>
@@ -645,6 +654,77 @@ const Login = () => {
                     </div>
                 </div>
             </div>
+
+            {showForgotPasswordModal && (
+                <div
+                    className="modal-overlay"
+                    onClick={() => setShowForgotPasswordModal(false)}
+                >
+                    <div
+                        className="modal-content"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3 className="modal-title">
+                            {t("auth.forgotPassword")}
+                        </h3>
+                        <form className="forgot-password-form">
+                            <div className="form-group">
+                                <label htmlFor="forgot-username">
+                                    {t("auth.username")}
+                                </label>
+                                <input
+                                    type="text"
+                                    id="forgot-username"
+                                    value={forgotPasswordData.username}
+                                    onChange={(e) =>
+                                        setForgotPasswordData({
+                                            ...forgotPasswordData,
+                                            username: e.target.value,
+                                        })
+                                    }
+                                    placeholder={t(
+                                        "form.placeholders.username",
+                                    )}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="forgot-email">
+                                    {t("auth.email")}
+                                </label>
+                                <input
+                                    type="email"
+                                    id="forgot-email"
+                                    value={forgotPasswordData.email}
+                                    onChange={(e) =>
+                                        setForgotPasswordData({
+                                            ...forgotPasswordData,
+                                            email: e.target.value,
+                                        })
+                                    }
+                                    placeholder={t("form.placeholders.email")}
+                                />
+                            </div>
+                            <div className="modal-actions">
+                                <button
+                                    type="button"
+                                    className="btn-modal-cancel"
+                                    onClick={() =>
+                                        setShowForgotPasswordModal(false)
+                                    }
+                                >
+                                    {t("form.cancel")}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn-modal-confirm"
+                                >
+                                    {t("form.submit")}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
