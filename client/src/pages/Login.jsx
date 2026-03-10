@@ -182,6 +182,51 @@ const Login = () => {
         setShowConfirmNewPassword(false);
     };
 
+    const handleChangePassword = async () => {
+        setForgotPasswordError("");
+
+        if (
+            !newPasswordData.newPassword ||
+            !newPasswordData.confirmNewPassword
+        ) {
+            setForgotPasswordError(t("form.required"));
+            return;
+        }
+
+        if (
+            newPasswordData.newPassword !== newPasswordData.confirmNewPassword
+        ) {
+            setForgotPasswordError(t("auth.passwordsNotMatch"));
+            return;
+        }
+
+        if (newPasswordData.newPassword.length < 8) {
+            setForgotPasswordError(t("auth.passwordMinLength"));
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            // TODO: Implementar endpoint de cambio de contraseña en el backend
+            // const response = await apiClient.changePassword({
+            //     username: forgotPasswordData.username,
+            //     email: forgotPasswordData.email,
+            //     newPassword: newPasswordData.newPassword
+            // });
+
+            // Por ahora solo mostramos mensaje de éxito
+            handleCloseForgotPasswordModal();
+            setError(t("auth.passwordChangedSuccess"));
+        } catch (err) {
+            setForgotPasswordError(
+                err.message || t("auth.passwordChangeError"),
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="auth-container">
             <div className="auth-language-switcher">
@@ -927,6 +972,7 @@ const Login = () => {
                                     type="button"
                                     className="btn-modal-cancel"
                                     onClick={handleCloseForgotPasswordModal}
+                                    disabled={loading}
                                 >
                                     {t("form.cancel")}
                                 </button>
@@ -935,10 +981,24 @@ const Login = () => {
                                         type="button"
                                         className="btn-modal-confirm"
                                         onClick={handleVerifyUserEmail}
+                                        disabled={loading}
                                     >
-                                        {t("form.submit")}
+                                        {loading
+                                            ? t("common.loading")
+                                            : t("form.submit")}
                                     </button>
-                                ) : null}
+                                ) : (
+                                    <button
+                                        type="button"
+                                        className="btn-modal-confirm"
+                                        onClick={handleChangePassword}
+                                        disabled={loading}
+                                    >
+                                        {loading
+                                            ? t("common.saving")
+                                            : t("auth.changePassword")}
+                                    </button>
+                                )}
                             </div>
                         </form>
                     </div>
