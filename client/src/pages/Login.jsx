@@ -208,16 +208,19 @@ const Login = () => {
         setLoading(true);
 
         try {
-            // TODO: Implementar endpoint de cambio de contraseña en el backend
-            // const response = await apiClient.changePassword({
-            //     username: forgotPasswordData.username,
-            //     email: forgotPasswordData.email,
-            //     newPassword: newPasswordData.newPassword
-            // });
+            await apiClient.cambiarPassword(
+                forgotPasswordData.username,
+                forgotPasswordData.email,
+                newPasswordData.newPassword,
+            );
 
-            // Por ahora solo mostramos mensaje de éxito
             handleCloseForgotPasswordModal();
-            setError(t("auth.passwordChangedSuccess"));
+            setError("");
+            setLoginData({ email: "", password: "" });
+
+            setTimeout(() => {
+                alert(t("auth.passwordChangedSuccess"));
+            }, 100);
         } catch (err) {
             setForgotPasswordError(
                 err.message || t("auth.passwordChangeError"),

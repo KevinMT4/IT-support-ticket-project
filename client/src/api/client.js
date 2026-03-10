@@ -100,6 +100,16 @@ class ApiClient {
     });
   }
 
+  async cambiarPassword(username, email, newPassword) {
+    return this.request('/cambiar-password/', {
+      method: 'POST',
+      body: JSON.stringify({ username, email, new_password: newPassword }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+
   async getTickets() {
     return this.request('/tickets/');
   }

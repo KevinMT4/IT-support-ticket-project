@@ -859,6 +859,31 @@ def verificar_usuario(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
+def cambiar_password(request):
+    username = request.data.get('username')
+    email = request.data.get('email')
+    new_password = request.data.get('new_password')
+
+    if not username or not email or not new_password:
+        return Response({'error': 'Usuario, correo y nueva contraseña son requeridos'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    if len(new_password) < 8:
+        return Response({'error': 'La contraseña debe tener al menos 8 caracteres'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        usuario = Usuario.objects.get(username=username, email=email)
+        usuario.set_password(new_password)
+        usuario.save()
+        return Response({'message': 'Contraseña cambiada exitosamente'})
+    except Usuario.DoesNotExist:
+        return Response({'error': 'Usuario o correo no encontrado'},
+                        status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_image(request):
     if request.user.rol != 'superuser':
