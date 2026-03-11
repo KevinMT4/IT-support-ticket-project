@@ -142,8 +142,52 @@ def send_ticket_created_email_to_admins(ticket):
 
 
 def send_ticket_status_updated_email(ticket, previous_status):
+    from django.utils import timezone
+
     subject = f'Ticket #{ticket.id} - Estado Actualizado'
     logo_html = '<div style="text-align:center;margin-bottom:20px;"><img src="cid:logo_image" alt="Logo" style="max-width:200px;height:auto;"></div>'
+
+    # Calcular tiempo de resolución si el ticket está resuelto
+    tiempo_resolucion_html = ""
+    tiempo_resolucion_plain = ""
+    solucion_html = ""
+    solucion_plain = ""
+
+    if ticket.estado == 'resuelto':
+        tiempo_transcurrido = timezone.now() - ticket.fecha_creacion
+        dias = tiempo_transcurrido.days
+        horas = tiempo_transcurrido.seconds // 3600
+        minutos = (tiempo_transcurrido.seconds % 3600) // 60
+
+        if dias > 0:
+            dia_word = 'días' if dias != 1 else 'día'
+            hora_word = 'horas' if horas != 1 else 'hora'
+            tiempo_resolucion = f"{dias} {dia_word}, {horas} {hora_word}"
+        elif horas > 0:
+            hora_word = 'horas' if horas != 1 else 'hora'
+            minuto_word = 'minutos' if minutos != 1 else 'minuto'
+            tiempo_resolucion = f"{horas} {hora_word}, {minutos} {minuto_word}"
+        else:
+            minuto_word = 'minutos' if minutos != 1 else 'minuto'
+            tiempo_resolucion = f"{minutos} {minuto_word}"
+
+        tiempo_resolucion_html = f'<p><strong>Tiempo de resolución:</strong> {tiempo_resolucion}</p>'
+        tiempo_resolucion_plain = f"Tiempo de resolución: {tiempo_resolucion}\n"
+
+        # Incluir detalles de la solución si están disponibles
+        if ticket.solucion_texto or ticket.solucion_imagenes:
+            solucion_plain = "\nDetalles de la Resolución:\n"
+
+            if ticket.solucion_texto:
+                solucion_html += f"""
+                <div style="margin: 20px 0;">
+                    <h3 style="color: #1e40af;">Solución:</h3>
+                    <p style="background-color: #f9fafb; padding: 15px; border-left: 4px solid #10b981; border-radius: 4px;">
+                        {ticket.solucion_texto}
+                    </p>
+                </div>
+                """
+                solucion_plain += f"Solución:\n{ticket.solucion_texto}\n"
 
     html_message = f"""
     <html>
@@ -168,7 +212,10 @@ def send_ticket_status_updated_email(ticket, previous_status):
                         </span>
                     </p>
                     <p><strong>Prioridad:</strong> {ticket.get_prioridad_display()}</p>
+                    {tiempo_resolucion_html}
                 </div>
+
+                {solucion_html}
 
                 <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 0.875rem; color: #6b7280;">
                     <p>Este correo ha sido enviado automáticamente por el Sistema de Gestión de Tickets.</p>
@@ -186,7 +233,7 @@ def send_ticket_status_updated_email(ticket, previous_status):
     Estado anterior: {dict(ticket.ESTADO_CHOICES).get(previous_status, previous_status)}
     Estado actual: {ticket.get_estado_display()}
     Prioridad: {ticket.get_prioridad_display()}
-
+    {tiempo_resolucion_plain}{solucion_plain}
     ---
     Este correo ha sido enviado automáticamente por el Sistema de Gestión de Tickets.
     """
