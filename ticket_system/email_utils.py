@@ -175,8 +175,18 @@ def send_ticket_status_updated_email(ticket, previous_status):
         tiempo_resolucion_plain = f"Tiempo de resolución: {tiempo_resolucion}\n"
 
         # Incluir detalles de la solución si están disponibles
-        if ticket.solucion_texto or ticket.solucion_imagenes:
+        if ticket.solucion_texto or ticket.solucion_imagenes or ticket.cerrado_por:
             solucion_plain = "\nDetalles de la Resolución:\n"
+
+            if ticket.cerrado_por:
+                solucion_html += f"""
+                <div style="margin: 20px 0;">
+                    <p style="background-color: #f0fdf4; padding: 12px; border-left: 4px solid #10b981; border-radius: 4px;">
+                        <strong>Cerrado por:</strong> {ticket.cerrado_por.nombre}
+                    </p>
+                </div>
+                """
+                solucion_plain += f"Cerrado por: {ticket.cerrado_por.nombre}\n"
 
             if ticket.solucion_texto:
                 solucion_html += f"""
