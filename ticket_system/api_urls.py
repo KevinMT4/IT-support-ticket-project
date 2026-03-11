@@ -11,12 +11,14 @@ from .api_views import (
     upload_image,
     DepartamentoViewSet,
     MotivoViewSet,
+    CerradorViewSet,
     TicketViewSet
 )
 
 router = DefaultRouter()
 router.register(r'departamentos', DepartamentoViewSet)
 router.register(r'motivos', MotivoViewSet)
+router.register(r'cerradores', CerradorViewSet)
 router.register(r'tickets', TicketViewSet, basename='ticket')
 
 urlpatterns = [

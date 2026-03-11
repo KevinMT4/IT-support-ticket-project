@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Usuario, Departamento, Motivo, Ticket
+from .models import Usuario, Departamento, Motivo, Ticket, Cerrador
 
 
 class DepartamentoSerializer(serializers.ModelSerializer):
@@ -62,6 +62,13 @@ class MotivoSerializer(serializers.ModelSerializer):
         model = Motivo
         fields = ['id', 'nombre', 'descripcion', 'departamento', 'departamento_nombre']
 
+
+class CerradorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cerrador
+        fields = ['id', 'nombre', 'activo']
+
+
 class TicketSerializer(serializers.ModelSerializer):
     usuario_nombre = serializers.SerializerMethodField()
     usuario_departamento_nombre = serializers.SerializerMethodField()
@@ -71,11 +78,13 @@ class TicketSerializer(serializers.ModelSerializer):
     # ``source='motivo.nombre'`` which would always return the raw Spanish
     # text stored in the database.
     motivo_nombre = serializers.SerializerMethodField()
+    cerrado_por_nombre = serializers.CharField(source='cerrado_por.nombre', read_only=True)
 
     def get_motivo_nombre(self, obj):
         if obj.motivo:
             return obj.motivo.get_nombre_por_idioma()
         return None
+
     estado_display = serializers.CharField(source='get_estado_display', read_only=True)
     prioridad_display = serializers.CharField(source='get_prioridad_display', read_only=True)
 
@@ -84,7 +93,8 @@ class TicketSerializer(serializers.ModelSerializer):
         fields = ['id', 'usuario', 'usuario_nombre', 'usuario_departamento_nombre',
                   'departamento', 'departamento_nombre', 'motivo', 'motivo_nombre',
                   'asunto', 'contenido', 'prioridad', 'prioridad_display', 'estado',
-                  'estado_display', 'fecha_creacion', 'fecha_cierre', 'solucion_texto', 'solucion_imagenes']
+                  'estado_display', 'fecha_creacion', 'fecha_cierre', 'cerrado_por', 'cerrado_por_nombre',
+                  'solucion_texto', 'solucion_imagenes']
         read_only_fields = ['id', 'fecha_creacion', 'usuario']
 
     def get_usuario_nombre(self, obj):

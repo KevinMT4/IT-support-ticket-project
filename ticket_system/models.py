@@ -62,6 +62,27 @@ class Motivo(models.Model):
         related_name='motivos'
     )
 
+
+class Cerrador(models.Model):
+    nombre = models.CharField(max_length=100)
+    activo = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = 'cerrador'
+        verbose_name = 'Cerrador'
+        verbose_name_plural = 'Cerradores'
+
+    def __str__(self):
+        return self.nombre
+
+
+class Ticket(models.Model):
+    ESTADO_CHOICES = [
+        ('abierto', 'Abierto'),
+        ('en_proceso', 'En Proceso'),
+        ('resuelto', 'Resuelto'),
+    ]
+
     class Meta:
         db_table = 'motivo'
         verbose_name = 'Motivo'
@@ -129,6 +150,13 @@ class Ticket(models.Model):
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='abierto')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_cierre = models.DateTimeField(null=True, blank=True)
+    cerrado_por = models.ForeignKey(
+        Cerrador,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='tickets_cerrados'
+    )
     solucion_texto = models.TextField(blank=True, null=True)
     solucion_imagenes = models.JSONField(blank=True, null=True)  # Lista de URLs de imágenes
 

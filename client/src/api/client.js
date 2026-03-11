@@ -148,6 +148,10 @@ class ApiClient {
     return this.request(`/motivos/${query}`);
   }
 
+  async getCerradores() {
+    return this.request('/cerradores/');
+  }
+
   async uploadImage(formData) {
     const url = `${this.baseURL}/upload-image/`;
     const headers = {};

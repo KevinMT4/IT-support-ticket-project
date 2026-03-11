@@ -138,6 +138,8 @@
         "resolutionModalTitle": "Resolution Details",
         "resolutionText": "Solution Description",
         "resolutionTextPlaceholder": "Describe how the problem was resolved...",
+        "closedBy": "Closed by",
+        "selectCloser": "Select who closed the ticket",
         "resolutionImages": "Images (optional)",
         "resolutionDetails": "Resolution Details",
         "uploading": "Uploading...",

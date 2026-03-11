@@ -21,6 +21,8 @@ const TicketDetail = () => {
     const [resolutionImages, setResolutionImages] = useState([]);
     const [uploadingImage, setUploadingImage] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+    const [closers, setClosers] = useState([]);
+    const [selectedCloser, setSelectedCloser] = useState(null);
     const { isSuperuser } = useAuth();
     const { t, currentLanguage } = useLanguage();
     const navigate = useNavigate();
@@ -28,6 +30,21 @@ const TicketDetail = () => {
     useEffect(() => {
         loadTicket();
     }, [id, currentLanguage]);
+
+    useEffect(() => {
+        const loadClosers = async () => {
+            try {
+                const data = await apiClient.getCerradores();
+                setClosers(data);
+            } catch (err) {
+                console.error('Error loading closers', err);
+            }
+        };
+
+        if (showResolutionModal && closers.length === 0) {
+            loadClosers();
+        }
+    }, [showResolutionModal, closers.length]);
 
     const getAbsoluteImageUrl = (url) => {
         if (!url) return url;
@@ -49,6 +66,7 @@ const TicketDetail = () => {
                 );
             }
             setTicket(data);
+            setSelectedCloser(data.cerrado_por || null);
             setError(null);
         } catch (err) {
             setError(t("ticketDetail.errorLoadingTicket"));
@@ -171,6 +189,7 @@ const TicketDetail = () => {
                 {
                     solucion_texto: resolutionText,
                     solucion_imagenes: serverImages,
+                    cerrado_por: selectedCloser,
                 },
             );
             setTicket(updatedTicket);
@@ -328,11 +347,20 @@ const TicketDetail = () => {
                         {ticket.estado === "resuelto" &&
                             (ticket.solucion_texto ||
                                 (ticket.solucion_imagenes &&
-                                    ticket.solucion_imagenes.length > 0)) && (
+                                    ticket.solucion_imagenes.length > 0) ||
+                                ticket.cerrado_por_nombre) && (
                                 <div className="ticket-section">
                                     <h3>
                                         {t("ticketDetail.resolutionDetails")}
                                     </h3>
+                                    {ticket.cerrado_por_nombre && (
+                                        <div className="ticket-description">
+                                            <strong>
+                                                {t("ticketDetail.closedBy")}: 
+                                            </strong>
+                                            {ticket.cerrado_por_nombre}
+                                        </div>
+                                    )}
                                     {ticket.solucion_texto && (
                                         <div className="ticket-description">
                                             {ticket.solucion_texto}
@@ -538,6 +566,29 @@ const TicketDetail = () => {
                                     )}
                                     rows="4"
                                 />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="closedBy">
+                                    {t("ticketDetail.closedBy")}
+                                </label>
+                                <select
+                                    id="closedBy"
+                                    value={selectedCloser || ""}
+                                    onChange={(e) =>
+                                        setSelectedCloser(
+                                            e.target.value ? Number(e.target.value) : null,
+                                        )
+                                    }
+                                >
+                                    <option value="">
+                                        {t("ticketDetail.selectCloser")}
+                                    </option>
+                                    {closers.map((closer) => (
+                                        <option key={closer.id} value={closer.id}>
+                                            {closer.nombre}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="resolutionImages">

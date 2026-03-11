@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Usuario, Departamento, Motivo, Ticket
+from .models import Usuario, Departamento, Motivo, Cerrador, Ticket
 
 
 @admin.register(Departamento)
@@ -39,6 +39,14 @@ class MotivoAdmin(admin.ModelAdmin):
     fields = ['nombre', 'nombre_en', 'departamento', 'descripcion']
 
 
+@admin.register(Cerrador)
+class CerradorAdmin(admin.ModelAdmin):
+    list_display = ['nombre', 'activo']
+    list_filter = ['activo']
+    search_fields = ['nombre']
+    ordering = ['nombre']
+
+
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
     list_display = ['id', 'asunto', 'usuario', 'departamento', 'prioridad', 'estado', 'fecha_creacion']
@@ -55,6 +63,6 @@ class TicketAdmin(admin.ModelAdmin):
             'fields': ('estado', 'prioridad')
         }),
         ('Fechas', {
-            'fields': ('fecha_creacion', 'fecha_cierre')
+            'fields': ('fecha_creacion', 'fecha_cierre', 'cerrado_por')
         }),
     )

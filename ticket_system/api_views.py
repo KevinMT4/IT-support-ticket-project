@@ -22,12 +22,13 @@ from reportlab.graphics.charts.barcharts import VerticalBarChart, HorizontalBarC
 from reportlab.graphics.charts.piecharts import Pie
 from reportlab.graphics.charts.legends import Legend
 from django.conf import settings
-from .models import Usuario, Departamento, Motivo, Ticket
+from .models import Usuario, Departamento, Motivo, Cerrador, Ticket
 from .serializers import (
     UsuarioSerializer,
     UsuarioRegistroSerializer,
     DepartamentoSerializer,
     MotivoSerializer,
+    CerradorSerializer,
     TicketSerializer,
     TicketCreateSerializer
 )
@@ -163,6 +164,12 @@ class MotivoViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
 
 
+class CerradorViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Cerrador.objects.filter(activo=True)
+    serializer_class = CerradorSerializer
+    permission_classes = [IsAuthenticated]
+
+
 class TicketViewSet(viewsets.ModelViewSet):
     serializer_class = TicketSerializer
     permission_classes = [IsAuthenticated]
@@ -214,6 +221,16 @@ class TicketViewSet(viewsets.ModelViewSet):
         if nuevo_estado == 'resuelto':
             ticket.solucion_texto = request.data.get('solucion_texto', '')
             ticket.solucion_imagenes = request.data.get('solucion_imagenes', [])
+
+            cerrador_id = request.data.get('cerrado_por')
+            if cerrador_id is not None:
+                try:
+                    from .models import Cerrador
+                    ticket.cerrado_por = Cerrador.objects.get(id=cerrador_id)
+                except (Cerrador.DoesNotExist, ValueError, TypeError):
+                    # ignore invalid selection, leave unchanged
+                    ticket.cerrado_por = None
+
             if not ticket.fecha_cierre:
                 ticket.fecha_cierre = timezone.now()
 
