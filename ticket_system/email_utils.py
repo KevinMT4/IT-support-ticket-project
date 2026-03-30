@@ -78,9 +78,6 @@ def send_ticket_created_email_to_admins(ticket):
     <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
             <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-                <h2 style="color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">
-                    Nuevo Ticket Creado
-                </h2>
 
                 <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
                     <tr style="background-color: #f3f4f6;">
@@ -108,13 +105,9 @@ def send_ticket_created_email_to_admins(ticket):
 
                 <div style="margin: 20px 0; padding: 15px; background-color: #fffbeb; border: 2px solid #fbbf24; border-radius: 8px;">
                     <h3 style="color: #92400e; margin-top: 0;">DESCRIPCION DEL PROBLEMA:</h3>
-                    <p style="margin: 0; white-space: pre-wrap; font-size: 14px; line-height: 1.6;">
-{ticket.contenido}
-                    </p>
-                </div>
-
-                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 0.875rem; color: #6b7280;">
-                    <p>Sistema de Gestion de Tickets - Notificacion Automatica</p>
+                    <div style="margin: 0; font-size: 14px; line-height: 1.6; word-wrap: break-word; overflow-wrap: break-word;">
+                        {ticket.contenido.replace(chr(10), '<br>')}
+                    </div>
                 </div>
             </div>
         </body>
