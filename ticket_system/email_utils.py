@@ -134,10 +134,13 @@ def send_ticket_created_email_to_admins(ticket):
         print("No hay administradores con email configurado para notificar")
         return False
 
-    # send with inline logo
-    success = _send_email_with_logo(subject, plain_message, logo_html + html_message, admin_emails)
+    # send with inline logo and copy hotline mailbox
+    cc_list = [settings.HOTLINE_EMAIL] if getattr(settings, 'HOTLINE_EMAIL', None) else None
+    success = _send_email_with_logo(subject, plain_message, logo_html + html_message, admin_emails, cc_list=cc_list)
     if success:
         print(f"Email enviado a administradores: {', '.join(admin_emails)}")
+        if cc_list:
+            print(f"Copia enviada a: {', '.join(cc_list)}")
     return success
 
 
@@ -312,11 +315,18 @@ def send_ticket_priority_updated_email(ticket, previous_priority):
     return _send_email_with_logo(subject, plain_message, logo_html + html_message, [ticket.usuario.email])
 
 
-def _send_email_with_logo(subject, plain_message, html_message, recipient_list):
+def _send_email_with_logo(subject, plain_message, html_message, recipient_list, cc_list=None, bcc_list=None):
     """Send an email with HTML body and embed the project logo as an inline image (CID).
     Returns True on success, False on failure."""
     try:
-        msg = EmailMultiAlternatives(subject=subject, body=plain_message, from_email=settings.DEFAULT_FROM_EMAIL, to=recipient_list)
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=plain_message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=recipient_list,
+            cc=cc_list,
+            bcc=bcc_list,
+        )
         msg.attach_alternative(html_message, "text/html")
 
         # find logo path
