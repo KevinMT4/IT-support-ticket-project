@@ -66,65 +66,88 @@ def send_ticket_created_email_to_user(ticket):
 def send_ticket_created_email_to_admins(ticket):
     from .models import Usuario
 
-    subject = f'Nuevo Ticket Creado: {ticket.asunto}'
+    # Subject más descriptivo para Teams
+    user_name = ticket.usuario.get_full_name() or ticket.usuario.username
+    dept_name = ticket.usuario.departamento.nombre if ticket.usuario.departamento else 'Sin Departamento'
+    subject = f'Nuevo Ticket: {ticket.asunto} - {user_name} ({dept_name})'
 
     logo_html = '<div style="text-align:center;margin-bottom:20px;"><img src="cid:logo_image" alt="Logo" style="max-width:200px;height:auto;"></div>'
 
+    # HTML simplificado para mejor compatibilidad con Teams
     html_message = f"""
     <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
             <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
                 <h2 style="color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">
-                    Nuevo Ticket Creado - Notificación para Administrador
+                    Nuevo Ticket Creado
                 </h2>
 
-                <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <p><strong>Creado por:</strong> {ticket.usuario.get_full_name() or ticket.usuario.username}</p>
-                    <p><strong>Email del usuario:</strong> {ticket.usuario.email}</p>
-                    <p><strong>Departamento del usuario:</strong> {ticket.usuario.departamento.nombre if ticket.usuario.departamento else 'N/A'}</p>
-                    <hr style="margin: 15px 0; border: none; border-top: 1px solid #d1d5db;">
-                    <p><strong>Asunto:</strong> {ticket.asunto}</p>
-                    <p><strong>Prioridad:</strong> {ticket.get_prioridad_display()}</p>
-                    <p><strong>Estado:</strong> {ticket.get_estado_display()}</p>
-                    <p><strong>Departamento destino:</strong> {ticket.departamento.nombre}</p>
-                    {f'<p><strong>Motivo:</strong> {ticket.motivo.nombre}</p>' if ticket.motivo else ''}
-                </div>
+                <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                    <tr style="background-color: #f3f4f6;">
+                        <td style="padding: 10px; font-weight: bold; border: 1px solid #e5e7eb;">Creado por:</td>
+                        <td style="padding: 10px; border: 1px solid #e5e7eb;">{user_name}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: bold; border: 1px solid #e5e7eb;">Email:</td>
+                        <td style="padding: 10px; border: 1px solid #e5e7eb;">{ticket.usuario.email}</td>
+                    </tr>
+                    <tr style="background-color: #f3f4f6;">
+                        <td style="padding: 10px; font-weight: bold; border: 1px solid #e5e7eb;">Departamento:</td>
+                        <td style="padding: 10px; border: 1px solid #e5e7eb;">{dept_name}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: bold; border: 1px solid #e5e7eb;">Asunto:</td>
+                        <td style="padding: 10px; border: 1px solid #e5e7eb;"><strong>{ticket.asunto}</strong></td>
+                    </tr>
+                    <tr style="background-color: #f3f4f6;">
+                        <td style="padding: 10px; font-weight: bold; border: 1px solid #e5e7eb;">Prioridad:</td>
+                        <td style="padding: 10px; border: 1px solid #e5e7eb;">{ticket.get_prioridad_display()}</td>
+                    </tr>
+                    {f'<tr><td style="padding: 10px; font-weight: bold; border: 1px solid #e5e7eb;">Motivo:</td><td style="padding: 10px; border: 1px solid #e5e7eb;">{ticket.motivo.nombre}</td></tr>' if ticket.motivo else ''}
+                </table>
 
-                <div style="margin: 20px 0;">
-                    <h3 style="color: #1e40af;">Descripción del Problema:</h3>
-                    <p style="background-color: #f9fafb; padding: 15px; border-left: 4px solid #2563eb; border-radius: 4px;">
-                        {ticket.contenido}
+                <div style="margin: 20px 0; padding: 15px; background-color: #fffbeb; border: 2px solid #fbbf24; border-radius: 8px;">
+                    <h3 style="color: #92400e; margin-top: 0;">DESCRIPCION DEL PROBLEMA:</h3>
+                    <p style="margin: 0; white-space: pre-wrap; font-size: 14px; line-height: 1.6;">
+{ticket.contenido}
                     </p>
                 </div>
 
                 <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 0.875rem; color: #6b7280;">
-                    <p>Este correo ha sido enviado automáticamente por el Sistema de Gestión de Tickets.</p>
-                    <p>Por favor, ingresa al sistema para gestionar este ticket.</p>
+                    <p>Sistema de Gestion de Tickets - Notificacion Automatica</p>
                 </div>
             </div>
         </body>
     </html>
     """
 
+    # Texto plano mejorado - MUY IMPORTANTE para Teams
     plain_message = f"""
-    Nuevo Ticket Creado - Notificación para Administrador
+=============================================================
+NUEVO TICKET CREADO - TICKET #{ticket.id}
+=============================================================
 
-    Creado por: {ticket.usuario.get_full_name() or ticket.usuario.username}
-    Email del usuario: {ticket.usuario.email}
-    Departamento del usuario: {ticket.usuario.departamento.nombre if ticket.usuario.departamento else 'N/A'}
+INFORMACION DEL USUARIO:
+------------------------
+Creado por: {user_name}
+Email: {ticket.usuario.email}
+Departamento: {dept_name}
 
-    Asunto: {ticket.asunto}
-    Prioridad: {ticket.get_prioridad_display()}
-    Estado: {ticket.get_estado_display()}
-    Departamento destino: {ticket.departamento.nombre}
-    {f'Motivo: {ticket.motivo.nombre}' if ticket.motivo else ''}
+DETALLES DEL TICKET:
+--------------------
+Asunto: {ticket.asunto}
+Prioridad: {ticket.get_prioridad_display()}
+Estado: {ticket.get_estado_display()}
+{f'Motivo: {ticket.motivo.nombre}' if ticket.motivo else ''}
 
-    Descripción del Problema:
-    {ticket.contenido}
+DESCRIPCION DEL PROBLEMA:
+-------------------------
+{ticket.contenido}
 
-    ---
-    Este correo ha sido enviado automáticamente por el Sistema de Gestión de Tickets.
-    Por favor, ingresa al sistema para gestionar este ticket.
+=============================================================
+Sistema de Gestion de Tickets - Notificacion Automatica
+Por favor, ingresa al sistema para gestionar este ticket.
+=============================================================
     """
 
     admins = Usuario.objects.filter(rol__in=['superuser', 'admin'], is_active=True)
