@@ -82,6 +82,12 @@ DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,localhost:8000,127.0.0.1:8000
 # Database Configuration (SQLite por defecto)
 DATABASE_URL=sqlite:///db.sqlite3
 
+DB_NAME=TicketsCofatBD
+DB_USER=root
+DB_PASSWORD=tu_contraseña
+DB_HOST=localhost
+DB_PORT=3306
+
 # Email Configuration
 EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
 EMAIL_HOST=smtp.gmail.com
