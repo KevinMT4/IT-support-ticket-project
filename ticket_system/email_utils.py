@@ -92,10 +92,6 @@ def send_ticket_created_email_to_admins(ticket):
                         <td style="padding: 10px; font-weight: bold; border: 1px solid #e5e7eb;">Departamento:</td>
                         <td style="padding: 10px; border: 1px solid #e5e7eb;">{dept_name}</td>
                     </tr>
-                    <tr>
-                        <td style="padding: 10px; font-weight: bold; border: 1px solid #e5e7eb;">Asunto:</td>
-                        <td style="padding: 10px; border: 1px solid #e5e7eb;"><strong>{ticket.asunto}</strong></td>
-                    </tr>
                     <tr style="background-color: #f3f4f6;">
                         <td style="padding: 10px; font-weight: bold; border: 1px solid #e5e7eb;">Prioridad:</td>
                         <td style="padding: 10px; border: 1px solid #e5e7eb;">{ticket.get_prioridad_display()}</td>
@@ -104,7 +100,6 @@ def send_ticket_created_email_to_admins(ticket):
                 </table>
 
                 <div style="margin: 20px 0; padding: 15px; background-color: #fffbeb; border: 2px solid #fbbf24; border-radius: 8px;">
-                    <h3 style="color: #92400e; margin-top: 0;">DESCRIPCION DEL PROBLEMA:</h3>
                     <div style="margin: 0; font-size: 14px; line-height: 1.6; word-wrap: break-word; overflow-wrap: break-word;">
                         {ticket.contenido.replace(chr(10), '<br>')}
                     </div>
@@ -128,13 +123,10 @@ Departamento: {dept_name}
 
 DETALLES DEL TICKET:
 --------------------
-Asunto: {ticket.asunto}
 Prioridad: {ticket.get_prioridad_display()}
 Estado: {ticket.get_estado_display()}
 {f'Motivo: {ticket.motivo.nombre}' if ticket.motivo else ''}
 
-DESCRIPCION DEL PROBLEMA:
--------------------------
 {ticket.contenido}
 
 =============================================================
